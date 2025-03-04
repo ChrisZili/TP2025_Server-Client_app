@@ -30,7 +30,7 @@ Cieľom aplikácie je:
 
 ## Technológie
 
-- **Backend:** TODO
-- **Frontend:** TODO
+- **Backend:** Flask (Python) s PostgreSQL databázou
+- **Frontend:** HTML, CSS, JavaScript
 - **Algoritmy:** Preddefinované algoritmy pre klasifikáciu, segmentáciu a detekciu obrazov
 
