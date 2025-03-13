@@ -1,23 +1,37 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.services.auth_service import AuthService
+from server.models.user import User
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 auth_service = AuthService()
 
 @bp.route('/register', methods=['POST'])
 def register():
+    """Endpoint na registráciu používateľa"""
     data = request.get_json()
     return auth_service.register_user(data)
 
 @bp.route('/login', methods=['POST'])
 def login():
+    """Endpoint na prihlásenie používateľa"""
     data = request.get_json()
     return auth_service.login_user(data)
 
-@bp.route('/protected', methods=['GET'])
+@bp.route('/me', methods=['GET'])
 @jwt_required()
-def protected():
-    """Chránená route - prístupná len s JWT tokenom"""
-    current_user = get_jwt_identity()
-    return jsonify({'message': f'Welcome User {current_user}!'}), 200
+def get_current_user():
+    """Vráti údaje o aktuálnom prihlásenom používateľovi"""
+    user_id = get_jwt_identity()
+    user = User.query.get(int(user_id))
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({
+        "id": user.id,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email,
+        "gender": user.gender
+    }), 200
