@@ -1,28 +1,7 @@
-from flask import Flask
-from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
-from server.config import Config
+from server import create_app
 from server.database import db
-from server.routes.auth import bp as auth_bp
-from server.routes.api import bp as api_bp
-import os
 
-app = Flask(__name__)
-app.config.from_object(Config)
-
-# Kontrola pripojenia k databáze
-try:
-    print(f"🔗 Connecting to database: {app.config['SQLALCHEMY_DATABASE_URI']}")
-    db.init_app(app)
-    migrate = Migrate(app, db)
-except Exception as e:
-    print(f"❌ Database connection failed: {e}")
-
-jwt = JWTManager(app)
-
-# Registrácia Blueprintov
-app.register_blueprint(auth_bp)
-app.register_blueprint(api_bp)
+app = create_app()
 
 # Inicializácia databázy v rámci kontextu aplikácie
 with app.app_context():

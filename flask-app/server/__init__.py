@@ -1,19 +1,23 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 from server.config import Config
+from server.database import db
+from server.routes import register_blueprints
 
-db = SQLAlchemy()
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-def create_app():
-    app = Flask(__name__,
-                static_folder='../client/static',
-                template_folder='../client/templates')
-    
-    app.config.from_object(Config)
-    
-    db.init_app(app)
-    
-    from server.routes import api
-    app.register_blueprint(api.bp)
-    
-    return app 
+    try:
+        print(f"🔗 Connecting to database: {app.config['SQLALCHEMY_DATABASE_URI']}")
+        db.init_app(app)
+        Migrate(app, db)
+    except Exception as e:
+        print(f"❌ Database connection failed: {e}")
+    JWTManager(app)
+
+    # Registrácia Blueprintov
+    register_blueprints(app)
+
+    return app
