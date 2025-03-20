@@ -3,24 +3,37 @@ from server.models.user import User
 from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token
 from datetime import timedelta
+from server.services.technician_service import TechnicianService
+from server.services.patient_service import PatientService
+from server.services.doctor_service import DoctorService
+from server.models.patient_data import PatientData
 
 class AuthService:
     def register_user(self, data):
         """Registrácia nového používateľa s kontrolou duplicity"""
         try:
+            user_type = data.get('user_type')
             first_name = data.get('first_name')
             last_name = data.get('last_name')
             email = data.get('email')
             password = data.get('password')
             gender = data.get('gender', 'unknown')  # Ak gender nie je poslaný, nastaví sa na 'unknown'
 
-            # ✅ Overenie povinných polí
-            if not first_name or not last_name or not email or not password:
-                return jsonify({'error': 'Missing required fields'}), 400
-
-            # ✅ Overenie, či už existuje rovnaký email
+            # Overenie, či už existuje rovnaký email
             if User.query.filter_by(email=email).first():
                 return jsonify({'error': 'Email already exists'}), 400
+
+            # Overenie, či je zadaný typ používateľa a volanie príslušnej metódy
+            if not user_type:
+                return jsonify({'error': 'Missing required fields'}), 400
+            if user_type == 'patient':
+                return PatientService().register_patient(data)
+            elif user_type == 'technician':
+                return TechnicianService().register_technician(data)
+            elif user_type == 'doctor':
+                return DoctorService().register_doctor(data)
+            else:
+                return jsonify({'error': 'Invalid user type'}), 400
 
             # ✅ Vytvorenie používateľa
             user = User(first_name=first_name, last_name=last_name, email=email, gender=gender)

@@ -1,14 +1,31 @@
 from server.database import db
+from server.models.user import User
+from server.models.doctor_data import DoctorData
+from server.models.original_image_data import OriginalImageData
 
-class PatientData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor_data.id'), nullable=True)  # Odkaz na doktora
-    birth_date = db.Column(db.Date, nullable=True)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import date
 
+class PatientData(User):
+    __tablename__ = "patients"
+    id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
 
-    patient = db.relationship('User', foreign_keys=[patient_id])
-    doctor = db.relationship('DoctorData', foreign_keys=[doctor_id], backref='patients')
+    # Osobné údaje pacienta
+    first_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
+    phone_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
+    birth_date: Mapped[date] = mapped_column(db.Date, nullable=False)
+    birth_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
+    gender: Mapped[str] = mapped_column(db.String(10), nullable=False)
 
-    # Pridanie vzťahu na obrázky pacienta
-    images = db.relationship('PatientImages', backref='patient_data', lazy=True)
+    __mapper_args__ = {
+        "polymorphic_identity": "patient"
+    }
+
+    # Vzťah na entitu Doctor – jeden pacient patrí jednému doktorovi.
+    doctor: Mapped["DoctorData"] = relationship("DoctorData", back_populates="patients", lazy="select")
+
+    # One-to-many vzťah na OrgImage – pacient môže mať viacero obrázkov.
+    images: Mapped[list["OriginalImageData"]] = relationship(
+        "OriginalImageData", back_populates="patient", cascade="all, delete-orphan", lazy="select"
+    )

@@ -3,7 +3,7 @@ from server.database import db
 from server.models.doctor_data import DoctorData
 from server.models.original_image_data import PatientImages
 from server.models.patient_data import PatientData
-from server.models.hospital import Hospital
+from server.models.hospital_data import Hospital
 from server.models.user import User
 
 class DoctorService:
@@ -120,3 +120,6 @@ class DoctorService:
                 } for img in images
             ]
         }), 200
+
+    def register_doctor(self, data):
+        pass

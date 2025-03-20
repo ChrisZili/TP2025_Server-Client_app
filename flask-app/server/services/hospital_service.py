@@ -1,6 +1,6 @@
 from flask import jsonify
 from server.database import db
-from server.models.hospital import Hospital
+from server.models.hospital_data import Hospital
 
 class HospitalService:
     def add_hospital(self, data):

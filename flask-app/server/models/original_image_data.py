@@ -1,7 +1,7 @@
 from server.database import db
 from datetime import datetime, UTC
 
-class PatientImages(db.Model):
+class OriginalImageData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_data_id = db.Column(db.Integer, db.ForeignKey('patient_data.id'), nullable=False)
     device_id = db.Column(db.Integer, db.ForeignKey('device.id'), nullable=False)
