@@ -1,7 +1,7 @@
 from server.database import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 import re
 
 class User(db.Model):
@@ -14,6 +14,9 @@ class User(db.Model):
 
     created_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     # Typ používateľa
+    created_images: Mapped[list["OriginalImageData"]] = relationship(
+        "OriginalImageData", back_populates="creator", lazy="select"
+    )
     user_type: Mapped[str] = mapped_column(db.String(20), default='user')
     __mapper_args__ = {
         'polymorphic_on': user_type,

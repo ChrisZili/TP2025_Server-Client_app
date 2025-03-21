@@ -24,8 +24,6 @@ def create_app(config_class=Config):
     # Registrácia Blueprintov
     register_blueprints(app)
 
-    @app.before_first_request
-    def init_admin():
-        create_admin()
+
 
     return app

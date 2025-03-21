@@ -1,8 +1,7 @@
 import uuid
 from server.database import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from server.models.doctor_data import DoctorData
-from server.models.technician_data import TechnicianData
+
 
 def generate_uuid16() -> str:
     """Generuje 16-miestny hex reťazec z uuid4."""
