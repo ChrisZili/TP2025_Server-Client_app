@@ -121,5 +121,41 @@ class DoctorService:
             ]
         }), 200
 
-    def register_doctor(self, data):
-        pass
+    @staticmethod
+    def register_doctor(data):
+        try:
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            phone_number = data.get('phone_number')
+            gender = data.get('gender')
+
+            doctor_code = data.get('doctor_code')
+
+            email = data.get('email')
+            password = data.get('password')
+
+            if not all([first_name, last_name, phone_number, gender, email, password, doctor_code]):
+                return jsonify({'error': 'Missing required fields'}), 400
+            hospital = Hospital.query.filter_by(doctor_code=doctor_code).first()
+            if not hospital:
+                return jsonify({'error': 'Doctor code does not exist'}), 400
+            if PatientData.query.filter_by(phone_number=phone_number).first():
+                return jsonify({'error': 'Patient with this phone number already exists'}), 400
+
+            new_doctor = DoctorData(
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                gender=gender,
+                email=email,
+                hospital_id = hospital.id
+            )
+            new_doctor.set_password(password)
+            db.session.add(new_doctor)
+            db.session.commit()
+            print()
+            return jsonify({'message': 'Doctor registered successfully'}), 201
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500

@@ -1,30 +1,34 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.services.auth_service import AuthService
 from server.models.user import User
 from server.extensions import limiter
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+bp = Blueprint('auth', __name__, url_prefix='/')
 auth_service = AuthService()
 
-@bp.route('/register', methods=['POST', 'GET'])
+@bp.route('/register/<string:user_type>', methods=['POST', 'GET'])
 @limiter.limit("3 per minute")
-def register():
+def register(user_type):
     """Endpoint na registráciu používateľa"""
-    data = request.get_json()
-    return auth_service.register_user(data)
+    if user_type not in ['patient', 'doctor', 'technician']:
+        abort(404)
+    if request.method == "POST":
+        data = request.get_json()
+        return auth_service.register_user(data, user_type)
 
 @bp.route('/login', methods=['POST', 'GET'])
 @limiter.limit("3 per 10 minutes")
 def login():
     """Endpoint na prihlásenie používateľa"""
-    data = request.get_json()
-    return auth_service.login_user(data)
+    if request.method == "POST":
+        data = request.get_json()
+        return auth_service.login_user(data)
 
-@bp.route('/me', methods=['POST', 'GET'])
+"""@bp.route('/me', methods=['POST', 'GET'])
 @jwt_required()
 def get_current_user():
-    """Vráti údaje o aktuálnom prihlásenom používateľovi"""
+    Vráti údaje o aktuálnom prihlásenom používateľovi
     user_id = get_jwt_identity()
     user = User.query.get(int(user_id))
 
@@ -38,3 +42,4 @@ def get_current_user():
         "email": user.email,
         "gender": user.gender
     }), 200
+"""
