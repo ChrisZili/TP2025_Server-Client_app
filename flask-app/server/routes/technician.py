@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from server.models.user import User
-from server.services.db_service import DatabaseService
+from server.services.technician_service import TechnicianData
 
 bp = Blueprint('technician', __name__, url_prefix='/technician')
-db_service = DatabaseService()
+technician_service = TechnicianData()

@@ -19,3 +19,8 @@ def create_admin() -> None:
 
         db.session.add(new_admin)
         db.session.commit()
+
+class AdminService:
+    @staticmethod
+    def register_admin(data):
+        pass

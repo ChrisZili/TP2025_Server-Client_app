@@ -6,7 +6,6 @@ from datetime import timedelta
 from server.services.technician_service import TechnicianService
 from server.services.patient_service import PatientService
 from server.services.doctor_service import DoctorService
-from server.models.patient_data import PatientData
 
 class AuthService:
     def register_user(self, data, user_type):
@@ -48,11 +47,10 @@ class AuthService:
 
             if user and user.check_password(password):
                 access_token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=1))
-                refresh_token = create_refresh_token(identity=str(user.id))
+                #refresh_token = create_refresh_token(identity=str(user.id))
 
                 return jsonify({
                     "access_token": access_token,
-                    "refresh_token": refresh_token,
                     "message": "Login successful"
                 }), 200
 
