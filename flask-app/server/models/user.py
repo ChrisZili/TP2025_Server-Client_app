@@ -23,6 +23,21 @@ class User(db.Model):
         'polymorphic_identity': 'user'
     }
 
+    def has_role(self, role: str) -> bool:
+        return self.user_type == role
+
+    def is_admin(self) -> bool:
+        return self.has_role("admin")
+
+    def is_doctor(self) -> bool:
+        return self.has_role("doctor")
+
+    def is_technician(self) -> bool:
+        return self.has_role("technician")
+
+    def is_patient(self) -> bool:
+        return self.has_role("patient")
+
     def set_password(self, password: str) -> None:
         """
         Nastaví heslo používateľa po overení jeho zložitosti.

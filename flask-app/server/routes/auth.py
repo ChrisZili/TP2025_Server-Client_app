@@ -18,7 +18,7 @@ def register(user_type):
         return auth_service.register_user(data, user_type)
 
 @bp.route('/login', methods=['POST', 'GET'])
-@limiter.limit("3 per 10 minutes")
+@limiter.limit("5 per 5 minutes")
 def login():
     """Endpoint na prihlásenie používateľa"""
     if request.method == "POST":

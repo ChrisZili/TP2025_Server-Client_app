@@ -6,16 +6,13 @@ class HospitalService:
     def add_hospital(self, data):
         """Pridanie nemocnice"""
         name = data.get("name")
-        code = data.get("code")
         country = data.get("country")
         city = data.get("city")
         street = data.get("street")
         postal_code = data.get("postal_code")
 
-        if Hospital.query.filter_by(code=code).first():
-            return jsonify({"error": "Hospital code already exists"}), 400
 
-        new_hospital = Hospital(name=name, code=code, country=country, city=city, street=street, postal_code=postal_code)
+        new_hospital = Hospital(name=name, country=country, city=city, street=street, postal_code=postal_code)
 
         db.session.add(new_hospital)
         db.session.commit()
@@ -39,5 +36,5 @@ class HospitalService:
         """Získanie všetkých nemocníc"""
         hospitals = Hospital.query.all()
         return jsonify([
-            {"id": h.id, "name": h.name, "code": h.code, "city": h.city} for h in hospitals
+            {"id": h.id, "name": h.name, "city": h.city, "street": h.street, "postal_code": h.postal_code, "doctor_code": h.doctor_code, "technician_code": h.technician_code} for h in hospitals
         ]), 200
