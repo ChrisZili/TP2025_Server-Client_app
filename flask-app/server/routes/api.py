@@ -13,4 +13,4 @@ def get_users():
 @bp.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
-    return db_service.create_user(data) 
+    return db_service.create_user(data)
