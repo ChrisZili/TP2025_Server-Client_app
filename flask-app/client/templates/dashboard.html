@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moji Lekári - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;}
+        body {display: flex; min-height: 100vh;}
+
+        .sidebar {
+            background-color: #4CAF91;
+            color: white;
+            width: 240px;
+            transition: width 0.3s;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .sidebar.minimized {width: 60px;}
+        .sidebar.hidden {width: 0;}
+
+        .sidebar ul {list-style: none; padding-top: 60px;}
+        .sidebar ul li {padding: 15px; cursor: pointer; white-space: nowrap;}
+        .sidebar ul li:hover {background-color: #45a086;}
+        .sidebar ul li i {margin-right: 10px;}
+        .sidebar.minimized ul li span, .sidebar.hidden ul li span {display: none;}
+
+        .user-info {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        .user-info i {font-size: 1.5em;}
+        .sidebar.minimized .user-info span, .sidebar.hidden .user-info {display: none;}
+
+        .content {margin-left: 240px; padding: 20px; flex-grow: 1; transition: margin-left 0.3s;}
+        .sidebar.minimized ~ .content, .sidebar.hidden ~ .content {margin-left: 60px;}
+
+        .toggle-btn {
+            position: fixed;
+            left: 245px;
+            top: 15px;
+            cursor: pointer;
+            color: gray;
+            z-index: 1100;
+            transition: left 0.3s;
+        }
+        .sidebar.minimized ~ .toggle-btn, .sidebar.hidden ~ .toggle-btn {left: 15px;}
+
+        .cards {display: flex; gap: 15px; flex-wrap: wrap;}
+        .card {
+            flex: 1 1 200px; padding: 15px; border-radius: 10px;
+            color: white; cursor: pointer;
+        }
+        .card.blue {background: linear-gradient(90deg, #2193b0, #6dd5ed);}
+        .card.purple {background: linear-gradient(90deg, #cc2b5e, #753a88);}
+        .card.red {background: linear-gradient(90deg, #e52d27, #b31217);}
+
+        .card:hover {opacity: 0.9;}
+
+        @media (max-width: 600px) {
+            .sidebar {width: 0;}
+            .content {margin-left: 0;}
+            .toggle-btn {left: 15px;}
+            .cards {flex-direction: column;}
+            h2 {font-size: 1.5rem;}
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i><span style="margin-left:10px;">Username</span>
+        </div>
+        <ul>
+            <li><i class="fa fa-home"></i><span>Domov</span></li>
+            <li onclick="location.href='/rezervacie'"><i class="fa fa-calendar"></i><span>Rezervácie</span></li>
+            <li onclick="location.href='/lekari'"><i class="fa fa-user-md"></i><span>Lekári</span></li>
+            <li onclick="location.href='/recepty'"><i class="fa fa-prescription"></i><span>Recepty</span></li>
+            <li onclick="location.href='/spravy'"><i class="fa fa-envelope"></i><span>Správy</span></li>
+            <li onclick="location.href='/dokumenty'"><i class="fa fa-file"></i><span>Dokumenty</span></li>
+            <li><i class="fa fa-cog"></i><span>Nastavenia</span></li>
+            <li><i class="fa fa-sign-out"></i><span>Odhlásiť</span></li>
+        </ul>
+    </nav>
+
+    <div class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="content">
+        <h2>Moji Lekári</h2>
+
+        <div class="cards">
+            <div class="card blue" onclick="location.href='/lekari'">
+                <h3>Lekári</h3>
+                <p>Zobrazte si zoznam lekárov a rezervujte si termín.</p>
+            </div>
+            <div class="card purple" onclick="location.href='/spravy'">
+                <h3>Správy</h3>
+                <p>Prečítajte si nové správy.</p>
+            </div>
+            <div class="card red" onclick="location.href='/recepty'">
+                <h3>Recepty</h3>
+                <p>Objednajte si užívané lieky.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 600) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('minimized');
+            }
+        }
+    </script>
+</body>
+</html>

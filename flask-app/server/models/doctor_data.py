@@ -1,5 +1,5 @@
 from server.database import db
-from server.models import PatientData
+from server.models.patient_data import PatientData
 from server.models.user import User
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -11,6 +11,11 @@ class DoctorData(User):
     last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     phone_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
     gender: Mapped[str] = mapped_column(db.String(10), nullable=False)
+
+    # Titul
+    title: Mapped[str] = mapped_column(db.String(50), nullable=True, default="")
+    suffix: Mapped[str] = mapped_column(db.String(50), nullable=True, default="")
+
     __mapper_args__ = {
         "polymorphic_identity": "doctor"
     }
@@ -25,3 +30,37 @@ class DoctorData(User):
     patients: Mapped[list["PatientData"]] = relationship(
         "PatientData", back_populates="doctor", cascade="all, delete-orphan", lazy="select", foreign_keys=[PatientData.doctor_id]
     )
+    def get_name(self):
+        parts = []
+        if self.first_name:
+            parts.append(self.first_name.strip())
+        if self.last_name:
+            parts.append(self.last_name.strip())
+        if self.title and self.title.strip():
+            parts.insert(0, self.title.strip())
+
+        full_name = " ".join(parts) if parts else ""
+
+        # Ak je prípona zadaná, pripojíme ju oddelenú čiarkou
+        if self.suffix and self.suffix.strip():
+            full_name += f", {self.suffix.strip()}"
+
+        return full_name
+
+    def get_info(self):
+        info = {}
+        try:
+            info = super().get_info()
+        except AttributeError:
+            # Ak rodičovská metóda get_info neexistuje, pokračujeme prázdne
+            pass
+
+        info.update({
+            "title": self.title if self.title else None,
+            "suffix": self.suffix if self.suffix else None,
+            "first_name": self.first_name if self.first_name else None,
+            "last_name": self.last_name if self.last_name else None,
+            "phone_number": self.phone_number if self.phone_number else None,
+            "gender": self.gender if self.gender else None,
+        })
+        return info

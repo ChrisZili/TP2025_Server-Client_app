@@ -61,12 +61,14 @@ class User(db.Model):
         :return: True, ak heslo spĺňa kritériá, inak False.
         :rtype: bool
         """
-        """if len(password) < 8:
-            return False
-        if not re.search(r'[A-Z]', password):
-            return False
-        if not re.search(r'\d', password):
-            return False"""
+        """
+            if len(password) < 8:
+                return False
+            if not re.search(r'[A-Z]', password):
+                return False
+            if not re.search(r'\d', password):
+                return False
+        """
         return True
 
     def check_password(self, password: str) -> bool:
@@ -76,3 +78,24 @@ class User(db.Model):
         :return: Vráti True, ak heslo sedí, inak False
         """
         return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def get_user(user_id: int):
+        """
+        Načíta používateľa podľa ID.
+        Ak používateľ existuje, vráti slovník s jeho údajmi.
+        Ak používateľ neexistuje, vráti {'error': 'User not found'} s HTTP statusom 404.
+        V prípade chyby vráti {'error': <chyba>} s HTTP statusom 500.
+        """
+        user = db.session.get(User, int(user_id))
+        if not user:
+            return None
+        return user
+
+    def get_info(self):
+        info = {
+            "email": self.email,
+            "user_type": self.user_type,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+        return info
