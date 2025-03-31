@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <div class="register-container">
+        <h1>Register</h1>
+        <form id="registerForm" action="#" method="POST" novalidate>
+            <select name="role" id="roleDropdown" required>
+                <option value="" disabled selected>Select Role</option>
+                <option value="Doctor">Doctor</option>
+                <option value="Patient">Patient</option>
+                <option value="Technician">Technician</option>
+            </select>
+
+            <select name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+
+            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" name="last_name" placeholder="Last Name" required>
+            <input type="number" name="year_of_birth" placeholder="Year of Birth" min="1900" value="2000" required>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Phone Number" pattern="\+?[0-9]{10,15}" required>
+            <div id="phoneFeedback" class="validation-feedback">Phone number must be 10-15 digits and may start with a "+".</div>
+            <input type="email" name="email" placeholder="Email" required>
+
+            <div id="hospitalCodeContainer"></div>
+
+            <button type="submit">Register</button>
+        </form>
+        <a href="login.html">Already have an account? Login</a>
+    </div>
+    <script src="../static/js/main.js"></script>
+</body>
+</html>

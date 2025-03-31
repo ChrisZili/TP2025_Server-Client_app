@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Photo</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <nav class="sidenav">
+        <ul>
+            <li><a href="account.html" aria-label="Account">Account</a></li>
+            <li><a href="add_patient.html" aria-label="Add Patient">Add Patient</a></li>
+            <li><a href="patients.html" aria-label="Patients">Patients</a></li>
+            <li><a href="add_photo.html" aria-label="Add Photo">Add Photo</a></li>
+        </ul>
+        <div class="logout">
+            <a href="login.html" aria-label="Logout">Logout</a>
+        </div>
+    </nav>
+    <main class="main-content">
+        <div class="add-photo-container">
+            <h1>Add Photo</h1>
+            <form id="addPhotoForm">
+                <label for="eye">Which Eye:</label>
+                <select id="eye" name="eye" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="left">Left Eye</option>
+                    <option value="right">Right Eye</option>
+                </select>
+                <label for="diagnosis">Diagnosis:</label>
+                <input type="text" id="diagnosis" name="diagnosis" placeholder="Enter diagnosis" required>
+                <label for="photoType">Photo Type:</label>
+                <input type="text" id="photoType" name="photoType" placeholder="Enter photo type" required>
+                <label for="deviceType">Device Type:</label>
+                <select id="deviceType" name="deviceType" required>
+                    <option value="" disabled selected>Select a device type</option>
+                    <option value="mobile">Mobile</option>
+                    <option value="camera">Camera</option>
+                    <option value="medical">Medical Device</option>
+                    <option value="other">Other</option>
+                </select>
+                <label for="deviceName">Device Name/Model:</label>
+                <input type="text" id="deviceName" name="deviceName" placeholder="Enter device name or model" required>
+                <label for="imageUpload">Upload Image:</label>
+                <input type="file" id="imageUpload" name="imageUpload" accept="image/*" required>
+                <div id="imagePreviewContainer">
+                    <img id="imagePreview" src="" alt="Image Preview">
+                    <button type="button" id="cancelImageButton" class="cancel-button">Cancel Image</button>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </main>
+    <script src="../static/js/main.js"></script>
+</body>
+</html>

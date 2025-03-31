@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    </head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form id="loginForm" action="/login" method="POST" novalidate>
+            <input type="text" name="username" placeholder="Username" required>
+            <div id="usernameFeedback" class="validation-feedback">Username is required.</div>
+
+            <input type="password" name="password" placeholder="Password" required>
+            <div id="passwordFeedback" class="validation-feedback">Password is required.</div>
+
+            <button type="submit">Login</button>
+        </form>
+        <a href="register.html">Don't have an account? Register</a>
+    </div>
+    <script src="../static/js/main.js"></script>
+</body>
+</html>

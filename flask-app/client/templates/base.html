@@ -4,10 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
+    <div id="mySidenav" class="sidenav">
+        <div class="top-section">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        </div>
+
+        <div class="bottom-section">
+            <a href="#">ACCOUNT</a>
+            <a href="#">PATIENTS</a>
+            <a href="#">ADD PATIENT</a>
+            <a href="#">ADD PHOTO</a>
+        </div>
+    </div>
+
+    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+
     {% block content %}{% endblock %}
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script src="../static/js/main.js"></script>
 </body>
-</html> 
+</html>
