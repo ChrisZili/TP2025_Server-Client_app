@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     fetchUsers();
 
-    // Account Page Logic
     const accountForm = document.getElementById('accountForm');
     const editButton = document.getElementById('editButton');
     const cancelButton = document.getElementById('cancelButton');

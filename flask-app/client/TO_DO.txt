@@ -1,0 +1,30 @@
+
+
+
+TREBA:
+Priorita od najnizsie cisal su najdolezitejsie zaroven aj od predpokladanej dlzky trvania
+
+PRIORITA 1
+    Prejst na flask z live servera
+    Spojazdnit request pre login
+    Spojazdnit request pre register
+    Spojazdnit request pre Add photo
+    Spojazdnit request pre ADD patients
+    Dorobit vsetky stranky pre Technician
+    Dorobit vsetky stranky pre Patient    
+    Spojazdnit requesty pre Technician
+    SPojaydnit requesty pre Patient
+
+PRIORITA 2
+        Dorobit stranku Doctor:patients + request    
+        Dorobit stranku ADD hospital
+
+PRIORITA 3 
+            Dorobit validacie pre dlzky input poli (Account, register, login, add photo,browse patient)
+            Dorobit forgot password
+            ??? Dorobit vymazat ucet???
+
+
+
+
+
