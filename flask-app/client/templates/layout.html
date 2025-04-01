@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Moji Lekári - Dashboard</title>
+  <title>{% block title %}Moji Lekári{% endblock %}</title>
 
-  <!-- Ikonky Font Awesome (ak treba) -->
+  <!-- Ikonky Font Awesome (ak potrebuješ) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Naše vlastné štýly -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+  <!-- Naše vlastné štýly (side menu, top-bar, atď.) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
 
 <!-- SIDEBAR vľavo -->
 <div class="sidebar" id="sidebar">
   <div class="user-info">
-    <!-- Ikona -->
     <i class="fas fa-user-circle"></i>
-    <!-- Meno používateľa – pôvodne "Username", teraz prázdne, vyplní ho JS -->
+    <!-- meno vloží neskôr JavaScript, alebo tu môžeš aj z templatu -->
     <span class="sidebar-text" id="username-span"></span>
   </div>
   <ul>
@@ -58,42 +58,29 @@
 
 <!-- Hlavný blok (odsunutý vpravo o šírku sidebara) -->
 <div class="main" id="main">
-
   <!-- Horný panel: hamburger + nadpis vedľa seba -->
   <div class="top-bar">
     <div id="hamburger" class="hamburger">
       <i class="fas fa-bars"></i>
     </div>
-    <h2>Moji Lekári</h2>
+    <!-- Tu môžeš mať napr. "Datab" alebo dynamický title -->
+    <h2>{% block header %}Datab{% endblock %}</h2>
   </div>
 
-  <!-- Obsah pod horným panelom -->
+  <!-- Obsah pod horným panelom: zvyčajne meníš tento blok v potomkoch -->
   <div class="content" id="content">
-    <!-- Ukážkové karty (statické) - ak ich chceš zachovať, nechaj tu -->
-    <div class="cards">
-      <div class="card blue" onclick="location.href='/lekari'">
-        <h3>Lekári</h3>
-        <p>Zobrazte si zoznam lekárov a rezervujte si termín.</p>
-      </div>
-      <div class="card purple" onclick="location.href='/spravy'">
-        <h3>Správy</h3>
-        <p>Prečítajte si nové správy.</p>
-      </div>
-      <div class="card red" onclick="location.href='/recepty'">
-        <h3>Recepty</h3>
-        <p>Objednajte si užívané lieky.</p>
-      </div>
-    </div>
 
-    <!-- Tu je priestor pre dynamický obsah z loadDashboard() -->
-    <div id="dashboard-content" style="margin-top: 30px;">
-      <!-- Sem sa vložia texty, zoznamy pacientov, atď. podľa role používateľa -->
-    </div>
+    <!-- Priestor pre čokoľvek – formuláre, tabuľky, texty atď. -->
+    {% block content %}
+    <!-- Tu nič, pretože to zaplní potomok, napr. "account.html" -->
+    {% endblock %}
+
   </div>
-
 </div>
 
-<!-- Naša logika (responzívny sidebar + volanie /account/info, atď.) -->
-  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<!-- script.js obsahuje logiku sidebaru (expanded/collapsed/hidden) + fetch s cookies, atď. -->
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+{% block scripts %}{% endblock %}
+
 </body>
 </html>

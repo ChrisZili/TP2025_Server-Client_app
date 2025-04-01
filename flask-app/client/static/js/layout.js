@@ -123,11 +123,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Rozhodneme, akú rolu má user
       // Napr. user.role = "doctor" / "patient" / "technician"
-      if (user.user_type === "doctor") {
+      if (user.role === "doctor") {
         loadDoctorDashboard(user);
-      } else if (user.user_type === "patient") {
+      } else if (user.role === "patient") {
         loadPatientDashboard(user);
-      } else if (user.user_type === "technician") {
+      } else if (user.role === "technician") {
         loadTechnicianDashboard(user);
       } else {
         // Neznáma rola, zobraz niečo neutrálne

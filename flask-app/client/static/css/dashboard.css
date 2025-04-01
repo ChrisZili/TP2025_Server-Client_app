@@ -1,0 +1,134 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* SIDEBAR – stavy ovládané v JS: .expanded / .collapsed / .hidden */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a7891, #4ebfdc);
+  color: white;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 1000;
+  width: 240px; /* predvolený stav, premení sa hneď v JS */
+}
+
+.sidebar.expanded {
+  width: 240px; /* ikony + text */
+}
+
+.sidebar.collapsed {
+  width: 50px; /* len ikony, text skrytý */
+}
+.sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+.sidebar.hidden {
+  width: 0;
+}
+
+/* Obsah sidebaru: user info + zoznam */
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+.user-info i {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+.sidebar ul li {
+  padding: 15px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.sidebar ul li:hover {
+  background: linear-gradient(90deg, #4ebfdc, #0c3039);
+}
+.sidebar ul li i {
+  margin-right: 10px;
+}
+
+/* .sidebar-text => text sidebara; pri collapsed je skrytý */
+
+/* HLAVNÝ BLOK (celá pravá časť) */
+.main {
+  position: relative;
+  margin-left: 240px; /* predpoklad: expanded sidebar */
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* top-bar hore, content pod ním */
+}
+
+/* Horný panel: hamburger + H2 vedľa seba */
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #eee;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2);
+}
+
+/* Hamburger (3 čiarky) v top-bare */
+.hamburger {
+  width: 40px;
+  height: 40px;
+  background: #ddd;
+  color: #333;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0,0,0,0.2);
+  margin-right: 15px;
+}
+.top-bar h2 {
+  font-size: 1.5rem;
+}
+
+/* Content = zvyšok pod top-bare */
+.content {
+  padding: 20px;
+  flex: 1; /* aby vyplnil zvyšok priestoru v .main */
+}
+
+/* Karty */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.card {
+  flex: 1 1 200px;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+}
+.card.blue {
+  background: linear-gradient(90deg, #2193b0, #6dd5ed);
+}
+.card.purple {
+  background: linear-gradient(90deg, #cc2b5e, #753a88);
+}
+.card.red {
+  background: linear-gradient(90deg, #e52d27, #b31217);
+}
+.card:hover {
+  opacity: 0.9;
+}
