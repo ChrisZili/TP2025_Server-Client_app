@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moji Lekári - Dashboard</title>
+
+  <!-- Ikonky Font Awesome (ak treba) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Naše vlastné štýly -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+<!-- SIDEBAR vľavo -->
+<div class="sidebar" id="sidebar">
+  <div class="user-info">
+    <!-- Ikona -->
+    <i class="fas fa-user-circle"></i>
+    <!-- Meno používateľa – pôvodne "Username", teraz prázdne, vyplní ho JS -->
+    <span class="sidebar-text" id="username-span"></span>
+  </div>
+  <ul>
+    <li>
+      <i class="fa fa-home"></i>
+      <span class="sidebar-text">Domov</span>
+    </li>
+    <li onclick="location.href='/rezervacie'">
+      <i class="fa fa-calendar"></i>
+      <span class="sidebar-text">Rezervácie</span>
+    </li>
+    <li onclick="location.href='/lekari'">
+      <i class="fa fa-user-md"></i>
+      <span class="sidebar-text">Lekári</span>
+    </li>
+    <li onclick="location.href='/recepty'">
+      <i class="fa fa-prescription"></i>
+      <span class="sidebar-text">Recepty</span>
+    </li>
+    <li onclick="location.href='/spravy'">
+      <i class="fa fa-envelope"></i>
+      <span class="sidebar-text">Správy</span>
+    </li>
+    <li onclick="location.href='/dokumenty'">
+      <i class="fa fa-file"></i>
+      <span class="sidebar-text">Dokumenty</span>
+    </li>
+    <li>
+      <i class="fa fa-cog"></i>
+      <span class="sidebar-text">Nastavenia</span>
+    </li>
+    <li id="logout-btn">
+      <i class="fa fa-sign-out"></i>
+      <span class="sidebar-text">Odhlásiť</span>
+    </li>
+  </ul>
+</div>
+
+<!-- Hlavný blok (odsunutý vpravo o šírku sidebara) -->
+<div class="main" id="main">
+
+  <!-- Horný panel: hamburger + nadpis vedľa seba -->
+  <div class="top-bar">
+    <div id="hamburger" class="hamburger">
+      <i class="fas fa-bars"></i>
+    </div>
+    <h2>Moji Lekári</h2>
+  </div>
+
+  <!-- Obsah pod horným panelom -->
+  <div class="content" id="content">
+    <!-- Ukážkové karty (statické) - ak ich chceš zachovať, nechaj tu -->
+    <div class="cards">
+      <div class="card blue" onclick="location.href='/lekari'">
+        <h3>Lekári</h3>
+        <p>Zobrazte si zoznam lekárov a rezervujte si termín.</p>
+      </div>
+      <div class="card purple" onclick="location.href='/spravy'">
+        <h3>Správy</h3>
+        <p>Prečítajte si nové správy.</p>
+      </div>
+      <div class="card red" onclick="location.href='/recepty'">
+        <h3>Recepty</h3>
+        <p>Objednajte si užívané lieky.</p>
+      </div>
+    </div>
+
+    <!-- Tu je priestor pre dynamický obsah z loadDashboard() -->
+    <div id="dashboard-content" style="margin-top: 30px;">
+      <!-- Sem sa vložia texty, zoznamy pacientov, atď. podľa role používateľa -->
+    </div>
+  </div>
+
+</div>
+
+<!-- Naša logika (responzívny sidebar + volanie /account/info, atď.) -->
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

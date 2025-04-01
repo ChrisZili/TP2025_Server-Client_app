@@ -8,3 +8,10 @@ class AdminData(User):
     __mapper_args__ = {
         "polymorphic_identity": "admin"
     }
+    def get_info_pat(self):
+        info = {}
+        try:
+            info = super().get_info()
+        except AttributeError:
+            pass
+        return info

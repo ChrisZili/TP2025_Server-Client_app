@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Moji Lekári{% endblock %}</title>
+
+  <!-- Ikonky Font Awesome (ak potrebuješ) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Naše vlastné štýly (side menu, top-bar, atď.) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+
+<!-- SIDEBAR vľavo -->
+<div class="sidebar" id="sidebar">
+  <div class="user-info">
+    <i class="fas fa-user-circle"></i>
+    <!-- meno vloží neskôr JavaScript, alebo tu môžeš aj z templatu -->
+    <span class="sidebar-text" id="username-span"></span>
+  </div>
+  <ul>
+    <li>
+      <i class="fa fa-home"></i>
+      <span class="sidebar-text">Domov</span>
+    </li>
+    <li onclick="location.href='/rezervacie'">
+      <i class="fa fa-calendar"></i>
+      <span class="sidebar-text">Rezervácie</span>
+    </li>
+    <li onclick="location.href='/lekari'">
+      <i class="fa fa-user-md"></i>
+      <span class="sidebar-text">Lekári</span>
+    </li>
+    <li onclick="location.href='/recepty'">
+      <i class="fa fa-prescription"></i>
+      <span class="sidebar-text">Recepty</span>
+    </li>
+    <li onclick="location.href='/spravy'">
+      <i class="fa fa-envelope"></i>
+      <span class="sidebar-text">Správy</span>
+    </li>
+    <li onclick="location.href='/dokumenty'">
+      <i class="fa fa-file"></i>
+      <span class="sidebar-text">Dokumenty</span>
+    </li>
+    <li>
+      <i class="fa fa-cog"></i>
+      <span class="sidebar-text">Nastavenia</span>
+    </li>
+    <li id="logout-btn">
+      <i class="fa fa-sign-out"></i>
+      <span class="sidebar-text">Odhlásiť</span>
+    </li>
+  </ul>
+</div>
+
+<!-- Hlavný blok (odsunutý vpravo o šírku sidebara) -->
+<div class="main" id="main">
+  <!-- Horný panel: hamburger + nadpis vedľa seba -->
+  <div class="top-bar">
+    <div id="hamburger" class="hamburger">
+      <i class="fas fa-bars"></i>
+    </div>
+    <!-- Tu môžeš mať napr. "Datab" alebo dynamický title -->
+    <h2>{% block header %}Datab{% endblock %}</h2>
+  </div>
+
+  <!-- Obsah pod horným panelom: zvyčajne meníš tento blok v potomkoch -->
+  <div class="content" id="content">
+
+    <!-- Priestor pre čokoľvek – formuláre, tabuľky, texty atď. -->
+    {% block content %}
+    <!-- Tu nič, pretože to zaplní potomok, napr. "account.html" -->
+    {% endblock %}
+
+  </div>
+</div>
+
+<!-- script.js obsahuje logiku sidebaru (expanded/collapsed/hidden) + fetch s cookies, atď. -->
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,6 +1,5 @@
-from flask import Blueprint, jsonify, request
-from server.models.user import User
-from server.services.admin_service import AdminData
+from flask import Blueprint
+from server.services.admin_service import AdminService
 
 bp = Blueprint('admin', __name__, url_prefix='/api')
-db_service = AdminData()
+db_service = AdminService()
