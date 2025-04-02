@@ -59,26 +59,26 @@
   transition: background-color 0.2s ease;
 }
 .sidebar ul li:hover {
-  background: linear-gradient(90deg, #4ebfdc, #046278);
+  background: linear-gradient(90deg, #4ebfdc, #0c3039);
 }
 
-/* -- Nové: Ak používaš <a> v li (anchor-based menu) -- */
+/* -- Ak používaš <a> v li (anchor-based menu) -- */
 .sidebar ul li a {
-  color: #fff;               /* aby text odkazu bol biely */
-  text-decoration: none;     /* žiadne podčiarknutie */
-  display: flex;             /* ikona a text vedľa seba */
+  color: #fff;
+  text-decoration: none;
+  display: flex;
   align-items: center;
-  width: 100%;               /* klikateľný celý riadok */
+  width: 100%;
 }
 
 .sidebar ul li a i {
-  color: inherit;            /* ikona zdedí farbu z rodiča (biela) */
-  margin-right: 10px;        /* medzera pred textom */
+  color: inherit;
+  margin-right: 10px;
 }
 
 /* visited a hover */
 .sidebar ul li a:visited {
-  color: #fff;               /* zostane biela */
+  color: #fff;
 }
 
 .sidebar ul li a:hover {
@@ -128,8 +128,8 @@
   flex: 1; /* aby vyplnil zvyšok priestoru v .main */
 }
 
-/* Aktívna položka li (označenie aktuálnej stránky) */
+/* Označenie aktuálnej položky v sidebare */
 .sidebar ul li.active {
-  background: rgba(255, 255, 255, 0.15); /* Jemné zvýraznenie */
-  border-radius: 8px; /* Zaoblené rohy */
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
 }

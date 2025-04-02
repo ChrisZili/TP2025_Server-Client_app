@@ -1,4 +1,3 @@
-
 /* Karty */
 .cards {
   display: flex;
@@ -12,6 +11,7 @@
   color: white;
   cursor: pointer;
 }
+
 .card.blue {
   background: linear-gradient(90deg, #2193b0, #6dd5ed);
 }
@@ -22,7 +22,7 @@
   background: linear-gradient(90deg, #e52d27, #b31217);
 }
 .card.green {
-  background: linear-gradient(90deg, #56ab2f, #a8e063); /* akékoľvek dve farby */
+  background: linear-gradient(90deg, #56ab2f, #a8e063);
 }
 .card.orange {
   background: linear-gradient(90deg, #f7971e, #ffd200);

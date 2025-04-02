@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 {% block stylesheet %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{{ super() }}
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
+
 {% block title %}
 Moji Lekári - Domov
 {% endblock %}

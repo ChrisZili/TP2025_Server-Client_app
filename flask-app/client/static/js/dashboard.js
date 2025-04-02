@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
+      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
       { icon: "fa fa-images",  label: "Fotky",        link: "/fotky" },
       { icon: "fa fa-upload",  label: "Pridať fotku", link: "/fotky/pridat" },
       { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/pacient/new" },
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     doctor: [
       { icon: "fa fa-home",    label: "Domov",         link: "/dashboard" },
+      { icon: "fa fa-user",    label: "Profil",        link: "/account" },
       { icon: "fa fa-users",   label: "Pacienti",      link: "/doctor/patients" },
       { icon: "fa fa-list",    label: "Zoznam",        link: "/doctor/list" },
       { icon: "fa fa-images",  label: "Fotky",         link: "/fotky" },
@@ -35,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     admin: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
+      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
       { icon: "fa fa-users",   label: "Pacienti",   link: "/admin/patients" },
       { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
       { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
