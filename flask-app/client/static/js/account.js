@@ -1,74 +1,201 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById('user-info');
+  const container = document.getElementById("dynamic-profile-form");
+  const saveBtn = document.getElementById("save-profile-btn");
 
-    // Funkcia zabezpečí, že sa cookies odosielajú so žiadosťou
-    function fetchWithAuth(url, options = {}) {
-        return fetch(url, {
-            ...options,
-            credentials: 'include', // Cookies sa odosielajú automaticky
-            headers: {
-                ...(options.headers || {}),
-                'Accept': 'application/json'
-            }
-        });
+  // Volanie s cookies
+  function fetchWithAuth(url, options = {}) {
+    return fetch(url, {
+      ...options,
+      credentials: 'include',
+      headers: {
+        ...(options.headers || {}),
+        'Accept': 'application/json'
+      }
+    });
+  }
+
+  // 1) Načítame user
+  async function loadUserInfo() {
+    try {
+      const response = await fetchWithAuth('/account/info');
+      if (!response.ok) {
+        throw new Error('Nepodarilo sa načítať údaje používateľa.');
+      }
+      const user = await response.json();
+
+      // 2) Vygenerovať formulár
+      renderProfileForm(user);
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = `<p>Chyba pri načítaní profilu: ${err.message}</p>`;
+    }
+  }
+
+  // 2) Podľa user.user_type vygenerujeme iné polia
+  function renderProfileForm(user) {
+    // V user môžeš mať: user.first_name, user.last_name, user.birth_number, user.address, user.email, user.phone_number,...
+    // Nižšie je "univerzálny" príklad. Rozdelíme na "Osobné údaje" (left column), "Kontaktné údaje" (right column).
+    // Môžeš pridať Adresa, Súhlasy, atď.
+
+    let personalFields = [];
+    let contactFields = [];
+    let consents = []; // ak chceš checkboxy na súhlasy
+
+    if (user.user_type === 'patient') {
+      personalFields = [
+        { label: "Meno",       name: "first_name",    value: user.first_name,  editable: true },
+        { label: "Priezvisko", name: "last_name",     value: user.last_name,   editable: true },
+        { label: "Rodné číslo",name: "birth_number",  value: user.birth_number,editable: false },
+      ];
+
+      contactFields = [
+        { label: "Email",     name: "email",        value: user.email,        editable: true },
+        { label: "Tel. číslo",name: "phone_number", value: user.phone_number, editable: true },
+      ];
+
+      consents = [
+        { label: "Súhlasím so spracovaním mojich osobných údajov.", name: "consent_data", checked: true },
+        { label: "Súhlasím so spracovaním mojich údajov v receptoch, správach a dokumentoch.", name: "consent_docs", checked: false },
+        //{ label: "Súhlasím so spracovaním mojich údajov na účely marketingu.", name: "consent_marketing", checked: false },
+      ];
+
+    } else if (user.user_type === 'doctor') {
+      personalFields = [
+        { label: "Meno",       name: "first_name",     value: user.first_name,   editable: true },
+        { label: "Priezvisko", name: "last_name",      value: user.last_name,    editable: true },
+        { label: "ID Lekára",  name: "doctor_id",      value: user.doctor_id,    editable: false },
+      ];
+      contactFields = [
+        { label: "Email",      name: "email",         value: user.email,         editable: true },
+        { label: "Tel. číslo", name: "phone_number",  value: user.phone_number,  editable: true },
+      ];
+      consents = [
+        { label: "Súhlasím so spracovaním osobných údajov (lekár).", name: "consent_data", checked: true },
+      ];
+    }
+    else if (user.user_type === 'technician') {
+      // atď. personalFields/ contactFields / consents
+      personalFields = [
+        { label: "Meno",       name: "first_name",  value: user.first_name,  editable: true },
+        { label: "Priezvisko", name: "last_name",   value: user.last_name,   editable: true },
+      ];
+      contactFields = [
+        { label: "Email", name: "email",           value: user.email,       editable: true },
+        { label: "Tel. číslo", name: "phone_number", value: user.phone_number, editable: true },
+      ];
+      consents = [];
+    }
+    else if (user.user_type === 'admin') {
+      personalFields = [
+        { label: "Meno", name: "first_name", value: user.first_name, editable: true },
+        { label: "Priezvisko", name: "last_name", value: user.last_name, editable: true },
+      ];
+      contactFields = [
+        { label: "Email", name: "email", value: user.email, editable: true },
+      ];
+      consents = [];
+    }
+    else {
+      // fallback, ak rola neznáma
+      personalFields = [
+        { label: "Meno", name: "first_name", value: user.first_name, editable: false },
+        { label: "Priezvisko", name: "last_name", value: user.last_name, editable: false },
+      ];
+      contactFields = [
+        { label: "Email", name: "email", value: user.email, editable: false },
+      ];
     }
 
-    async function loadUserInfo() {
-        try {
-            // Voláme endpoint /account/info, ktorý vráti JSON dáta o používateľovi
-            const response = await fetchWithAuth('/account/info');
-            if (!response.ok) {
-                throw new Error('Nepodarilo sa načítať údaje používateľa. Môže byť neplatný token.');
-            }
+    // Generujeme HTML:
+    let html = `<div class="two-columns">`;
 
-            const user = await response.json();
-            let html = '';
+    // Ľavý stĺpec: osobné údaje + adresa...
+    html += `<div class="column left-col">
+      <h3>Osobné údaje</h3>
+      <div class="fields">`;
+    personalFields.forEach(field => {
+      html += createInputField(field.label, field.name, field.value, field.editable);
+    });
+    // Môžeš pridať "Adresa", "PSČ", "Mesto" ak to user obsahuje
+    if (user.address_street) {
+      html += createInputField("Ulica a číslo domu", "address_street", user.address_street, true);
+    }
+    if (user.address_city) {
+      html += createInputField("Mesto", "address_city", user.address_city, true);
+    }
+    if (user.address_zip) {
+      html += createInputField("PSČ", "address_zip", user.address_zip, true);
+    }
+    html += `</div> 
+    </div>`; // end left-col
 
-            // Vždy zobrazíme email, lebo je k dispozícii
+    // Pravý stĺpec: kontaktné údaje
+    html += `<div class="column right-col">
+      <h3>Kontaktné údaje</h3>
+      <div class="fields">`;
+    contactFields.forEach(field => {
+      html += createInputField(field.label, field.name, field.value, field.editable);
+    });
+    html += `</div>`;
 
-            html += `<p><strong>Email:</strong> ${user.email}</p>`;
-            if (user.user_type) {
-                html += `<p><strong>Typ uživateľa:</strong> ${user.user_type}</p>`;
-            }
-            if (user.first_name) {
-                html += `<p><strong>Meno:</strong> ${user.first_name}</p>`;
-            }
-            if (user.last_name) {
-                html += `<p><strong>Priezvisko:</strong> ${user.last_name}</p>`;
-            }
-            if (user.gender) {
-                html += `<p><strong>Pohlavie:</strong> ${user.gender}</p>`;
-            }
-            if (user.phone_number) {
-                html += `<p><strong>Telefón:</strong> ${user.phone_number}</p>`;
-            }
-            if (user.birth_date) {
-                html += `<p><strong>Dátum narodenia:</strong> ${new Date(user.birth_date).toLocaleDateString('sk-SK')}</p>`;
-            }
-            if (user.birth_number) {
-                html += `<p><strong>Rodné číslo:</strong> ${user.birth_number}</p>`;
-            }
-            html += `<p><strong>ID lekára:</strong> ${user.doctor_id ? user.doctor_id : 'Nepriradený'}</p>`;
-            if (user.diagnosis_right_eye) {
-                html += `<p><strong>Diagnóza pravého oka:</strong> ${user.diagnosis_right_eye}</p>`;
-            }
-            if (user.diagnosis_left_eye) {
-                html += `<p><strong>Diagnóza ľavého oka:</strong> ${user.diagnosis_left_eye}</p>`;
-            }
-            container.innerHTML = html;
-        } catch (error) {
-            console.error(error);
-            container.innerHTML = `<p>Chyba pri načítaní údajov: ${error.message}</p>`;
+    // Súhlasy
+    if (consents.length > 0) {
+      html += `<h3>Súhlasy</h3>
+               <div class="fields consents">`;
+      consents.forEach(consent => {
+        html += createCheckbox(consent.label, consent.name, consent.checked);
+      });
+      html += `</div>`;
+    }
+
+    html += `</div>`; // end right-col
+    html += `</div>`; // end two-columns
+
+    container.innerHTML = html;
+  }
+
+  // 3) Vytvára input field (zaoblený) => label + input
+  function createInputField(label, name, value, editable) {
+    // Môžeš použiť <input> type="text" alebo "date" atď.
+    // Tu zjednodušene: type="text"
+    // Ak editable je false, sprav readonly
+    const disabledAttr = editable ? `` : `readonly`;
+    return `
+      <div class="form-group">
+        <label>${label}</label>
+        <input type="text" name="${name}" value="${value || ''}" ${disabledAttr} />
+      </div>
+    `;
+  }
+
+  // 4) Vytvára checkbox pre "Súhlasy"
+  function createCheckbox(label, name, checked) {
+    return `
+      <div class="form-group checkbox-group">
+        <input type="checkbox" name="${name}" ${checked ? 'checked' : ''} />
+        <label>${label}</label>
+      </div>
+    `;
+  }
+
+  // 5) Uloženie
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      // Pozbieraj polia z dynamic-profile-form
+      const allInputs = container.querySelectorAll("input");
+      let dataToSave = {};
+      allInputs.forEach(inp => {
+        if (inp.type === "checkbox") {
+          dataToSave[inp.name] = inp.checked;
+        } else {
+          dataToSave[inp.name] = inp.value;
         }
-    }
+      });
+      console.log("Chcem uložiť:", dataToSave);
+      // Tu môžeš spraviť fetchWithAuth('/account/update', { method:'POST', body: JSON.stringify(dataToSave), ... })
+      alert("Zmeny uložené (len debug). Pozri console.log");
+    });
+  }
 
-    loadUserInfo();
-
-    // Pri odhlásení presmerujeme používateľa na /logout, ktorý vymaže JWT cookie
-    const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            window.location.href = "/logout";
-        });
-    }
+  loadUserInfo();
 });

@@ -71,11 +71,12 @@ def dashboard():
             return render_template('error.html'), 400
 
         user = db.session.get(User, user_id_int)
+        print(user.user_type)
         if not user:
             flash("Používateľ nenájdený", "error")
             return render_template('error.html'), 404
 
-        return render_template('dashboard.html', user=user)
+        return render_template('dashboard.html', user=user, current_page="dashboard")
 
 
 @bp.route('/logout', methods=['GET'])
