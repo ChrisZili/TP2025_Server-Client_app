@@ -128,14 +128,14 @@ class DoctorService:
             phone_number = data.get('phone_number')
             gender = data.get('gender')
 
-            doctor_code = data.get('doctor_code')
+            hospital_code = data.get('hospital_code')
 
             email = data.get('email')
             password = data.get('password')
 
-            if not all([first_name, last_name, phone_number, gender, email, password, doctor_code]):
+            if not all([first_name, last_name, phone_number, gender, email, password, hospital_code]):
                 return {'error': 'Missing required fields'}, 400
-            hospital = Hospital.query.filter_by(doctor_code=doctor_code).first()
+            hospital = Hospital.query.filter_by(hospital_code=hospital_code).first()
             if not hospital:
                 return {'error': 'Doctor code does not exist'}, 400
             if PatientData.query.filter_by(phone_number=phone_number).first():

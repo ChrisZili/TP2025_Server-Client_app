@@ -12,19 +12,19 @@ class TechnicianService:
         try:
             first_name = data.get('first_name')
             last_name = data.get('last_name')
-            technician_code = data.get('technician_code')
+            hospital_code = data.get('hospital_code')
             email = data.get('email')
             password = data.get('password')
 
             # Kontrola povinných údajov
-            if not all([first_name, last_name, email, password, technician_code]):
+            if not all([first_name, last_name, email, password, hospital_code]):
                 logger.error("Chýbajú povinné údaje pri registrácii technika. Prijaté kľúče: %s", list(data.keys()))
                 return {'error': 'Missing required fields'}, 400
 
             # Overenie, či existuje nemocnica so zadaným technician_code
-            hospital = Hospital.query.filter_by(technician_code=technician_code).first()
+            hospital = Hospital.query.filter_by(hospital_code=hospital_code).first()
             if not hospital:
-                logger.error("Technician code '%s' neexistuje.", technician_code)
+                logger.error("Technician code '%s' neexistuje.", hospital_code)
                 return {'error': 'Technician code does not exist'}, 400
 
             # Kontrola duplicity na základe emailu
