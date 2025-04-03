@@ -26,6 +26,9 @@ class User(db.Model):
     def has_role(self, role: str) -> bool:
         return self.user_type == role
 
+    def is_super_admin(self) -> bool:
+        return self.has_role('super_admin')
+
     def is_admin(self) -> bool:
         return self.has_role("admin")
 
