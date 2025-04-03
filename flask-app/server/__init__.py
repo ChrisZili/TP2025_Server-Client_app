@@ -6,7 +6,6 @@ from server.database import db
 from server.routes import register_blueprints
 from server.extensions import limiter
 from dotenv import load_dotenv
-from server.services.admin_service import create_admin
 import os
 from flask_cors import CORS
 from server.logging_config import setup_logger

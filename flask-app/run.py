@@ -1,11 +1,11 @@
 from server import create_app
 from server.database import db
-from server.services.admin_service import create_admin
+from server.services.super_admin_service import create_super_admin
 
 app = create_app()
 
 def init_admin():
-    create_admin()
+    create_super_admin()
 
 # Inicializácia databázy v rámci kontextu aplikácie
 with app.app_context():
