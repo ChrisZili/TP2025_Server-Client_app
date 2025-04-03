@@ -10,6 +10,14 @@
   gap: 30px;
 }
 
+/* Pre malé obrazovky (napr. do 768px) zobrazíme jeden stĺpec */
+@media (max-width: 600px) {
+  .two-columns {
+    flex-direction: column;
+    gap: 15px; /* menšia medzera, ak chceš */
+  }
+}
+
 /* Každý stĺpec */
 .column {
   flex: 1;
