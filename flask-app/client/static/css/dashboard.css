@@ -34,3 +34,13 @@
 .card:hover {
   opacity: 0.9;
 }
+
+/* Pre obrazovky menšie ako 600px */
+@media (max-width: 600px) {
+  .cards {
+    flex-direction: column;
+  }
+  .card {
+    flex: 1 1 100%;
+  }
+}
