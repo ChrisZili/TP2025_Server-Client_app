@@ -8,16 +8,11 @@ register_service = RegisterService()
 
 logger = logging.getLogger(__name__)
 
-
 @bp.route('/', methods=['GET'], endpoint='register_select')
 def register_select():
-    """Endpoint pre výber typu registrácie.
-       Zobrazí stránku s tlačidlami pre výber: pacient, lekár, technik.
-    """
+    """Endpoint pre výber typu registrácie."""
     logger.info("Register select page requested")
-    # Pre túto stránku sa predpokladá HTML, ale ak by bol JSON požiadavka:
     if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
-        logger.debug("Returning JSON response for register select")
         return jsonify({"msg": "Select registration type"}), 200
     else:
         return render_template('register.html')
@@ -25,22 +20,20 @@ def register_select():
 
 @bp.route('/<string:user_type>', methods=['GET'], endpoint='register_form')
 def register_form(user_type):
-    """Endpoint pre zobrazenie registračného formulára pre daný typ používateľa."""
+    """Zobrazenie registračného formulára pre daný user_type."""
     logger.info("Register form requested for user_type: %s", user_type)
     if user_type not in ['patient', 'doctor', 'technician']:
         logger.error("Invalid user_type: %s", user_type)
         abort(404)
-    # Renderujeme príslušnú šablónu pre daný typ
+    # Zobrazíme prázdny formulár:
     return render_template(f'register_{user_type}.html', user_type=user_type)
-
 
 @bp.route('/<string:user_type>', methods=['POST'], endpoint='register_post')
 @limiter.limit("3 per minute", methods=['POST'])
 def register_post(user_type):
-    """Endpoint na registráciu používateľa spracovaním odoslaných dát."""
-    logger.info("Registration POST requested for user_type: %s", user_type)
+    """Spracovanie registračného formulára. Pri chybe posielame `form_data` späť do šablóny."""
+    logger.info("Registration POST for user_type: %s", user_type)
     if user_type not in ['patient', 'doctor', 'technician']:
-        logger.error("Invalid user_type in POST: %s", user_type)
         abort(404)
 
     # Vstupná kontrola: zisťujeme, či sú dáta zaslané ako JSON alebo formulárom
@@ -51,23 +44,37 @@ def register_post(user_type):
         data = request.form
         logger.debug("Received Form registration data for %s: keys=%s", user_type, list(data.keys()))
 
-    # Spracovanie registrácie cez service vrstvu
     result, status = register_service.register_user(data, user_type)
     logger.info("Registration result for %s: status=%s, result=%s", user_type, status, result)
 
-    # Rozhodovanie o formáte výstupu na základe Accept hlavičky
+    # Ak preferuje JSON (napr. API volanie), vrátime JSON
     if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
-        # Ak klient preferuje JSON odpoveď
-        response = jsonify(result)
-        return response, status
+        return jsonify(result), status
     else:
-        # Ak klient preferuje HTML
+        # HTML režim
         if status == 201:
-            flash(result.get('message', 'Registrácia prebehla úspešne.'), 'success')
+            # Úspech -> flash + redirect (POST-Redirect-GET)
+            flash(result.get('message', 'Registration successful'), 'success')
             logger.debug("Registration successful, redirecting to login")
-            response = redirect(url_for('auth.login_get'))
+            return redirect(url_for('auth.login_get'))
         else:
-            flash(result.get('error', 'Registrácia zlyhala.'), 'error')
+            # Neúspech -> zobraz šablónu s tým, čo prišlo (form_data),
+            # aby používateľ nemusel všetko vypisovať odznova.
+            flash(result.get('error', 'Registration failed'), 'error')
             logger.error("Registration failed (HTML), redirecting back to register form")
-            response = redirect(url_for('register.register_form', user_type=user_type))
-        return response
+
+            # PRE BEZPEČNOSŤ: odstránime heslo, aby sa nezobrazilo vo formulári
+            # (vo výnimočných prípadoch by ste ho tam mohli nechať, ale neodporúča sa)
+            data_dict = dict(data)
+            data_dict.pop('password', None)
+
+            logger.error("Registration failed -> re-render form with partial data")
+
+            return (
+                render_template(
+                    f'register_{user_type}.html',
+                    user_type=user_type,
+                    form_data=data_dict
+                ),
+                400
+            )
