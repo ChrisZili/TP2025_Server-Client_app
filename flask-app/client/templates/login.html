@@ -49,8 +49,7 @@ Login - FEI STU
   <a href="/forgot-password" class="forgot-link">Zabudli ste heslo?</a>
 
   <!-- Link: Registrácia -->
-  <!-- TODO: Opravit volanie (nech neni /register/patient...) -->
-  <a href="/register/patient" class="register-link">Registrovať</a>
+  <a href="{{ url_for('register.register_form') }}" class="register-link">Registrovať</a>
 
   <!-- Info text o registrácii cez pozvánku -->
   <div class="register-info">
