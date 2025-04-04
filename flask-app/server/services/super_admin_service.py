@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 def create_super_admin() -> None:
     load_dotenv()  # Načíta environment premenné zo súboru .env
     # Skontrolujeme, či už existuje admin s user_type="admin"
-    admin = SuperAdminData.query.filter_by(user_type="admin").first()
-    if admin:
-        logger.info("Admin už existuje: %s", admin.email)
+    super_admin = SuperAdminData.query.filter_by(user_type="super_admin").first()
+    if super_admin:
+        logger.info("Super_admin už existuje: %s", super_admin.email)
         return
 
     email = os.getenv("ADMIN_EMAIL")
@@ -20,14 +20,14 @@ def create_super_admin() -> None:
         logger.error("ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.")
         return
 
-    new_admin = SuperAdminData(
+    new_super_admin = SuperAdminData(
         email=email,
         user_type="super_admin"
     )
-    new_admin.set_password(password)
+    new_super_admin.set_password(password)
 
     try:
-        db.session.add(new_admin)
+        db.session.add(new_super_admin)
         db.session.commit()
         logger.info("Admin úspešne vytvorený s emailom: %s", email)
     except Exception as e:
