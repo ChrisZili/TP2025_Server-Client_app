@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
       { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
       { icon: "fa fa-user-md", label: "Admini",    link: "/admins" },
-      { icon: "fa fa-hospital",label: "Nemocnice",  link: "/hospital" },
+      { icon: "fa fa-hospital",label: "Nemocnice",  link: "/hospitals" },
       { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
