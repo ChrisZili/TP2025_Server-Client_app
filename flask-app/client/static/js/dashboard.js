@@ -42,7 +42,20 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
       { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
       { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
-      { icon: "fa fa-hospital",label: "Nemocnice",  link: "/hospitals" },
+      { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
+      { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
+    ],
+    super_admin: [
+      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
+      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
+      { icon: "fa fa-users",   label: "Pacienti",   link: "/admin/patients" },
+      { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
+      { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
+      { icon: "fa fa-user-md", label: "Admini",    link: "/admins" },
+      { icon: "fa fa-hospital",label: "Nemocnice",  link: "/hospital" },
       { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
@@ -119,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
         loadTechnicianDashboard();
       } else if (user.user_type === "admin") {
         loadAdminDashboard();
+      } else if (user.user_type === "super_admin") {
+        loadSuperAdminDashboard();
       } else {
         const dc = document.getElementById("dashboard-content");
         if (dc) {
@@ -159,6 +174,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const dc = document.getElementById("dashboard-content");
     if (dc) {
       dc.innerHTML = "<h2>Admin Dashboard</h2><p>Správa systému, nemocnice, atď.</p>";
+    }
+  }
+  function loadSuperAdminDashboard() {
+    const dc = document.getElementById("dashboard-content");
+    if (dc) {
+      dc.innerHTML = "<h2>Super Admin Dashboard</h2><p>Správa systému, atď.</p>";
     }
   }
 
