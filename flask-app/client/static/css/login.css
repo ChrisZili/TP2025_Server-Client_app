@@ -62,42 +62,35 @@
 
 /* Password wrapper a tlačidlo show/hide hesla */
 .password-wrapper {
-  position: relative; /* umožní absolútne umiestnenie ikonky */
+  position: relative;
 }
 
-/* Zvýšime pravý padding inputu, aby text neprekrýval ikonku */
-.password-wrapper input {
-  padding-right: 50px; /* priestor pre ikonku vpravo */
-}
-
-/* Absolútne umiestnená ikonka (oko) vpravo vo vnútri inputu */
+/* Tlačidlo na zobrazovanie/skrývanie hesla – zrušíme okraje, aby sa ikonka správne zobrazila */
 .toggle-pw {
   background: none;
   border: none;
-  padding: 0;
+  padding: 0;           /* Odstráni nadbytočné okraje tlačidla */
   cursor: pointer;
   text-decoration: none;
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
 }
 
-/* Ikona oka: kruh, jemné orámovanie a zmena farby pri hover */
+/* Ikona oka v kruhu */
 .toggle-pw i {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid #666;
   color: #666;
   font-size: 1.2rem;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.2s;
 }
+
+/* Hover efekt pre ikonku oka */
 .toggle-pw:hover i {
-  background-color: #eee; /* svetlo šedá pri hoveri */
+  background-color: #f0f0f0;
   color: #333;
 }
 
