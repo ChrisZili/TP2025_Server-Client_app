@@ -59,7 +59,7 @@
   transition: background-color 0.2s ease;
 }
 .sidebar ul li:hover {
-  background: linear-gradient(90deg, #4ebfdc, #17839c);
+  background: linear-gradient(90deg, #4ebfdc, #0c3039);
 }
 
 /* -- Ak používaš <a> v li (anchor-based menu) -- */
