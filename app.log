@@ -1,0 +1,777 @@
+2025-04-07 00:14:15,363 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-07 00:14:15,390 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.10.1.55:5001
+2025-04-07 00:14:15,390 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-07 00:14:15,392 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 00:14:16,284 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-07 00:14:16,301 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 00:14:16,304 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-07 00:15:46,116 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 00:15:46] "GET / HTTP/1.1" 200 -
+2025-04-07 00:15:46,218 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 00:15:46] "GET /static/css/landing.css HTTP/1.1" 200 -
+2025-04-07 00:15:46,218 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 00:15:46] "GET /static/css/base.css HTTP/1.1" 200 -
+2025-04-07 00:15:46,349 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 00:15:46] "GET /static/icons/apple-touch-icon.png HTTP/1.1" 200 -
+2025-04-07 00:15:46,350 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 00:15:46] "GET /static/icons/favicon.svg HTTP/1.1" 200 -
+2025-04-07 00:15:46,360 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 00:15:46] "GET /static/images/doctor-wide.jpg HTTP/1.1" 200 -
+2025-04-07 00:15:57,113 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:15:57] "GET / HTTP/1.1" 200 -
+2025-04-07 00:15:57,165 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:15:57] "GET /static/css/base.css HTTP/1.1" 200 -
+2025-04-07 00:15:57,166 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:15:57] "GET /static/css/landing.css HTTP/1.1" 200 -
+2025-04-07 00:15:57,332 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:15:57] "GET /static/icons/apple-touch-icon.png HTTP/1.1" 200 -
+2025-04-07 00:15:57,334 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:15:57] "GET /static/icons/favicon.svg HTTP/1.1" 200 -
+2025-04-07 00:15:57,341 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:15:57] "GET /static/images/doctor-wide.jpg HTTP/1.1" 200 -
+2025-04-07 00:16:09,167 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:09] "GET /login HTTP/1.1" 200 -
+2025-04-07 00:16:09,301 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:09] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 00:16:09,303 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:09] "GET /static/css/login.css HTTP/1.1" 200 -
+2025-04-07 00:16:09,304 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:09] "GET /static/js/login.js HTTP/1.1" 200 -
+2025-04-07 00:16:21,828 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:21] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-07 00:16:24,329 - server.routes.register - INFO - Register form requested for user_type: patient
+2025-04-07 00:16:24,338 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:24] "GET /register/ HTTP/1.1" 200 -
+2025-04-07 00:16:24,449 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:24] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 00:16:24,452 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:24] "GET /static/css/register_patient.css HTTP/1.1" 200 -
+2025-04-07 00:16:24,452 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:24] "GET /static/js/register_patient.js HTTP/1.1" 200 -
+2025-04-07 00:16:24,461 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:24] "GET /static/images/sk.svg HTTP/1.1" 200 -
+2025-04-07 00:16:33,913 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:16:33] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-07 00:17:09,033 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:09] "GET /login HTTP/1.1" 200 -
+2025-04-07 00:17:09,166 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:09] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 00:17:09,168 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:09] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+2025-04-07 00:17:09,171 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:17:09] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-07 00:18:01,438 - server.services.auth_service - INFO - Spustená metóda login_user
+2025-04-07 00:18:01,705 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "POST /login HTTP/1.1" 200 -
+2025-04-07 00:18:01,787 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "GET /dashboard HTTP/1.1" 200 -
+2025-04-07 00:18:01,916 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "GET /static/css/layout.css HTTP/1.1" 200 -
+2025-04-07 00:18:01,916 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "GET /static/css/dashboard.css HTTP/1.1" 200 -
+2025-04-07 00:18:01,917 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "GET /static/js/dashboard.js HTTP/1.1" 200 -
+2025-04-07 00:18:01,918 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "GET /static/js/layout.js HTTP/1.1" 200 -
+2025-04-07 00:18:01,984 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:01] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 00:18:02,000 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:02] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 00:18:06,858 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:06] "[33mGET /doctors HTTP/1.1[0m" 404 -
+2025-04-07 00:18:10,748 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "GET /dashboard HTTP/1.1" 200 -
+2025-04-07 00:18:10,871 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-07 00:18:10,874 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "[36mGET /static/css/dashboard.css HTTP/1.1[0m" 304 -
+2025-04-07 00:18:10,875 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2025-04-07 00:18:10,878 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-07 00:18:10,908 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 00:18:10,929 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:10] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 00:18:19,762 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:19] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-07 00:18:19,774 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:19] "GET /login HTTP/1.1" 200 -
+2025-04-07 00:18:19,894 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:19] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 00:18:19,896 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:19] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+2025-04-07 00:18:19,898 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 00:18:19] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-07 20:49:51,896 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-07 20:49:51,973 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.10.1.55:5001
+2025-04-07 20:49:51,973 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-07 20:49:51,975 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 20:49:52,753 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-07 20:49:52,765 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 20:49:52,768 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-07 20:50:01,102 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:01] "GET / HTTP/1.1" 200 -
+2025-04-07 20:50:01,236 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:01] "[36mGET /static/css/landing.css HTTP/1.1[0m" 304 -
+2025-04-07 20:50:01,237 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:01] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 20:50:01,246 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:01] "[36mGET /static/images/doctor-wide.jpg HTTP/1.1[0m" 304 -
+2025-04-07 20:50:03,467 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:03] "GET /login HTTP/1.1" 200 -
+2025-04-07 20:50:03,578 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:03] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 20:50:03,591 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:03] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+2025-04-07 20:50:03,591 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 20:50:03] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-07 21:51:44,454 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-07 21:51:44,476 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.10.1.55:5001
+2025-04-07 21:51:44,476 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-07 21:51:44,477 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 21:51:45,256 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-07 21:51:45,268 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 21:51:45,270 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-07 21:51:52,314 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:52] "GET / HTTP/1.1" 200 -
+2025-04-07 21:51:52,479 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:52] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:51:52,483 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:52] "[36mGET /static/css/landing.css HTTP/1.1[0m" 304 -
+2025-04-07 21:51:52,643 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:52] "[36mGET /static/images/doctor-wide.jpg HTTP/1.1[0m" 304 -
+2025-04-07 21:51:54,846 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:54] "GET /login HTTP/1.1" 200 -
+2025-04-07 21:51:54,987 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:54] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:51:54,989 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:54] "GET /static/css/login.css HTTP/1.1" 200 -
+2025-04-07 21:51:54,991 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:51:54] "GET /static/js/login.js HTTP/1.1" 200 -
+2025-04-07 21:52:03,247 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:03] "[33mGET /laccount HTTP/1.1[0m" 404 -
+2025-04-07 21:52:09,115 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:09] "[32mGET /account HTTP/1.1[0m" 308 -
+2025-04-07 21:52:09,148 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:09] "[32mGET /account/ HTTP/1.1[0m" 302 -
+2025-04-07 21:52:09,159 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:09] "GET /login HTTP/1.1" 200 -
+2025-04-07 21:52:09,270 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:09] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:52:09,273 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:09] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+2025-04-07 21:52:09,274 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:09] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-07 21:52:16,929 - server.routes.register - INFO - Register form requested for user_type: patient
+2025-04-07 21:52:16,940 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:16] "GET /register/ HTTP/1.1" 200 -
+2025-04-07 21:52:17,058 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:17] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:52:17,060 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:17] "GET /static/css/register_patient.css HTTP/1.1" 200 -
+2025-04-07 21:52:17,061 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:17] "GET /static/js/register_patient.js HTTP/1.1" 200 -
+2025-04-07 21:52:17,066 - werkzeug - INFO - 10.10.1.55 - - [07/Apr/2025 21:52:17] "GET /static/images/sk.svg HTTP/1.1" 200 -
+2025-04-07 21:52:54,750 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:54] "GET / HTTP/1.1" 200 -
+2025-04-07 21:52:54,813 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:54] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:52:54,815 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:54] "[36mGET /static/css/landing.css HTTP/1.1[0m" 304 -
+2025-04-07 21:52:55,049 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:55] "[36mGET /static/images/doctor-wide.jpg HTTP/1.1[0m" 304 -
+2025-04-07 21:52:57,042 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:57] "GET /login HTTP/1.1" 200 -
+2025-04-07 21:52:57,158 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:57] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:52:57,168 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:57] "GET /static/css/login.css HTTP/1.1" 200 -
+2025-04-07 21:52:57,170 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:52:57] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-07 21:53:59,328 - server.services.auth_service - INFO - Spustená metóda login_user
+2025-04-07 21:53:59,648 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "POST /login HTTP/1.1" 200 -
+2025-04-07 21:53:59,731 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /dashboard HTTP/1.1" 200 -
+2025-04-07 21:53:59,852 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /static/css/layout.css HTTP/1.1" 200 -
+2025-04-07 21:53:59,853 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /static/js/dashboard.js HTTP/1.1" 200 -
+2025-04-07 21:53:59,854 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /static/css/dashboard.css HTTP/1.1" 200 -
+2025-04-07 21:53:59,856 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /static/js/layout.js HTTP/1.1" 200 -
+2025-04-07 21:53:59,921 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:53:59,925 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:53:59] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:03,455 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "[32mGET /account HTTP/1.1[0m" 308 -
+2025-04-07 21:54:03,469 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "GET /account/ HTTP/1.1" 200 -
+2025-04-07 21:54:03,569 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:03,571 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "GET /static/css/account.css HTTP/1.1" 200 -
+2025-04-07 21:54:03,575 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "GET /static/js/account.js HTTP/1.1" 200 -
+2025-04-07 21:54:03,575 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-07 21:54:03,603 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:03,618 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:03] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:05,609 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:05] "[33mGET /admin/patients HTTP/1.1[0m" 404 -
+2025-04-07 21:54:13,251 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "GET /dashboard HTTP/1.1" 200 -
+2025-04-07 21:54:13,370 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:13,375 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "[36mGET /static/css/dashboard.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:13,375 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2025-04-07 21:54:13,376 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-07 21:54:13,403 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:13,422 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:13] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:18,772 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "GET /account/ HTTP/1.1" 200 -
+2025-04-07 21:54:18,875 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:18,878 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "[36mGET /static/css/account.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:18,880 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "[36mGET /static/js/account.js HTTP/1.1[0m" 304 -
+2025-04-07 21:54:18,881 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-07 21:54:18,900 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:18,917 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:18] "GET /account/info HTTP/1.1" 200 -
+2025-04-07 21:54:24,362 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:24] "[33mGET /fotky HTTP/1.1[0m" 404 -
+2025-04-07 21:54:27,645 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:27] "[33mGET /technicians HTTP/1.1[0m" 404 -
+2025-04-07 21:54:37,622 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:37] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-07 21:54:37,632 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:37] "GET /login HTTP/1.1" 200 -
+2025-04-07 21:54:37,743 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:37] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:37,745 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:37] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:37,747 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:37] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-07 21:54:40,233 - server.routes.register - INFO - Register form requested for user_type: patient
+2025-04-07 21:54:40,234 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:40] "GET /register/ HTTP/1.1" 200 -
+2025-04-07 21:54:40,353 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:40] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:54:40,355 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:40] "GET /static/css/register_patient.css HTTP/1.1" 200 -
+2025-04-07 21:54:40,356 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:40] "GET /static/js/register_patient.js HTTP/1.1" 200 -
+2025-04-07 21:54:40,362 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:54:40] "GET /static/images/sk.svg HTTP/1.1" 200 -
+2025-04-07 21:55:58,889 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:55:58] "[32mPOST /register HTTP/1.1[0m" 308 -
+2025-04-07 21:55:58,901 - server.routes.register - INFO - Registration POST for user_type: patient
+2025-04-07 21:55:59,073 - server.services.patient_service - ERROR - Výnimka pri registrácii pacienta: (builtins.TypeError) SQLite Date type only accepts Python date objects as input.
+[SQL: INSERT INTO patients (id, first_name, last_name, phone_number, birth_date, birth_number, gender, doctor_id, diagnosis_right_eye, diagnosis_left_eye) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'phone_number': '111111111', 'last_name': 'Tinak', 'birth_date': '2000-04-19', 'id': 2, 'first_name': 'jakub', 'birth_number': '111111/1111', 'gender': 'Male', 'diagnosis_right_eye': None, 'diagnosis_left_eye': None, 'doctor_id': None}]]
+Traceback (most recent call last):
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1812, in _execute_context
+    context = constructor(
+        dialect, self, conn, execution_options, *args, **kw
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 1477, in _init_compiled
+    flattened_processors[key](compiled_params[key])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\dialects\sqlite\base.py", line 1192, in process
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: SQLite Date type only accepts Python date objects as input.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\jakub\Team_project_Klient_server\TP2025_Server-Client_app\flask-app\server\services\patient_service.py", line 45, in register_patient
+    db.session.commit()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 4353, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 4488, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 4449, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1048, in _emit_insert_statements
+    result = connection.execute(
+        statement, multiparams, execution_options=execution_options
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1416, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\sql\elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1818, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str(statement), parameters, None, None
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1812, in _execute_context
+    context = constructor(
+        dialect, self, conn, execution_options, *args, **kw
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 1477, in _init_compiled
+    flattened_processors[key](compiled_params[key])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\dialects\sqlite\base.py", line 1192, in process
+    raise TypeError(
+    ...<2 lines>...
+    )
+sqlalchemy.exc.StatementError: (builtins.TypeError) SQLite Date type only accepts Python date objects as input.
+[SQL: INSERT INTO patients (id, first_name, last_name, phone_number, birth_date, birth_number, gender, doctor_id, diagnosis_right_eye, diagnosis_left_eye) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'phone_number': '111111111', 'last_name': 'Tinak', 'birth_date': '2000-04-19', 'id': 2, 'first_name': 'jakub', 'birth_number': '111111/1111', 'gender': 'Male', 'diagnosis_right_eye': None, 'diagnosis_left_eye': None, 'doctor_id': None}]]
+2025-04-07 21:55:59,190 - server.routes.register - INFO - Registration result for patient: status=500, result={'error': "(builtins.TypeError) SQLite Date type only accepts Python date objects as input.\n[SQL: INSERT INTO patients (id, first_name, last_name, phone_number, birth_date, birth_number, gender, doctor_id, diagnosis_right_eye, diagnosis_left_eye) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]\n[parameters: [{'phone_number': '111111111', 'last_name': 'Tinak', 'birth_date': '2000-04-19', 'id': 2, 'first_name': 'jakub', 'birth_number': '111111/1111', 'gender': 'Male', 'diagnosis_right_eye': None, 'diagnosis_left_eye': None, 'doctor_id': None}]]"}
+2025-04-07 21:55:59,191 - server.routes.register - ERROR - Registration failed (HTML), re-render form with partial data
+2025-04-07 21:55:59,192 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:55:59] "[31m[1mPOST /register/ HTTP/1.1[0m" 400 -
+2025-04-07 21:55:59,303 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:55:59] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:55:59,306 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:55:59] "[36mGET /static/css/register_patient.css HTTP/1.1[0m" 304 -
+2025-04-07 21:55:59,307 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:55:59] "[36mGET /static/js/register_patient.js HTTP/1.1[0m" 304 -
+2025-04-07 21:55:59,311 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:55:59] "[36mGET /static/images/sk.svg HTTP/1.1[0m" 304 -
+2025-04-07 21:56:40,608 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:56:40] "[32mPOST /register HTTP/1.1[0m" 308 -
+2025-04-07 21:56:40,622 - server.routes.register - INFO - Registration POST for user_type: patient
+2025-04-07 21:56:40,771 - server.services.patient_service - ERROR - Výnimka pri registrácii pacienta: (builtins.TypeError) SQLite Date type only accepts Python date objects as input.
+[SQL: INSERT INTO patients (id, first_name, last_name, phone_number, birth_date, birth_number, gender, doctor_id, diagnosis_right_eye, diagnosis_left_eye) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'phone_number': '111111111', 'last_name': 'Tinak', 'birth_date': '2000-04-18', 'id': 2, 'first_name': 'jakub', 'birth_number': '111111/1111', 'gender': 'Male', 'diagnosis_right_eye': None, 'diagnosis_left_eye': None, 'doctor_id': None}]]
+Traceback (most recent call last):
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1812, in _execute_context
+    context = constructor(
+        dialect, self, conn, execution_options, *args, **kw
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 1477, in _init_compiled
+    flattened_processors[key](compiled_params[key])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\dialects\sqlite\base.py", line 1192, in process
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: SQLite Date type only accepts Python date objects as input.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\jakub\Team_project_Klient_server\TP2025_Server-Client_app\flask-app\server\services\patient_service.py", line 45, in register_patient
+    db.session.commit()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 4353, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 4488, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 4449, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1048, in _emit_insert_statements
+    result = connection.execute(
+        statement, multiparams, execution_options=execution_options
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1416, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\sql\elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1818, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str(statement), parameters, None, None
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\base.py", line 1812, in _execute_context
+    context = constructor(
+        dialect, self, conn, execution_options, *args, **kw
+    )
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\default.py", line 1477, in _init_compiled
+    flattened_processors[key](compiled_params[key])
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jakub\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\dialects\sqlite\base.py", line 1192, in process
+    raise TypeError(
+    ...<2 lines>...
+    )
+sqlalchemy.exc.StatementError: (builtins.TypeError) SQLite Date type only accepts Python date objects as input.
+[SQL: INSERT INTO patients (id, first_name, last_name, phone_number, birth_date, birth_number, gender, doctor_id, diagnosis_right_eye, diagnosis_left_eye) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: [{'phone_number': '111111111', 'last_name': 'Tinak', 'birth_date': '2000-04-18', 'id': 2, 'first_name': 'jakub', 'birth_number': '111111/1111', 'gender': 'Male', 'diagnosis_right_eye': None, 'diagnosis_left_eye': None, 'doctor_id': None}]]
+2025-04-07 21:56:40,775 - server.routes.register - INFO - Registration result for patient: status=500, result={'error': "(builtins.TypeError) SQLite Date type only accepts Python date objects as input.\n[SQL: INSERT INTO patients (id, first_name, last_name, phone_number, birth_date, birth_number, gender, doctor_id, diagnosis_right_eye, diagnosis_left_eye) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]\n[parameters: [{'phone_number': '111111111', 'last_name': 'Tinak', 'birth_date': '2000-04-18', 'id': 2, 'first_name': 'jakub', 'birth_number': '111111/1111', 'gender': 'Male', 'diagnosis_right_eye': None, 'diagnosis_left_eye': None, 'doctor_id': None}]]"}
+2025-04-07 21:56:40,776 - server.routes.register - ERROR - Registration failed (HTML), re-render form with partial data
+2025-04-07 21:56:40,776 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:56:40] "[31m[1mPOST /register/ HTTP/1.1[0m" 400 -
+2025-04-07 21:56:40,896 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:56:40] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-07 21:56:40,898 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:56:40] "[36mGET /static/css/register_patient.css HTTP/1.1[0m" 304 -
+2025-04-07 21:56:40,901 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:56:40] "[36mGET /static/js/register_patient.js HTTP/1.1[0m" 304 -
+2025-04-07 21:56:40,904 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 21:56:40] "[36mGET /static/images/sk.svg HTTP/1.1[0m" 304 -
+2025-04-07 22:00:19,181 - server.services.admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-07 22:00:19,215 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.10.1.55:5000
+2025-04-07 22:00:19,215 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-07 22:00:19,216 - werkzeug - INFO -  * Restarting with stat
+2025-04-07 22:00:20,353 - server.services.admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-07 22:00:20,377 - werkzeug - WARNING -  * Debugger is active!
+2025-04-07 22:00:20,380 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-07 22:00:26,956 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:26] "GET / HTTP/1.1" 200 -
+2025-04-07 22:00:27,019 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:27] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-04-07 22:00:27,027 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:27] "GET /static/icons/apple-touch-icon.png HTTP/1.1" 200 -
+2025-04-07 22:00:27,027 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:27] "GET /static/icons/favicon.svg HTTP/1.1" 200 -
+2025-04-07 22:00:27,045 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:27] "[33mGET /static/images/doctor-eye.jpg HTTP/1.1[0m" 404 -
+2025-04-07 22:00:33,524 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:33] "GET /login HTTP/1.1" 200 -
+2025-04-07 22:00:33,657 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:33] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-07 22:00:33,670 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:33] "GET /static/js/login.js HTTP/1.1" 200 -
+2025-04-07 22:00:42,860 - server.routes.register - INFO - Register select page requested
+2025-04-07 22:00:42,863 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:42] "GET /register/ HTTP/1.1" 200 -
+2025-04-07 22:00:42,977 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:42] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-07 22:00:46,289 - server.routes.register - INFO - Register form requested for user_type: patient
+2025-04-07 22:00:46,293 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:46] "GET /register/patient HTTP/1.1" 200 -
+2025-04-07 22:00:46,417 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:46] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-07 22:00:46,418 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:00:46] "GET /static/js/register_patient.js HTTP/1.1" 200 -
+2025-04-07 22:03:26,305 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:26] "GET / HTTP/1.1" 200 -
+2025-04-07 22:03:26,323 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:26] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-04-07 22:03:26,391 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:26] "[33mGET /static/images/doctor-eye.jpg HTTP/1.1[0m" 404 -
+2025-04-07 22:03:28,643 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:28] "GET / HTTP/1.1" 200 -
+2025-04-07 22:03:28,660 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:28] "GET /static/css/style.css HTTP/1.1" 200 -
+2025-04-07 22:03:28,726 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:28] "[33mGET /static/images/doctor-eye.jpg HTTP/1.1[0m" 404 -
+2025-04-07 22:03:29,619 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:29] "GET / HTTP/1.1" 200 -
+2025-04-07 22:03:29,637 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:29] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-07 22:03:29,696 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:29] "[33mGET /static/images/doctor-eye.jpg HTTP/1.1[0m" 404 -
+2025-04-07 22:03:34,369 - server.routes.register - INFO - Register select page requested
+2025-04-07 22:03:34,371 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:34] "GET /register/ HTTP/1.1" 200 -
+2025-04-07 22:03:34,481 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:34] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-07 22:03:36,260 - server.routes.register - INFO - Register form requested for user_type: patient
+2025-04-07 22:03:36,261 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:36] "GET /register/patient HTTP/1.1" 200 -
+2025-04-07 22:03:36,381 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:36] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-07 22:03:36,382 - werkzeug - INFO - 127.0.0.1 - - [07/Apr/2025 22:03:36] "[36mGET /static/js/register_patient.js HTTP/1.1[0m" 304 -
+2025-04-08 19:48:53,107 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:09:27,322 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:09:52,103 - server.services.admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:09:52,143 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.10.1.55:5000
+2025-04-08 20:09:52,143 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-08 20:09:52,145 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:09:53,239 - server.services.admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:09:53,259 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:09:53,273 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:11:21,242 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:11:21] "GET / HTTP/1.1" 200 -
+2025-04-08 20:11:21,409 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:11:21] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:11:21,433 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:11:21] "[33mGET /static/images/doctor-eye.jpg HTTP/1.1[0m" 404 -
+2025-04-08 20:11:24,378 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:11:24] "GET /login HTTP/1.1" 200 -
+2025-04-08 20:11:24,534 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:11:24] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:11:24,543 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:11:24] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-08 20:22:25,928 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:22:37,586 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:22:37,634 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.10.1.55:5005
+2025-04-08 20:22:37,634 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-08 20:22:37,636 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:22:38,817 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:22:38,836 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:22:38,840 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:22:43,207 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:43] "GET / HTTP/1.1" 200 -
+2025-04-08 20:22:43,411 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:43] "GET /static/css/landing.css HTTP/1.1" 200 -
+2025-04-08 20:22:43,411 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:43] "GET /static/css/base.css HTTP/1.1" 200 -
+2025-04-08 20:22:43,588 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:43] "GET /static/icons/apple-touch-icon.png HTTP/1.1" 200 -
+2025-04-08 20:22:43,613 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:43] "GET /static/images/doctor-wide.jpg HTTP/1.1" 200 -
+2025-04-08 20:22:43,758 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:43] "GET /static/icons/favicon.svg HTTP/1.1" 200 -
+2025-04-08 20:22:48,924 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:48] "GET /login HTTP/1.1" 200 -
+2025-04-08 20:22:49,120 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:49] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-08 20:22:49,125 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:49] "GET /static/css/login.css HTTP/1.1" 200 -
+2025-04-08 20:22:49,125 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:22:49] "GET /static/js/login.js HTTP/1.1" 200 -
+2025-04-08 20:25:09,662 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:25:09,709 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.10.1.55:5005
+2025-04-08 20:25:09,709 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-08 20:25:09,712 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:25:10,814 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:25:10,830 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:25:10,832 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:25:27,252 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:25:27,297 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.10.1.55:5005
+2025-04-08 20:25:27,298 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-08 20:25:27,299 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:25:28,373 - server.services.super_admin_service - ERROR - ADMIN_EMAIL alebo ADMIN_PASSWORD nie sú nastavené v environment variables.
+2025-04-08 20:25:28,392 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:25:28,395 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:27:21,700 - server.services.super_admin_service - INFO - Admin úspešne vytvorený s emailom: admin@example.com
+2025-04-08 20:27:21,734 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.10.1.55:5005
+2025-04-08 20:27:21,734 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-08 20:27:21,736 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:27:22,768 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:27:22,788 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:27:22,793 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:27:42,189 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "[32mGET /dashboard HTTP/1.1[0m" 302 -
+2025-04-08 20:27:42,239 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "GET /login HTTP/1.1" 200 -
+2025-04-08 20:27:42,464 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "GET /static/js/login.js HTTP/1.1" 200 -
+2025-04-08 20:27:42,477 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "GET /static/css/base.css HTTP/1.1" 200 -
+2025-04-08 20:27:42,477 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "GET /static/css/login.css HTTP/1.1" 200 -
+2025-04-08 20:27:42,815 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "GET /static/icons/site.webmanifest HTTP/1.1" 200 -
+2025-04-08 20:27:42,818 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:27:42] "GET /static/icons/favicon.ico HTTP/1.1" 200 -
+2025-04-08 20:28:04,024 - server.services.auth_service - INFO - Spustená metóda login_user
+2025-04-08 20:28:04,936 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:04] "POST /login HTTP/1.1" 200 -
+2025-04-08 20:28:04,994 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:04] "GET /dashboard HTTP/1.1" 200 -
+2025-04-08 20:28:05,008 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "GET /static/css/layout.css HTTP/1.1" 200 -
+2025-04-08 20:28:05,012 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "GET /static/css/dashboard.css HTTP/1.1" 200 -
+2025-04-08 20:28:05,016 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "GET /static/js/dashboard.js HTTP/1.1" 200 -
+2025-04-08 20:28:05,018 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "GET /static/js/layout.js HTTP/1.1" 200 -
+2025-04-08 20:28:05,076 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:28:05,114 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:28:05,148 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:05] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:28:08,747 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:08] "[33mGET /fotky HTTP/1.1[0m" 404 -
+2025-04-08 20:28:08,867 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:08] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:28:16,225 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:16] "[33mGET /admin/patients HTTP/1.1[0m" 404 -
+2025-04-08 20:28:16,256 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:16] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:28:26,821 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "[32mGET /account HTTP/1.1[0m" 308 -
+2025-04-08 20:28:26,843 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "GET /account/ HTTP/1.1" 200 -
+2025-04-08 20:28:26,859 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "GET /static/css/account.css HTTP/1.1" 200 -
+2025-04-08 20:28:26,863 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 20:28:26,866 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "GET /static/js/account.js HTTP/1.1" 200 -
+2025-04-08 20:28:26,869 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 20:28:26,897 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:28:26,911 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:28:26,948 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:26] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:28:31,962 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:31] "[33mGET /fotky HTTP/1.1[0m" 404 -
+2025-04-08 20:28:31,996 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:28:31] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:50:31,504 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:50:31,554 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.10.1.55:5005
+2025-04-08 20:50:31,555 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-08 20:50:31,557 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:50:32,633 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:50:32,649 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:50:32,651 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:50:35,838 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "GET /account/ HTTP/1.1" 200 -
+2025-04-08 20:50:35,954 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:35,965 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "[36mGET /static/css/account.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:35,967 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "[36mGET /static/js/account.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:35,970 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:35,984 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:50:35,986 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:35] "[36mGET /static/icons/favicon.ico HTTP/1.1[0m" 304 -
+2025-04-08 20:50:36,010 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:36] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:50:36,024 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:36] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:50:37,918 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "GET /dashboard HTTP/1.1" 200 -
+2025-04-08 20:50:37,943 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:37,945 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "[36mGET /static/css/dashboard.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:37,946 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:37,949 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:37,969 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:50:37,989 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:37] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:50:38,025 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:38] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:50:43,386 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:43] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-08 20:50:43,422 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:43] "GET /login HTTP/1.1" 200 -
+2025-04-08 20:50:43,443 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:43] "[36mGET /static/css/base.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:43,452 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:43] "[36mGET /static/css/login.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:43,455 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:43] "[36mGET /static/js/login.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:43,496 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:43] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:50:45,214 - server.services.auth_service - INFO - Spustená metóda login_user
+2025-04-08 20:50:45,697 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "POST /login HTTP/1.1" 200 -
+2025-04-08 20:50:45,720 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "GET /dashboard HTTP/1.1" 200 -
+2025-04-08 20:50:45,736 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:45,742 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "[36mGET /static/css/dashboard.css HTTP/1.1[0m" 304 -
+2025-04-08 20:50:45,742 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:45,751 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 20:50:45,772 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:50:45,792 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:50:45,832 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:45] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:50:47,955 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:47] "[32mGET /fotky HTTP/1.1[0m" 308 -
+2025-04-08 20:50:47,965 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 20:50:48,133 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:48] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 20:50:48,180 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:48] "GET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-04-08 20:50:48,229 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:48] "GET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-04-08 20:50:48,303 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:48] "GET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=r3gVPFoPWJVhnli1lRjv HTTP/1.1" 200 -
+2025-04-08 20:50:48,346 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:50:48] "GET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-04-08 20:52:58,793 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\fotky.py', reloading
+2025-04-08 20:52:59,012 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:53:00,436 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:53:00,465 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:53:00,469 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:53:25,660 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\doctor.py', reloading
+2025-04-08 20:53:25,915 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:53:27,267 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:53:27,294 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:53:27,297 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:53:30,483 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 20:53:30,520 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:30] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 20:53:30,609 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:30] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:53:30,610 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:30] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 20:53:30,630 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:30] "GET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=zqbCztSni9y8xwdGBTkV HTTP/1.1" 200 -
+2025-04-08 20:53:30,643 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:30] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 20:53:36,121 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "GET /account/ HTTP/1.1" 200 -
+2025-04-08 20:53:36,140 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 20:53:36,147 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "[36mGET /static/css/account.css HTTP/1.1[0m" 304 -
+2025-04-08 20:53:36,149 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "[36mGET /static/js/account.js HTTP/1.1[0m" 304 -
+2025-04-08 20:53:36,152 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 20:53:36,179 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:53:36,224 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:53:36,268 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:36] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 20:53:37,656 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:37] "[33mGET /admin/patients HTTP/1.1[0m" 404 -
+2025-04-08 20:53:37,720 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:37] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:53:41,119 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 20:53:41,156 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:41] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 20:53:41,172 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:41] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:53:41,173 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:41] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 20:53:41,182 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:53:41] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=zqbCztSni9y8xwdGBTkV HTTP/1.1[0m" 304 -
+2025-04-08 20:54:52,966 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\doctor.py', reloading
+2025-04-08 20:54:53,225 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:54:54,771 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:54:54,791 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:54:54,794 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:55:04,873 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\fotky.py', reloading
+2025-04-08 20:55:05,055 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:55:06,133 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:55:06,155 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:55:06,158 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:55:11,749 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 20:55:11,825 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:11] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 20:55:12,005 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 20:55:12,008 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:55:12,042 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:12] "GET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=268LA0jADlmtAoL5vyGD HTTP/1.1" 200 -
+2025-04-08 20:55:12,064 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 20:55:24,452 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:24] "[33mGET /fotky.fotky HTTP/1.1[0m" 404 -
+2025-04-08 20:55:24,491 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:24] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:55:35,539 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:35] "[33mGET /fotky.fotky/ HTTP/1.1[0m" 404 -
+2025-04-08 20:55:35,585 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:55:35] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 20:56:54,018 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\fotky.py', reloading
+2025-04-08 20:56:54,220 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:56:56,028 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:56:56,078 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:56:56,086 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:56:57,010 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:56:57] "[31m[1mGET /fotky/ HTTP/1.1[0m" 405 -
+2025-04-08 20:56:57,066 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:56:57] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-08 20:56:58,030 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:56:58] "[31m[1mGET /fotky/ HTTP/1.1[0m" 405 -
+2025-04-08 20:57:06,214 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\fotky.py', reloading
+2025-04-08 20:57:06,411 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 20:57:07,720 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 20:57:07,753 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 20:57:07,756 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 20:57:11,321 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 20:57:11,358 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:11] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 20:57:11,440 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:11] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:57:11,441 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:11] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 20:57:11,456 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:11] "GET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=MTywWyBslhdFoZomeAWt HTTP/1.1" 200 -
+2025-04-08 20:57:11,470 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:11] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 20:57:12,361 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 20:57:12,397 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:12] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 20:57:12,414 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 20:57:12,415 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 20:57:12,432 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=MTywWyBslhdFoZomeAWt HTTP/1.1[0m" 304 -
+2025-04-08 20:57:12,466 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 20:57:12] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:01:49,816 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\fotky.py', reloading
+2025-04-08 21:01:50,011 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 21:01:51,330 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 21:01:51,356 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 21:01:51,361 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 21:01:53,944 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:01:53,977 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:53] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 21:01:54,057 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 21:01:54,058 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 21:01:54,081 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "GET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=1xiA7vgKdNTfJnZmeFru HTTP/1.1" 200 -
+2025-04-08 21:01:54,091 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:01:54,837 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:01:54,863 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 21:01:54,878 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 21:01:54,879 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 21:01:54,898 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=1xiA7vgKdNTfJnZmeFru HTTP/1.1[0m" 304 -
+2025-04-08 21:01:54,920 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:54] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,124 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:01:55,141 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 21:01:55,157 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,158 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,172 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=1xiA7vgKdNTfJnZmeFru HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,201 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,292 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:01:55,325 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 21:01:55,343 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,346 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,365 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=1xiA7vgKdNTfJnZmeFru HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,393 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,448 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:01:55,464 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 21:01:55,477 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,481 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,497 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=1xiA7vgKdNTfJnZmeFru HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,519 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,669 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:01:55,699 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[35m[1mGET /fotky/ HTTP/1.1[0m" 500 -
+2025-04-08 21:01:55,713 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,715 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,731 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png&s=1xiA7vgKdNTfJnZmeFru HTTP/1.1[0m" 304 -
+2025-04-08 21:01:55,757 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:01:55] "[36mGET /fotky/?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-04-08 21:02:33,700 - werkzeug - INFO -  * Detected change in 'c:\\Users\\jakub\\Team_project_Klient_server\\TP2025_Server-Client_app-Metke\\flask-app\\server\\routes\\fotky.py', reloading
+2025-04-08 21:02:33,902 - werkzeug - INFO -  * Restarting with stat
+2025-04-08 21:02:35,111 - server.services.super_admin_service - INFO - Super_admin už existuje: admin@example.com
+2025-04-08 21:02:35,132 - werkzeug - WARNING -  * Debugger is active!
+2025-04-08 21:02:35,135 - werkzeug - INFO -  * Debugger PIN: 151-028-988
+2025-04-08 21:02:41,452 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:02:41,585 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "GET /fotky/ HTTP/1.1" 200 -
+2025-04-08 21:02:41,620 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:02:41,623 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "GET /fotky/ HTTP/1.1" 200 -
+2025-04-08 21:02:41,880 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 21:02:41,884 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 21:02:41,890 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "GET /static/css/fotky.css HTTP/1.1" 200 -
+2025-04-08 21:02:41,890 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "GET /static/js/fotky.js HTTP/1.1" 200 -
+2025-04-08 21:02:41,920 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 21:02:41,924 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "[36mGET /static/icons/favicon.ico HTTP/1.1[0m" 304 -
+2025-04-08 21:02:41,967 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:41] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 21:02:52,597 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "GET /dashboard HTTP/1.1" 200 -
+2025-04-08 21:02:52,614 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "[36mGET /static/css/dashboard.css HTTP/1.1[0m" 304 -
+2025-04-08 21:02:52,615 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2025-04-08 21:02:52,615 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 21:02:52,618 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 21:02:52,637 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 21:02:52,662 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 21:02:52,703 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:52] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 21:02:56,634 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:02:56,636 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "GET /fotky/ HTTP/1.1" 200 -
+2025-04-08 21:02:56,652 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "[36mGET /static/css/fotky.css HTTP/1.1[0m" 304 -
+2025-04-08 21:02:56,652 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 21:02:56,656 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "[36mGET /static/js/fotky.js HTTP/1.1[0m" 304 -
+2025-04-08 21:02:56,658 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 21:02:56,661 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:02:56,668 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "GET /fotky/ HTTP/1.1" 200 -
+2025-04-08 21:02:56,689 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 21:02:56,709 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:02:56] "GET /account/info HTTP/1.1" 200 -
+2025-04-08 21:03:18,733 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:03:18,742 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "POST /fotky/ HTTP/1.1" 200 -
+2025-04-08 21:03:18,769 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "[36mGET /static/css/layout.css HTTP/1.1[0m" 304 -
+2025-04-08 21:03:18,775 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "[36mGET /static/css/fotky.css HTTP/1.1[0m" 304 -
+2025-04-08 21:03:18,779 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "[36mGET /static/js/fotky.js HTTP/1.1[0m" 304 -
+2025-04-08 21:03:18,784 - server.routes.fotky - INFO - Accessing the Fotky page
+2025-04-08 21:03:18,792 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "GET /fotky/ HTTP/1.1" 200 -
+2025-04-08 21:03:18,793 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "[36mGET /static/js/layout.js HTTP/1.1[0m" 304 -
+2025-04-08 21:03:18,814 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "[36mGET /static/icons/site.webmanifest HTTP/1.1[0m" 304 -
+2025-04-08 21:03:18,846 - werkzeug - INFO - 127.0.0.1 - - [08/Apr/2025 21:03:18] "GET /account/info HTTP/1.1" 200 -
