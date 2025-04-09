@@ -2,7 +2,7 @@ from server import db
 from server.models.user import User
 from flask import jsonify
 
-class DatabaseService:
+class UserService:
     def create_user(self, data):
         try:
             user = User(
@@ -14,4 +14,4 @@ class DatabaseService:
             return jsonify({'message': 'User created successfully'}), 201
         except Exception as e:
             db.session.rollback()
-            return jsonify({'error': str(e)}), 400 
+            return jsonify({'error': str(e)}), 400

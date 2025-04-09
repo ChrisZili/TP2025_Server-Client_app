@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fotky.css') }}">
+{% endblock %}
+
+{% block title %}
+Moji Lekári - Fotky
+{% endblock %}
+
+{% block header %}
+Fotky
+{% endblock %}
+
+{% block content %}
+<div id="fotky-container" style="display: flex; gap: 20px;">
+  <form action="{{ url_for('fotky') }}" method="POST" enctype="multipart/form-data" class="form-container" style="flex: 1;">
+    
+        <!-- First dropdown menu for patients -->
+    <div class="form-group">
+      <label for="patient">Pacient:</label>
+      <select id="patient" name="patient" class="form-input" required>
+        <option value="" disabled selected>Vyberte pacienta</option>
+        {% for patient in patients %}
+          <option value="{{ patient }}">{{ patient }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group-row">
+      <div class="form-group">
+        <label for="eye">Oko:</label>
+        <select id="eye" name="eye" class="form-input" required>
+          <option value="right">Pravé oko</option>
+          <option value="left">Ľavé oko</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="diagnostic">Typ obrazu:</label>
+      <input type="text" id="diagnostic" name="diagnostic" placeholder="Zadajte diagnostiku" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="variant">Typ zariadenia:</label>
+      <input type="text" id="variant" name="variant" placeholder="Zadajte variant produktu" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="zariadenie">Typ kamery:</label>
+      <input type="text" id="zariadenie" name="zariadenie" placeholder="Zadajte typ kamery" class="form-input" required>
+    </div>
+    
+    <!-- Dynamically generated checkboxes in two columns -->
+    <div class="form-group">
+      <div class="checkbox-container">
+        {% for method in method_names %}
+          <div class="checkbox-group">
+            <input type="checkbox" id="method-{{ loop.index }}" name="method-{{ loop.index }}" value="{{ method }}">
+            <label for="method-{{ loop.index }}">{{ method }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div id="photo-preview-container" style="margin-top: 15px;">
+        <img id="photo-preview" src="#" alt="Photo Preview" style="display: none; max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
+      </div>
+
+      <p id="file-name" class="file-name" style="margin-top: 10px; font-size: 14px; color: #555;"></p>
+
+      <div class="file-input-wrapper" data-state="upload">
+        <input type="file" id="photo" name="photo" accept="image/*" class="form-input" required>
+      </div>
+    </div>
+
+    <button type="submit" id="upload-button" class="form-button">Nahrajte fotku</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/fotky.js') }}"></script>
+{% endblock %}

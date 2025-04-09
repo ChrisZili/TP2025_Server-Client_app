@@ -1,52 +1,89 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+  const main = document.getElementById("main");
+  const hamburger = document.getElementById("hamburger");
 
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('Script loaded and running!');
-    const form = document.getElementById('registerForm');
-    const roleDropdown = document.getElementById('roleDropdown');
-    const hospitalCodeContainer = document.getElementById('hospitalCodeContainer');
+  // Zistí aktuálny breakpoint
+  function getBreakpoint() {
+    const w = window.innerWidth;
+    if (w >= 900) return "large";
+    if (w >= 600) return "medium";
+    return "small";
+  }
 
-    if (roleDropdown) {
-        roleDropdown.addEventListener('change', function () {
-            if (roleDropdown.value === 'Doctor') {
-                if (!document.getElementById('hospital_code')) {
-                    const hospitalCodeInput = document.createElement('input');
-                    hospitalCodeInput.type = 'text';
-                    hospitalCodeInput.id = 'hospital_code';
-                    hospitalCodeInput.name = 'hospital_code';
-                    hospitalCodeInput.placeholder = 'Hospital Code';
-                    hospitalCodeContainer.appendChild(hospitalCodeInput);
-                }
-            } else {
-                const existingHospitalCodeInput = document.getElementById('hospital_code');
-                if (existingHospitalCodeInput) {
-                    hospitalCodeContainer.removeChild(existingHospitalCodeInput);
-                }
-            }
-        });
-    }
-
-    if (form) {
-        form.addEventListener('submit', function (event) {
-            let isValid = true;
-
-            form.querySelectorAll('input, select').forEach(field => {
-                const feedback = document.getElementById(field.name + 'Feedback');
-                if (!field.checkValidity()) {
-                    field.classList.add('invalid');
-                    if (feedback) feedback.style.display = 'block';
-                    isValid = false;
-                } else {
-                    field.classList.remove('invalid');
-                    if (feedback) feedback.style.display = 'none';
-                }
-            });
-
-            if (!isValid) {
-                console.log('Form is invalid. Preventing submission.');
-                event.preventDefault();
-            }
-        });
+  // Nastaví default stav sidebaru (expanded, collapsed, hidden) podľa šírky
+  // a nastaví aj margin-left pre .main.
+  function setDefaultState() {
+    sidebar.classList.remove("expanded", "collapsed", "hidden");
+    let bp = getBreakpoint();
+    if (bp === "large") {
+      // expanded
+      sidebar.classList.add("expanded");
+      main.style.marginLeft = "240px";
+    } else if (bp === "medium") {
+      // collapsed
+      sidebar.classList.add("collapsed");
+      main.style.marginLeft = "50px";
     } else {
-        console.error('Form with id "registerForm" not found!');
+      // small => hidden
+      sidebar.classList.add("hidden");
+      main.style.marginLeft = "0";
     }
+  }
+
+  // Prepína stavy pri kliku na hamburger
+  // large => expanded <-> collapsed
+  // medium => collapsed <-> expanded
+  // small => hidden <-> expanded
+  function toggleSidebar() {
+    let bp = getBreakpoint();
+
+    if (bp === "large") {
+      if (sidebar.classList.contains("expanded")) {
+        // expanded -> collapsed
+        sidebar.classList.remove("expanded");
+        sidebar.classList.add("collapsed");
+        main.style.marginLeft = "50px";
+      } else {
+        // collapsed -> expanded
+        sidebar.classList.remove("collapsed");
+        sidebar.classList.add("expanded");
+        main.style.marginLeft = "240px";
+      }
+    }
+    else if (bp === "medium") {
+      if (sidebar.classList.contains("collapsed")) {
+        // collapsed -> expanded
+        sidebar.classList.remove("collapsed");
+        sidebar.classList.add("expanded");
+        main.style.marginLeft = "240px";
+      } else {
+        // expanded -> collapsed
+        sidebar.classList.remove("expanded");
+        sidebar.classList.add("collapsed");
+        main.style.marginLeft = "50px";
+      }
+    }
+    else {
+      // small => hidden <-> expanded
+      if (sidebar.classList.contains("hidden")) {
+        // hidden -> expanded
+        sidebar.classList.remove("hidden");
+        sidebar.classList.add("expanded");
+        main.style.marginLeft = "240px";
+      } else {
+        // expanded -> hidden
+        sidebar.classList.remove("expanded");
+        sidebar.classList.add("hidden");
+        main.style.marginLeft = "0";
+      }
+    }
+  }
+
+  // Pri načítaní a pri zmene veľkosti nastavíme predvolený stav
+  window.addEventListener("resize", setDefaultState);
+  setDefaultState();
+
+  // Klik na hamburger => toggle
+  hamburger.addEventListener("click", toggleSidebar);
 });

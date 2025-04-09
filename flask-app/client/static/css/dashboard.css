@@ -1,0 +1,46 @@
+/* Karty */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.card {
+  flex: 1 1 200px;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.card.blue {
+  background: linear-gradient(90deg, #2193b0, #6dd5ed);
+}
+.card.purple {
+  background: linear-gradient(90deg, #cc2b5e, #753a88);
+}
+.card.red {
+  background: linear-gradient(90deg, #e52d27, #b31217);
+}
+.card.green {
+  background: linear-gradient(90deg, #56ab2f, #a8e063);
+}
+.card.orange {
+  background: linear-gradient(90deg, #f7971e, #ffd200);
+}
+.card.teal {
+  background: linear-gradient(90deg, #11998e, #38ef7d);
+}
+
+.card:hover {
+  opacity: 0.9;
+}
+
+/* Pre obrazovky menšie ako 600px */
+@media (max-width: 600px) {
+  .cards {
+    flex-direction: column;
+  }
+  .card {
+    flex: 1 1 100%;
+  }
+}

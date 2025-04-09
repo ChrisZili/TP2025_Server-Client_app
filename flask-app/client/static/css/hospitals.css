@@ -1,0 +1,204 @@
+.hospitals-container {
+  padding: 20px;
+}
+
+/* Tabs wrapper pre horizontálny scroll na mobile */
+.tabs-wrapper {
+  overflow-x: auto; /* Umožní horizontálny scroll na malých displejoch */
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+}
+
+.tab {
+  padding: 10px 15px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.tab:hover {
+  background-color: #ddd;
+}
+
+.tab.active {
+  background-color: #ccc;
+  font-weight: bold;
+}
+
+.tab-content {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Štýly pre karty nemocníc */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.card {
+  flex: 1 1 200px;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #2193b0, #4b8c9f);
+  color: #ffffff;                  /* čierny text */
+  cursor: pointer;
+  transition: opacity 0.3s;
+  border: 1px solid #000;       /* čierny rám */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* tien */
+}
+
+.card h3 {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card p {
+  margin: 4px 0;
+}
+
+.card:hover {
+  opacity: 0.9;
+}
+
+/* Na malých displejoch: karty pod seba */
+@media (max-width: 600px) {
+  .cards {
+    flex-direction: column;
+  }
+  .card {
+    flex: 1 1 100%;
+  }
+
+  .tabs {
+    gap: 10px;
+  }
+  .tab {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+}
+#search-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#search-btn {
+  padding: 10px 15px;
+  font-size: 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#search-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Hlásenia pre operácie v tabu "Pridať nemocnicu" */
+#add-hospital-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#add-hospital-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+#add-hospital-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Tlačidlo pre pridanie nemocnice */
+#add-hospital-btn {
+  padding: 10px 15px;
+  font-size: 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+#add-hospital-btn:hover {
+  background-color: #2980b9;
+}
+.add-btn {
+  background: #1a7891;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.add-btn:hover {
+  opacity: 0.9;
+}
+
+
+/* form-group pre inputy */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* label nad inputom */
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+/* input */
+.form-group input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-size: 1.1rem;
+}
+.form-group input[type="text"]:focus {
+  border-color: #66b2ff;
+}
+
+/* Odfarbi readonly polia do siva */
+.form-group input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed; /* aby bolo jasné, že to nejde upravovať */
+}

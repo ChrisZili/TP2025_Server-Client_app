@@ -1,0 +1,66 @@
+.hospital-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 1.1rem;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.form-group input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-size: 1.1rem;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #66b2ff;
+}
+
+.form-group input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.save-btn {
+  background: #1a7891;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+}
+
+/* Pre responzívne usporiadanie, ak by bolo potrebné */
+@media (max-width: 600px) {
+  .hospital-container {
+    padding: 10px;
+  }
+  .form-group input[type="text"] {
+    font-size: 1rem;
+  }
+  .save-btn {
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+}

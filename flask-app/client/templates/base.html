@@ -1,29 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+  <meta charset="UTF-8">
+
+  <title>{% block title %}Flask App{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}" />
+  <link rel="manifest" href="{{ url_for('static', filename='icons/site.webmanifest') }}" />
+<!-- Príklad: Font Awesome CDN (verzia 6.x) -->
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+  integrity="sha512-..."
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link
+  rel="stylesheet"
+  href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+  integrity="sha384-DyZ88mC6Up2Q1DVj7jK4n2tbK53UJ4fZIb5B4TvkpCLYzCI2i+FzGZo+M2ebp4kK"
+  crossorigin="anonymous"
+/>
+
+
+  {% block stylesheet %}{% endblock %}
+
 </head>
 <body>
-    <div id="mySidenav" class="sidenav">
-        <div class="top-section">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        </div>
-
-        <div class="bottom-section">
-            <a href="#">ACCOUNT</a>
-            <a href="#">PATIENTS</a>
-            <a href="#">ADD PATIENT</a>
-            <a href="#">ADD PHOTO</a>
-        </div>
-    </div>
-
-    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
-
-    {% block content %}{% endblock %}
-
-    <script src="../static/js/main.js"></script>
+  {% block content %}{% endblock %}
+  {% block scripts %}{% endblock %}
 </body>
 </html>
