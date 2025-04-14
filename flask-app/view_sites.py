@@ -1,8 +1,9 @@
 from flask import Flask, render_template, url_for, jsonify, flash, make_response, redirect, request, send_file
 import os
 from io import BytesIO
+import base64
 
-app = Flask(__name__, template_folder='client/templates', static_folder='client/static')
+app = Flask(__name__, template_folder='client/templates', static_folder='client\\static')
 app.secret_key = 'your_secret_key_here'
 
 UPLOAD_FOLDER = os.path.join(app.static_folder, 'images')
@@ -11,16 +12,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the upload folder exists
 uploaded_photo = None
 uploaded_data = {}
 
-# Account page
-@app.route('/account')
-def account():
-    return render_template('account.html')
+# Centralized structure for medical methods
+MEDICAL_METHODS = ["Segmentacia", "Klasifikacia", "Detekcia", "Aloha", "Qloha"]
 
-# Account info page
-@app.route('/account/info')
-def account_info():
-    # Example response
-    user_data = {
+# Centralized structure for users
+USERS = {
+    "user@example.com": {
         "email": "user@example.com",
         "user_type": "doctor",
         "first_name": "John",
@@ -32,8 +29,225 @@ def account_info():
         "doctor_id": 22222,
         "diagnosis_right_eye": "Healthy",
         "diagnosis_left_eye": "Healthy",
-        "Methods": "Segmentacia, Klasifikacia, Detekcia, Aloha",
-       }
+    }
+}
+
+# Centralized structure for photos
+PHOTOS = [
+    {
+        "name": "Photo 1",
+        "eye": "rigth",
+        "patient": "Patient1",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "1.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia"]
+    },
+    {
+        "name": "Photo 2",
+        "eye": "left",
+        "patient": "Patient1",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "2.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+    {
+        "name": "Photo 3",
+        "eye": "rigth",
+        "patient": "Patient2",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "2.3.2023",
+        "url": "/static/images/Untitled3.jpg",
+        "methods": ["Segmentacia", "Detekcia"]
+    },
+    # 20 new random photos linked to existing ones
+    {
+        "name": "Photo 4",
+        "eye": "left",
+        "patient": "Patient3",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "3.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia"]
+    },
+    {
+        "name": "Photo 5",
+        "eye": "rigth",
+        "patient": "Patient4",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "4.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+    {
+        "name": "Photo 6",
+        "eye": "left",
+        "patient": "Patient5",
+        "hospital": "Hospital3",
+        "doctor": "Doctor3",
+        "date": "5.1.2023",
+        "url": "/static/images/Untitled3.jpg",
+        "methods": ["Segmentacia", "Detekcia"]
+    },
+    {
+        "name": "Photo 7",
+        "eye": "rigth",
+        "patient": "Patient6",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "6.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia"]
+    },
+    {
+        "name": "Photo 8",
+        "eye": "left",
+        "patient": "Patient7",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "7.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+    {
+        "name": "Photo 9",
+        "eye": "rigth",
+        "patient": "Patient8",
+        "hospital": "Hospital3",
+        "doctor": "Doctor3",
+        "date": "8.1.2023",
+        "url": "/static/images/Untitled3.jpg",
+        "methods": ["Segmentacia", "Detekcia"]
+    },
+    {
+        "name": "Photo 10",
+        "eye": "left",
+        "patient": "Patient9",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "9.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia"]
+    },
+    {
+        "name": "Photo 11",
+        "eye": "rigth",
+        "patient": "Patient10",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "10.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+    {
+        "name": "Photo 12",
+        "eye": "left",
+        "patient": "Patient11",
+        "hospital": "Hospital3",
+        "doctor": "Doctor3",
+        "date": "11.1.2023",
+        "url": "/static/images/Untitled3.jpg",
+        "methods": ["Segmentacia", "Detekcia"]
+    },
+    {
+        "name": "Photo 13",
+        "eye": "rigth",
+        "patient": "Patient12",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "12.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia"]
+    },
+    {
+        "name": "Photo 14",
+        "eye": "left",
+        "patient": "Patient13",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "13.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+    {
+        "name": "Photo 15",
+        "eye": "rigth",
+        "patient": "Patient14",
+        "hospital": "Hospital3",
+        "doctor": "Doctor3",
+        "date": "14.1.2023",
+        "url": "/static/images/Untitled3.jpg",
+        "methods": ["Segmentacia", "Detekcia"]
+    },
+    {
+        "name": "Photo 16",
+        "eye": "left",
+        "patient": "Patient15",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "15.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia", "Detekcia", "Aloha", "Qloha"]
+    },
+    {
+        "name": "Photo 17",
+        "eye": "rigth",
+        "patient": "Patient16",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "16.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+    {
+        "name": "Photo 18",
+        "eye": "left",
+        "patient": "Patient17",
+        "hospital": "Hospital3",
+        "doctor": "Doctor3",
+        "date": "17.1.2023",
+        "url": "/static/images/Untitled3.jpg",
+        "methods": ["Segmentacia", "Detekcia"]
+    },
+    {
+        "name": "Photo 19",
+        "eye": "rigth",
+        "patient": "Patient18",
+        "hospital": "Hospital1",
+        "doctor": "Doctor1",
+        "date": "18.1.2023",
+        "url": "/static/images/Untitled1.jpg",
+        "methods": ["Segmentacia", "Klasifikacia"]
+    },
+    {
+        "name": "Photo 20",
+        "eye": "left",
+        "patient": "Patient19",
+        "hospital": "Hospital2",
+        "doctor": "Doctor2",
+        "date": "19.1.2023",
+        "url": "/static/images/Untitled2.jpg",
+        "methods": ["Detekcia"]
+    },
+]
+
+# Account page
+@app.route('/account')
+def account():
+    return render_template('account.html')
+
+# Account info page
+@app.route('/account/info')
+def account_info():
+    # Example response
+    user_data = USERS["user@example.com"]
+    user_data["Methods"] = ", ".join(MEDICAL_METHODS)
     return jsonify(user_data)
 
 # Landing page
@@ -90,26 +304,13 @@ def logout():
 def fotky():
     global uploaded_photo, uploaded_data
 
-    # Example patient data with "Methods" and "Patients"
-    user_data = {
-        "email": "user@example.com",
-        "user_type": "patient",
-        "first_name": "John",
-        "last_name": "Doe",
-        "gender": "Male",
-        "phone_number": "123456789",
-        "birth_date": "1990-01-01",
-        "birth_number": "9001011234",
-        "doctor_id": 22222,
-        "diagnosis_right_eye": "Healthy",
-        "diagnosis_left_eye": "Healthy",
-        "Methods": "Segmentacia, Klasifikacia",  # Example methods
-        "Patients": "Patient1, Patient2, Patient3",  # Example patients
-    }
+    # Get the current user (example: hardcoded email for now)
+    user_email = "user@example.com"
+    user_data = USERS.get(user_email)
 
     # Split the methods and patients into lists
-    method_names = [method.strip() for method in user_data['Methods'].split(',')]
-    patients = [patient.strip() for patient in user_data['Patients'].split(',')]
+    method_names = MEDICAL_METHODS
+    patients = sorted(set(photo.get("patient", "-") for photo in PHOTOS))
 
     if request.method == 'POST':
         if 'photo' not in request.files:
@@ -172,6 +373,78 @@ def upload_photo():
         file.save(file_path)
         flash('Photo uploaded successfully!', 'success')
         return redirect(url_for('fotky'))
+
+@app.route('/fotky/list', methods=['GET'])
+def fotky_list():
+    # Get the current user (example: hardcoded email for now)
+    user_email = "user@example.com"
+    user_data = USERS.get(user_email)
+
+    # Extract unique values for doctors, patients, and hospitals
+    doctors = sorted(set(photo.get("doctor", "-") for photo in PHOTOS))
+    patients = sorted(set(photo.get("patient", "-") for photo in PHOTOS))
+    hospitals = sorted(set(photo.get("hospital", "-") for photo in PHOTOS))
+
+    return render_template(
+        'fotky_list.html',
+        photos=PHOTOS,
+        doctors=doctors,
+        patients=patients,
+        hospitals=hospitals,
+        user_type=user_data.get("user_type", "guest"),
+        user_data=user_data
+    )
+
+@app.route('/fotky/detail/<photo_name>/update_methods', methods=['POST'])
+def update_photo_methods(photo_name):
+    # Find the photo by name
+    photo = next((p for p in PHOTOS if p["name"] == photo_name), None)
+
+    if not photo:
+        flash("Photo not found.", "error")
+        return redirect(url_for('fotky_list'))
+
+    # Get the selected methods from the form
+    selected_methods = request.form.getlist('methods')
+
+    # Update the photo's methods
+    photo['methods'] = selected_methods
+
+    # Simulate saving to the database (in a real app, you'd save this to your database)
+    flash(f"Metódy pre fotku {photo_name} boli aktualizované.", "success")
+    return redirect(url_for('photo_detail', photo_name=photo_name))
+
+@app.route('/fotky/detail/<photo_name>', methods=['GET', 'POST'])
+def photo_detail(photo_name):
+    # Get the current user (example: hardcoded email for now)
+    user_email = "user@example.com"
+    user_data = USERS.get(user_email)
+
+    # Add the Methods attribute to user_data
+    user_data["Methods"] = ", ".join(MEDICAL_METHODS)
+
+    # Find the photo by name
+    photo = next((p for p in PHOTOS if p["name"] == photo_name), None)
+
+    if not photo:
+        flash("Photo not found.", "error")
+        return redirect(url_for('fotky_list'))
+
+    if request.method == 'POST':
+        # Handle form submission to update methods
+        selected_methods = request.form.getlist('methods')
+        photo['methods'] = selected_methods
+
+        # Simulate saving to the database (in a real app, you'd save this to your database)
+        flash(f"Metódy pre fotku {photo_name} boli aktualizované.", "success")
+
+    # Render the photo detail page
+    return render_template(
+        'photo_detail.html',
+        photo=photo,
+        user_data=user_data,
+        medical_methods=MEDICAL_METHODS
+    )
 
 if __name__ == '__main__':
         app.run(debug=True, port=5002)

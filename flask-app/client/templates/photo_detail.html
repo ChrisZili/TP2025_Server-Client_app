@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Detail Fotky - {{ photo.name }}
+{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fotky.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="photo-methods-container">
+  <!-- Photo Section -->
+  <div>
+    <img src="{{ photo.url }}" alt="{{ photo.name }}" class="photo-preview">
+  </div>
+
+  <!-- Methods Section -->
+  <div>
+    <div>
+      {% for method in medical_methods %}
+      <div>
+        <input
+          type="checkbox"
+          id="method-{{ method }}"
+          name="methods"
+          value="{{ method }}"
+          {% if method in photo.methods %}
+          checked disabled
+          {% endif %}
+        >
+        <label for="method-{{ method }}">{{ method }}</label>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- New Button -->
+    <button id="download-button" class="action-button">Stiahni obrazy</button>
+  </div>
+</div>
+
+<!-- Details Section -->
+<div class="details-container">
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Názov</th>
+      <td style="padding: 10px; border-bottom: 1px solid #ccc;">{{ photo.name }}</td>
+    </tr>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Dátum</th>
+      <td style="padding: 10px; border-bottom: 1px solid #ccc;">{{ photo.date }}</td>
+    </tr>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Oko</th>
+      <td style="padding: 10px; border-bottom: 1px solid #ccc;">{{ photo.eye }}</td>
+    </tr>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Pacient</th>
+      <td style="padding: 10px; border-bottom: 1px solid #ccc;">{{ photo.patient }}</td>
+    </tr>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Doktor</th>
+      <td style="padding: 10px; border-bottom: 1px solid #ccc;">{{ photo.doctor }}</td>
+    </tr>
+    <tr>
+      <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Nemocnica</th>
+      <td style="padding: 10px; border-bottom: 1px solid #ccc;">{{ photo.hospital }}</td>
+    </tr>
+  </table>
+
+  <!-- Buttons Section -->
+  <div style="display: flex; gap: 10px; margin-top: 20px;">
+    <a href="{{ url_for('fotky_list') }}" class="action-button">Späť na zoznam</a>
+    {% if not medical_methods|length == photo.methods|length %}
+    <button type="button" class="action-button">Nahrat</button>
+    {% endif %}
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/fotky_details.js') }}"></script>
+{% endblock %}

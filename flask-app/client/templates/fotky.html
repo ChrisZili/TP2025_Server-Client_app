@@ -66,11 +66,12 @@ Fotky
     </div>
 
     <div class="form-group">
-      <div id="photo-preview-container" style="margin-top: 15px;">
-        <img id="photo-preview" src="#" alt="Photo Preview" style="display: none; max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
+      <div id="photo-preview-container" style="display: none;"> <!-- Hide the container by default -->
+        <img id="photo-preview" src="#" alt="Photo Preview" style="max-width: 100%; border: 1px solid #ccc; border-radius: 5px; display: none;"> <!-- Hide the image by default -->
       </div>
 
-      <p id="file-name" class="file-name" style="margin-top: 10px; font-size: 14px; color: #555;"></p>
+      <p id="file-name" class="file-name" style="margin-top: 10px; font-size: 14px; color: #555; display: none;"> <!-- Hide the file name by default -->
+      </p>
 
       <div class="file-input-wrapper" data-state="upload">
         <input type="file" id="photo" name="photo" accept="image/*" class="form-input" required>
