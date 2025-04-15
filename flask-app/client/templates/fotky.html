@@ -17,7 +17,7 @@ Fotky
 <div id="fotky-container" style="display: flex; gap: 20px;">
   <form action="{{ url_for('fotky') }}" method="POST" enctype="multipart/form-data" class="form-container" style="flex: 1;">
     
-        <!-- First dropdown menu for patients -->
+    <!-- First dropdown menu for patients -->
     <div class="form-group">
       <label for="patient">Pacient:</label>
       <select id="patient" name="patient" class="form-input" required>
@@ -53,13 +53,13 @@ Fotky
       <input type="text" id="zariadenie" name="zariadenie" placeholder="Zadajte typ kamery" class="form-input" required>
     </div>
     
-    <!-- Dynamically generated checkboxes in two columns -->
+    <!-- Dynamically generated checkboxes for medical methods -->
     <div class="form-group">
       <div class="checkbox-container">
-        {% for method in method_names %}
+        {% for method in medical_methods %}
           <div class="checkbox-group">
-            <input type="checkbox" id="method-{{ loop.index }}" name="method-{{ loop.index }}" value="{{ method }}">
-            <label for="method-{{ loop.index }}">{{ method }}</label>
+            <input type="checkbox" id="method-{{ method.name }}" name="methods" value="{{ method.name }}">
+            <label for="method-{{ method.name }}">{{ method.name }}</label>
           </div>
         {% endfor %}
       </div>

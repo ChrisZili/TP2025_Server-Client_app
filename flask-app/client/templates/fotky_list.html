@@ -147,10 +147,10 @@ Zoznam Fotiek
       const hospital = row.dataset.hospital.toLowerCase();
       const doctor = row.dataset.doctor.toLowerCase();
 
-      const matchesEye = !eyeFilter || eye.includes(eyeFilter);
-      const matchesPatient = !patientFilter || patient.includes(patientFilter);
-      const matchesHospital = !hospitalFilter || hospital.includes(hospitalFilter);
-      const matchesDoctor = !doctorFilter || doctor.includes(doctorFilter);
+      const matchesEye = !eyeFilter || eye === eyeFilter;
+      const matchesPatient = !patientFilter || patient === patientFilter;
+      const matchesHospital = !hospitalFilter || hospital === hospitalFilter;
+      const matchesDoctor = !doctorFilter || doctor === doctorFilter;
 
       if (matchesEye && matchesPatient && matchesHospital && matchesDoctor) {
         row.style.display = '';

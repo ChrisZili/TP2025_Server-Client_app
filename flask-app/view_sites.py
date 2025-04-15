@@ -13,13 +13,49 @@ uploaded_photo = None
 uploaded_data = {}
 
 # Centralized structure for medical methods
-MEDICAL_METHODS = ["Segmentacia", "Klasifikacia", "Detekcia", "Aloha", "Qloha"]
+MEDICAL_METHODS = [
+    {
+        "name": "Segmentacia",
+        "description": "Segmentation of medical images.",
+        "mask": "Binary mask for segmentation.",
+        "diagnosis": "Used for identifying regions of interest.",
+        "data": {"complexity": "High", "tools": ["Tool A", "Tool B"]}
+    },
+    {
+        "name": "Klasifikacia",
+        "description": "Classification of medical conditions.",
+        "mask": "Not applicable.",
+        "diagnosis": "Used for categorizing medical conditions.",
+        "data": {"accuracy": "95%", "tools": ["Tool C"]}
+    },
+    {
+        "name": "Detekcia",
+        "description": "Detection of anomalies in images.",
+        "mask": "Bounding boxes for detected anomalies.",
+        "diagnosis": "Used for identifying anomalies.",
+        "data": {"speed": "Fast", "tools": ["Tool D", "Tool E"]}
+    },
+    {
+        "name": "Aloha",
+        "description": "Experimental method Aloha.",
+        "mask": "Not applicable.",
+        "diagnosis": "Experimental diagnostic method.",
+        "data": {"notes": "Still in testing phase."}
+    },
+    {
+        "name": "Qloha",
+        "description": "Experimental method Qloha.",
+        "mask": "Not applicable.",
+        "diagnosis": "Experimental diagnostic method.",
+        "data": {"tools": ["Tool F"], "limitations": "Requires high computational power."}
+    }
+]
 
 # Centralized structure for users
 USERS = {
     "user@example.com": {
         "email": "user@example.com",
-        "user_type": "doctor",
+        "user_type": "admin",
         "first_name": "John",
         "last_name": "Doe",
         "gender": "Male",
@@ -247,7 +283,11 @@ def account():
 def account_info():
     # Example response
     user_data = USERS["user@example.com"]
-    user_data["Methods"] = ", ".join(MEDICAL_METHODS)
+    
+    # Extract method names from the MEDICAL_METHODS structure
+    method_names = [method["name"] for method in MEDICAL_METHODS if "name" in method]
+    user_data["Methods"] = ", ".join(method_names)
+    
     return jsonify(user_data)
 
 # Landing page
@@ -308,8 +348,7 @@ def fotky():
     user_email = "user@example.com"
     user_data = USERS.get(user_email)
 
-    # Split the methods and patients into lists
-    method_names = MEDICAL_METHODS
+    # Extract patients from the PHOTOS structure
     patients = sorted(set(photo.get("patient", "-") for photo in PHOTOS))
 
     if request.method == 'POST':
@@ -338,11 +377,12 @@ def fotky():
             flash('Photo and data uploaded successfully!', 'success')
             return redirect(url_for('fotky'))
 
+    # Pass the medical methods to the template
     return render_template(
         'fotky.html',
         photo_uploaded=uploaded_photo is not None,
         uploaded_data=uploaded_data,
-        method_names=method_names,
+        medical_methods=MEDICAL_METHODS,  # Pass the updated structure
         patients=patients
     )
 
@@ -420,8 +460,9 @@ def photo_detail(photo_name):
     user_email = "user@example.com"
     user_data = USERS.get(user_email)
 
-    # Add the Methods attribute to user_data
-    user_data["Methods"] = ", ".join(MEDICAL_METHODS)
+    # Extract method names from the MEDICAL_METHODS structure
+    method_names = [method["name"] for method in MEDICAL_METHODS if "name" in method]
+    user_data["Methods"] = ", ".join(method_names)
 
     # Find the photo by name
     photo = next((p for p in PHOTOS if p["name"] == photo_name), None)

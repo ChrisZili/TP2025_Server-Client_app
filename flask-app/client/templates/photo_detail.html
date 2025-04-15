@@ -22,14 +22,14 @@ Detail Fotky - {{ photo.name }}
       <div>
         <input
           type="checkbox"
-          id="method-{{ method }}"
+          id="method-{{ method.name }}"
           name="methods"
-          value="{{ method }}"
-          {% if method in photo.methods %}
+          value="{{ method.name }}"
+          {% if method.name in photo.methods %}
           checked disabled
           {% endif %}
         >
-        <label for="method-{{ method }}">{{ method }}</label>
+        <label for="method-{{ method.name }}">{{ method.name }}</label>
       </div>
       {% endfor %}
     </div>
