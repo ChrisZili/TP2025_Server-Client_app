@@ -1,9 +1,9 @@
 import logging
 from server.database import db
 from server.models.user import User
-from server.services.technician_service import TechnicianService
-from server.services.patient_service import PatientService
-from server.services.doctor_service import DoctorService
+from server.services.technicians_service import TechniciansService
+from server.services.patients_service import PatientsService
+from server.services.doctors_service import DoctorsService
 
 logger = logging.getLogger(__name__)
 
@@ -30,13 +30,13 @@ class RegisterService:
             # Volanie príslušnej registračnej metódy podľa typu používateľa
             if user_type == 'patient':
                 logger.info("Volanie registračnej metódy pre pacienta")
-                return PatientService().register_patient(data)
+                return PatientsService().register_patient(data)
             elif user_type == 'technician':
                 logger.info("Volanie registračnej metódy pre technika")
-                return TechnicianService().register_technician(data)
+                return TechniciansService().add_technician(data)
             elif user_type == 'doctor':
                 logger.info("Volanie registračnej metódy pre lekára")
-                return DoctorService().register_doctor(data)
+                return DoctorsService().register_doctor(data)
             else:
                 logger.error("Registrácia zlyhala: Neplatný user_type: %s", user_type)
                 return {'error': 'Invalid user type'}, 400
