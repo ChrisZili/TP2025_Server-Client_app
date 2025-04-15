@@ -94,7 +94,7 @@ def get_hospital(hospital_id):
         if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
             return jsonify({'error': 'Internal server error'}), 500
         else:
-            return render_template("hospital_details.html", error="Internal server error"), 500
+            return render_template("error_500.html", error="Internal server error"), 500
 
     if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
         return jsonify(response_data), status
@@ -111,14 +111,16 @@ def get_hospitals():
     Ak nie je, prístup je odmietnutý.
     """
     user_id = get_jwt_identity()
-
     try:
         user_id_int = int(user_id)
-        message, status = hospital_service.check_user_id
+        message, status = hospital_service.check_user_id(user_id_int)
     except (ValueError, TypeError):
         if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
             return jsonify({'error': 'Internal server error'}), 500
         else:
-            return render_template("hospitals.html", error="Internal server error"), 500
-    logger.info("Používateľ s id %s pristupuje na stránku nemocníc", user_id_int)
-    return render_template("hospitals.html"), status
+            return render_template("error_500.html", error="Internal server error"), 500
+    if status != 200:
+        return render_template('error_404.html'), 404
+    else:
+        logger.info("Používateľ s id %s pristupuje na stránku nemocníc", user_id_int)
+        return render_template("hospitals.html"), status
