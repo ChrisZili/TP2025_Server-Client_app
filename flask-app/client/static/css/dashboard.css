@@ -1,46 +1,161 @@
 /* Karty */
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 .card {
-  flex: 1 1 200px;
-  padding: 15px;
-  border-radius: 10px;
-  color: white;
+  background: #fff;
+  color: #333;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
   cursor: pointer;
+  min-height: 160px;
 }
 
-.card.blue {
-  background: linear-gradient(90deg, #2193b0, #6dd5ed);
-}
-.card.purple {
-  background: linear-gradient(90deg, #cc2b5e, #753a88);
-}
-.card.red {
-  background: linear-gradient(90deg, #e52d27, #b31217);
-}
-.card.green {
-  background: linear-gradient(90deg, #56ab2f, #a8e063);
-}
-.card.orange {
-  background: linear-gradient(90deg, #f7971e, #ffd200);
-}
-.card.teal {
-  background: linear-gradient(90deg, #11998e, #38ef7d);
+.card:hover {
+  transform: translateY(-5px);
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-weight: bold;
+  color: white;
+  font-size: 1rem;
+}
+
+.card-body {
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.card-body .highlight {
+  display: block;
+  font-weight: bold;
+  color: #0066cc;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+/* Základ pre všetky karty - rovnaká modrá paleta, rôzne smery gradientu */
+
+.card.hospitalSky .card-header {
+  background: linear-gradient(to right, #1976d2, #2196f3);
+}
+
+.card.adminSteel .card-header {
+  background: linear-gradient(to left, #1976d2, #2196f3);
+}
+
+.card.doctorOcean .card-header {
+  background: linear-gradient(to top right, #1976d2, #2196f3);
+}
+
+.card.techNavy .card-header {
+  background: linear-gradient(to bottom right, #1976d2, #2196f3);
+}
+
+.card.patientSoft .card-header {
+  background: linear-gradient(to top left, #1976d2, #2196f3);
+}
+
+.card.photoSky .card-header {
+  background: linear-gradient(to bottom left, #1976d2, #2196f3);
+}
+
+.card.listBlue .card-header {
+  background: linear-gradient(to right, #1976d2, #2196f3);
+}
+
+.card.resultsIce .card-header {
+  background: linear-gradient(to left, #1976d2, #2196f3);
+}
+
+.card.messageCool .card-header {
+  background: linear-gradient(to bottom, #1976d2, #2196f3);
+}
+
+.card.addPhoto .card-header {
+  background: linear-gradient(to top, #1976d2, #2196f3);
+}
+
+.card.newPatient .card-header {
+  background: linear-gradient(135deg, #1976d2, #2196f3);
+}
+
+
+
+
+
+
+
+/*
+.card.hospitalSky .card-header {
+  background: linear-gradient(to right, #00B4DB, #0083B0);
+}
+
+.card.adminShield .card-header {
+  background: linear-gradient(to right, #F7971E, #FFD200);
+}
+
+.card.doctorOcean .card-header {
+  background: linear-gradient(to right, #1FA2FF, #12D8FA);
+}
+
+.card.patientCare .card-header {
+  background: linear-gradient(to right, #A770EF, #FDB99B);
+}
+
+.card.techGear .card-header {
+  background: linear-gradient(to right, #11998E, #38EF7D);
+}
+
+.card.photoFlow .card-header {
+  background: linear-gradient(to right, #f7971e, #ffd200);
+}
+
+.card.listView .card-header {
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+}
+
+.card.resultsGlow .card-header {
+  background: linear-gradient(to right, #43cea2, #185a9d);
+}
+
+.card.messagePulse .card-header {
+  background: linear-gradient(to right, #fc6076, #ff9a44);
+}
+.card.addPhoto .card-header {
+  background: linear-gradient(to right, #ff9966, #ff5e62);
+}
+
+.card.newPatient .card-header {
+  background: linear-gradient(to right, #56ab2f, #a8e063);
+}
+*/
+
+
+
+#dashboard-content {
+  margin-top: 30px
+}
 .card:hover {
   opacity: 0.9;
 }
 
-/* Pre obrazovky menšie ako 600px */
 @media (max-width: 600px) {
   .cards {
     flex-direction: column;
   }
   .card {
+    max-width: 600px;
     flex: 1 1 100%;
   }
 }

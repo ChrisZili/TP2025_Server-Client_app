@@ -2,12 +2,20 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8"/>
-  <title>{% block title %}Moji Lekári{% endblock %}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-  {% block stylesheet%}{% endblock %}
+  <title>{% block title %}eVýsledky{% endblock %}</title>
 
+   <link rel="preload" href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/css/all.min.css') }}" as="style">
+   <link rel="preload" href="{{ url_for('static', filename='css/layout.css') }}" as="style">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+  {% block stylesheet%}{% endblock %}
+  {% block metadata %}
+  <meta name="description" content="Domovská stránka systému eVysledky – rýchly prehľad výsledkov, správ a profilu.">
+  {% endblock %}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
 
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}" />
@@ -18,7 +26,7 @@
 </head>
 <body>
   <!-- SIDEBAR: => Uisti sa, že je presne takto pomenovaný id="sidebar" -->
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar  hidden-js" id="sidebar">
     <div class="user-info">
       <i class="fas fa-user-circle"></i>
       <span class="sidebar-text" id="username-span"></span>
@@ -31,16 +39,16 @@
   </div>
 
   <!-- main + top-bar -->
-  <div class="main" id="main">
+  <div class="main  hidden-js" id="main">
     <div class="top-bar">
       <div id="hamburger" class="hamburger"><i class="fas fa-bars"></i></div>
-      <h2>{% block header %}Moji Lekári{% endblock %}</h2>
+      <h1>{% block header %}eVýsledky{% endblock %}</h1>
     </div>
     <div class="content" id="content">
       {% block content %}{% endblock %}
     </div>
   </div>
     {% block scripts %}{% endblock %}
-  <script src="{{ url_for('static', filename='js/layout.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/layout.js') }}" defer></script>
 </body>
 </html>

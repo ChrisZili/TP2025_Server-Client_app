@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1) Načítame user
   async function loadUserInfo() {
     try {
-      const response = await fetchWithAuth('/account/info');
+      const response = await fetchWithAuth('/settings/info');
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa.');
       }

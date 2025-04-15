@@ -24,5 +24,5 @@ Môj profil
 
 {% block scripts %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='js/account.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/account.js') }}" defer></script>
 {% endblock %}

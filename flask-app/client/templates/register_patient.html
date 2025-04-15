@@ -3,10 +3,13 @@
 {% block title %}
 Patient Registration
 {% endblock %}
-
+{% block metadata %}
+  <meta name="description" content="Registracna stránka systému eVysledky - pacient.">
+{% endblock %}
 {% block stylesheet %}
   {{ super() }}
   <!-- Link na vlastný CSS súbor -->
+  <link rel="preload" href="{{ url_for('static', filename='css/register_patient.css') }}" as="style">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/register_patient.css') }}">
 {% endblock %}
 
@@ -205,5 +208,5 @@ Patient Registration
 {% block scripts %}
   {{ super() }}
   <!-- Link na externý JS súbor -->
-  <script src="{{ url_for('static', filename='js/register_patient.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/register_patient.js') }}" defer></script>
 {% endblock %}

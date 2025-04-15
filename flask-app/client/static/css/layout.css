@@ -5,6 +5,9 @@
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
+.hidden-js {
+  display: none !important;
+}
 
 /* SIDEBAR – stavy ovládané v JS: .expanded / .collapsed / .hidden */
 .sidebar {
@@ -12,7 +15,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  background: linear-gradient(180deg, #1a7891, #4ebfdc);
+  background: linear-gradient(180deg, #056887, #097293);
   color: white;
   overflow: hidden;
   transition: width 0.3s ease;
@@ -59,7 +62,7 @@
   transition: background-color 0.2s ease;
 }
 .sidebar ul li:hover {
-  background: linear-gradient(90deg,  #2287a6, #4ebfdc);
+  background: linear-gradient(90deg, #10779c, #4ebfdc);
 }
 
 /* -- Ak používaš <a> v li (anchor-based menu) -- */
