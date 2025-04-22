@@ -1,0 +1,364 @@
+MEDICAL_METHODS = [
+    {
+        "name": "Segmentacia",
+        "description": "Segmentation of medical images.",
+        "mask": "Binary mask for segmentation.",
+        "diagnosis": "Used for identifying regions of interest.",
+        "data": {"complexity": "High", "tools": ["Tool A", "Tool B"]}
+    },
+    {
+        "name": "Klasifikacia",
+        "description": "Classification of medical conditions.",
+        "mask": "Not applicable.",
+        "diagnosis": "Used for categorizing medical conditions.",
+        "data": {"accuracy": "95%", "tools": ["Tool C"]}
+    },
+    {
+        "name": "Detekcia",
+        "description": "Detection of anomalies in images.",
+        "mask": "Bounding boxes for detected anomalies.",
+        "diagnosis": "Used for identifying anomalies.",
+        "data": {"speed": "Fast", "tools": ["Tool D", "Tool E"]}
+    },
+    {
+        "name": "Aloha",
+        "description": "Experimental method Aloha.",
+        "mask": "Not applicable.",
+        "diagnosis": "Experimental diagnostic method.",
+        "data": {"notes": "Still in testing phase."}
+    },
+    {
+        "name": "Qloha",
+        "description": "Experimental method Qloha.",
+        "mask": "Not applicable.",
+        "diagnosis": "Experimental diagnostic method.",
+        "data": {"tools": ["Tool F"], "limitations": "Requires high computational power."}
+    }
+]
+# Centralized structure for users
+USER_DATA = {
+    "id": 1,  # Explicit: Primary key for the user
+    "email": "john.doe@example.com",  # Explicit: User's email address
+    "password_hash": "pbkdf2:sha256:150000$examplehash",  # Explicit: Example hashed password
+    "created_at": "2023-01-01T12:00:00Z",  # Explicit: Timestamp when the user account was created
+    "user_type": "doctor",  # Explicit: User type (e.g., "super_admin", "admin", "doctor", "technician", "patient", "user")
+    "created_images": [  # Explicit: Relationship to images created by the user
+        {"id": 101, "name": "Image1.jpg", "created_at": "2023-01-10T10:00:00Z"},
+        {"id": 102, "name": "Image2.jpg", "created_at": "2023-01-15T14:30:00Z"},
+    ],
+    "info": {  # Explicit: Returned by the `get_info` method
+        "email": "john.doe@example.com",
+        "user_type": "doctor",
+        "created_at": "2023-01-01T12:00:00Z",
+    },
+}
+
+ADMIN_DATA = {
+    "id": 1,  # Explicit: Primary key for the admin
+    "first_name": "Admin",  # Explicit: Admin's first name
+    "last_name": "Doe",  # Explicit: Admin's last name
+    "phone_number": "+421987654321",  # Explicit: Unique phone number
+    "gender": "female",  # Explicit: Gender of the admin
+    "hospital_id": 1,  # Explicit: Foreign key to the hospital the admin belongs to
+    "hospital": {  # Explicit: Relationship to the hospital
+        "id": 1,
+        "name": "Central Hospital",
+        "street": "Main Street 123",  # Implied: From `get_info_pat` method
+        "city": "Bratislava",
+        "country": "Slovakia",
+    },
+    "info": {  # Implied: From `get_info_pat` method
+        "first_name": "Alice",
+        "last_name": "Johnson",
+        "phone_number": "+421987654321",
+        "gender": "female",
+        "street": "Main Street 123",  # Added from the hospital relationship
+    },
+    "full_name": "Alice Johnson",  # Implied: From `get_full_name` method
+}
+
+DOCTOR_DATA = {
+    "id": 1,  # Primary key for the doctor
+    "first_name": "Doctor",  # Doctor's first name
+    "last_name": "Doe",  # Doctor's last name
+    "phone_number": "+421123456789",  # Unique phone number
+    "gender": "male",  # Gender of the doctor
+    "title": "Dr.",  # Optional title (e.g., "Dr.", "Prof.")
+    "suffix": "PhD",  # Optional suffix (e.g., "PhD", "MD")
+    "super_doctor": True,  # Indicates if the doctor is a "super doctor"
+    "hospital_id": 1,  # Foreign key to the hospital the doctor belongs to
+    "hospital": {  # Relationship to the hospital
+        "id": 1,
+        "name": "General Hospital",
+        "address": "123 Main Street, Bratislava",
+    },
+    "patients": [  # Relationship to patients managed by the doctor
+        {
+            "id": 101,
+            "first_name": "Alice",
+            "last_name": "Smith",
+            "gender": "female",
+            "birth_date": "1990-05-15",
+        },
+        {
+            "id": 102,
+            "first_name": "Bob",
+            "last_name": "Johnson",
+            "gender": "male",
+            "birth_date": "1985-08-20",
+        },
+    ],
+    "created_images": [  # Images created by the doctor
+        {"id": 201, "name": "X-Ray1.jpg", "created_at": "2023-01-10T10:00:00Z"},
+        {"id": 202, "name": "MRI_Scan.jpg", "created_at": "2023-01-15T14:30:00Z"},
+    ],
+    "info": {  # Additional information from `get_info`
+        "title": "Dr.",
+        "suffix": "PhD",
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "+421123456789",
+        "gender": "male",
+    },
+    "full_name": "Dr. John Doe, PhD",  # Full name generated by `get_full_name`
+}
+
+HOSPITAL_DATA = {
+    "id": 1,  # Explicit: Primary key for the hospital
+    "name": "Central Hospital",  # Explicit: Name of the hospital
+    "country": "Slovakia",  # Explicit: Country where the hospital is located
+    "city": "Bratislava",  # Explicit: City where the hospital is located
+    "street": "Main Street 123",  # Explicit: Street address of the hospital
+    "postal_code": "81101",  # Explicit: Postal code of the hospital
+    "hospital_code": "abcd1234efgh5678",  # Explicit: Unique 16-character hospital code
+    "doctors": [  # Explicit: Relationship to doctors in the hospital
+        {
+            "id": 1,
+            "first_name": "John",
+            "last_name": "Doe",
+            "phone_number": "+421123456789",
+            "gender": "male",
+            "title": "Dr.",
+            "suffix": "PhD",
+            "super_doctor": True,
+        },
+        {
+            "id": 2,
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "phone_number": "+421987654321",
+            "gender": "female",
+            "title": "Dr.",
+            "suffix": "MD",
+            "super_doctor": False,
+        },
+    ],
+    "technicians": [  # Explicit: Relationship to technicians in the hospital
+        {
+            "id": 1,
+            "first_name": "Alice",
+            "last_name": "Brown",
+            "phone_number": "+421555666777",
+            "gender": "female",
+        },
+        {
+            "id": 2,
+            "first_name": "Bob",
+            "last_name": "White",
+            "phone_number": "+421444555666",
+            "gender": "male",
+        },
+    ],
+    "admins": [  # Explicit: Relationship to admins in the hospital
+        {
+            "id": 1,
+            "first_name": "Alice",
+            "last_name": "Johnson",
+            "phone_number": "+421987654321",
+            "gender": "female",
+        },
+        {
+            "id": 2,
+            "first_name": "Bob",
+            "last_name": "Williams",
+            "phone_number": "+421123123123",
+            "gender": "male",
+        },
+    ],
+    "info": {  # Implied: From `get_info` method
+        "name": "Central Hospital",
+        "country": "Slovakia",
+        "city": "Bratislava",
+        "street": "Main Street 123",
+        "postal_code": "81101",
+    },
+    "hospital_code_info": "abcd1234efgh5678",  # Implied: From `get_hospital_code` method
+}
+
+TECHNICIAN_DATA = {
+    "id": 1,  # Explicit: Primary key for the technician
+    "first_name": "Bob",  # Explicit: Technician's first name
+    "last_name": "Brown",  # Explicit: Technician's last name
+    "hospital_id": 1,  # Explicit: Foreign key to the hospital the technician belongs to
+    "hospital": {  # Explicit: Relationship to the hospital
+        "id": 1,
+        "name": "Central Hospital",
+        "street": "Main Street 123",
+        "city": "Bratislava",
+        "country": "Slovakia",
+    },
+    "full_name": "Bob Brown",  # Implied: From `get_full_name` method
+    "info": {  # Implied: From `get_info` method
+        "id": 1,
+        "first_name": "Bob",
+        "last_name": "Brown",
+        "hospital_id": 1,
+    },
+}
+
+ORIGINAL_IMAGE_DATA = {
+    "id": 1,  # Explicit: Primary key for the image
+    "original_image_path": "/images/original/image1.jpg",  # Explicit: Path to the original image
+    "quality": "good",  # Explicit: Quality of the image (default is "good")
+    "created_at": "2023-04-01T12:00:00Z",  # Explicit: Timestamp when the image was created
+    "eye_side": "prave",  # Explicit: Indicates which eye the image corresponds to ("prave" or "lave")
+    "diagnosis": "Glaucoma",  # Explicit: Diagnosis associated with the image (nullable)
+
+    "device_id": 1,  # Explicit: Foreign key to the device used to capture the image
+    "device": {  # Explicit: Relationship to the device
+        "id": 1,
+        "name": "OCT Scanner",
+        "manufacturer": "Medical Devices Inc.",
+        "model": "OCT-2025",
+    },
+
+    "creator_id": 1,  # Explicit: Foreign key to the user who created the image
+    "creator": {  # Explicit: Relationship to the creator (user)
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "user_type": "technician",
+    },
+
+    "patient_id": 101,  # Explicit: Foreign key to the patient associated with the image
+    "patient": {  # Explicit: Relationship to the patient
+        "id": 101,
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "birth_date": "1990-05-15",
+        "gender": "female",
+    },
+
+    "processed_images": [  # Explicit: Relationship to processed images derived from this original image
+        {
+            "id": 201,
+            "processed_image_path": "/images/processed/image1_processed.jpg",
+            "algorithm": "DeepLearningModelV1",
+            "created_at": "2023-04-02T14:00:00Z",
+        },
+        {
+            "id": 202,
+            "processed_image_path": "/images/processed/image1_processed_v2.jpg",
+            "algorithm": "DeepLearningModelV2",
+            "created_at": "2023-04-03T10:30:00Z",
+        },
+    ],
+}
+
+PATIENT_DATA = {
+    "id": 101,  # Explicit: Primary key for the patient
+    "first_name": "Patient",  # Explicit: Patient's first name
+    "last_name": "Doe",  # Explicit: Patient's last name
+    "phone_number": "+421987654321",  # Explicit: Unique phone number
+    "birth_date": "1990-05-15",  # Explicit: Patient's birth date in ISO format
+    "birth_number": "9005151234",  # Explicit: Unique birth number
+    "gender": "female",  # Explicit: Patient's gender
+    "doctor_id": 1,  # Explicit: Foreign key to the doctor managing the patient
+    "doctor": {  # Explicit: Relationship to the doctor
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone_number": "+421123456789",
+        "gender": "male",
+        "title": "Dr.",
+        "suffix": "PhD",
+    },
+    "diagnosis_right_eye": "Glaucoma",  # Explicit: Diagnosis for the right eye (nullable)
+    "diagnosis_left_eye": "Cataract",  # Explicit: Diagnosis for the left eye (nullable)
+    "images": [  # Explicit: Relationship to original images associated with the patient
+        {
+            "id": 201,
+            "original_image_path": "/images/original/image1.jpg",
+            "quality": "good",
+            "created_at": "2023-04-01T12:00:00Z",
+            "eye_side": "prave",
+            "diagnosis": "Glaucoma",
+        },
+        {
+            "id": 202,
+            "original_image_path": "/images/original/image2.jpg",
+            "quality": "good",
+            "created_at": "2023-04-02T14:30:00Z",
+            "eye_side": "lave",
+            "diagnosis": "Cataract",
+        },
+    ],
+    "full_name": "Alice Smith",  # Implied: From `get_full_name` method
+    "info": {  # Implied: From `get_info` method
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "phone_number": "+421987654321",
+        "birth_date": "1990-05-15",
+        "birth_number": "9005151234",
+        "gender": "female",
+        "doctor_id": 1,
+        "diagnosis_right_eye": "Glaucoma",
+        "diagnosis_left_eye": "Cataract",
+    },
+}
+
+PROCESSED_IMAGE_DATA = {
+    "id": 201,  # Explicit: Primary key for the processed image
+    "created_at": "2023-04-02T14:00:00Z",  # Explicit: Timestamp when the processed image was created
+    "status": "completed",  # Explicit: Status of the processing (default is "pending")
+    "technical_notes": "Processed with high accuracy.",  # Explicit: Technical notes about the processing (nullable)
+    "diagnostic_notes": "Detected early signs of glaucoma.",  # Explicit: Diagnostic notes about the processing (nullable)
+    "process_type": {  # Explicit: Relationship to the process type
+        "id": 1,
+        "name": "Segmentation",
+        "description": "Segmentation of retinal layers.",
+    },
+    "processed_image_path": "/images/processed/image1_processed.jpg",  # Explicit: Path to the processed image (nullable)
+    "segmentation_mask_path": "/images/processed/mask1.jpg",  # Explicit: Path to the segmentation mask (nullable)
+    "bounding_boxes_path": "/images/processed/bounding_boxes1.json",  # Explicit: Path to the bounding boxes file (nullable)
+    "answer": {  # Explicit: JSON field for additional processing results (nullable)
+        "glaucoma_probability": 0.85,
+        "retinal_thickness": 250,
+    },
+    "original_image_id": 101,  # Explicit: Foreign key to the original image
+    "original_image": {  # Explicit: Relationship to the original image
+        "id": 101,
+        "original_image_path": "/images/original/image1.jpg",
+        "quality": "good",
+        "created_at": "2023-04-01T12:00:00Z",
+        "eye_side": "prave",
+        "diagnosis": "Glaucoma",
+    },
+}
+
+SUPER_ADMIN_DATA = {
+    "id": 1,  # Explicit: Primary key for the super admin
+    "user_type": "super_admin",  # Explicit: Polymorphic identity for the super admin
+    "info": {  # Implied: From `get_info_pat` method
+        "id": 1,
+        "user_type": "super_admin",
+    },
+    "full_name": "Super Admin",  # Implied: From `get_full_name` method
+}
+
+
+
+
+
+

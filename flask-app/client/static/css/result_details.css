@@ -1,0 +1,228 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+}
+
+.responsive-container {
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Photo Previews */
+.result-photo-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.result-photo-container .image-preview {
+  flex: 1;
+  text-align: center;
+}
+
+.result-photo-container .image-preview h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.result-photo-container .image-preview img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+}
+
+/* Details Section */
+.details-container {
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.details-container h3 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+}
+
+.details-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.details-container th,
+.details-container td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.details-container th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.details-container td {
+  text-align: right;
+}
+
+.details-container .hidden-input {
+  display: none;
+}
+
+.details-container textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+  font-size: 14px;
+}
+
+/* Buttons */
+.action-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: -webkit-fill-available;
+  margin-bottom: 3%;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
+}
+
+.action-button-green {
+  background-color: #28a745;
+}
+
+.action-button-green:hover {
+  background-color: #218838;
+}
+
+.back-to-list-button {
+  background-color: #6c757d; /* Gray background */
+}
+
+.back-to-list-button:hover {
+  background-color: #5a6268; /* Darker gray on hover */
+}
+
+.processed-table-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Space between buttons */
+  margin-top: 20px;
+}
+
+.back-button-container {
+  text-align: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add spacing above the button */
+}
+
+/* Resizable Table */
+.resizable-table-container {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  margin-bottom: 20px;
+}
+
+.resizable-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.resizable-table th,
+.resizable-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.resizable-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.resizable-table td {
+  text-align: right;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+
+  .responsive-container {
+    max-width: 95%;
+    padding: 10px;
+  }
+  .result-photo-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .result-photo-container .image-preview {
+    width: 100%;
+  }
+
+  .details-container table th,
+  .details-container table td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .action-button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+
+  .details-container textarea {
+    height: 60px;
+  }
+  .action-button {
+    width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .details-container table th,
+  .details-container table td {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .action-button {
+    font-size: 10px;
+    padding: 6px 12px;
+    width: 100%;
+  }
+
+  .result-photo-container .image-preview img {
+    width: 100%;
+  }
+}

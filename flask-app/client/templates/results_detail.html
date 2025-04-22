@@ -1,0 +1,189 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Detail Spracovaného Obrázku - {{ processed_image.id if processed_image else "N/A" }}
+{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/result_details.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="responsive-container">
+  <!-- Processed Image Previews -->
+  <div class="result-photo-container">
+    <div class="image-preview">
+      <h4>Spracovaná fotka</h4>
+      <img id="preview-image" src="{{ urls.preview_url }}" alt="Processed Image">
+    </div>
+    {% if urls.mask_url %}
+    <div class="image-preview">
+      <h4>Segmentačná maska</h4>
+      <img id="mask-image" src="{{ urls.mask_url }}" alt="Segmentation Mask">
+    </div>
+    {% endif %}
+    {% if urls.bounding_boxes_url %}
+    <div class="image-preview">
+      <h4>Ohraničenia</h4>
+      <img id="bounding-boxes-image" src="{{ urls.bounding_boxes_url }}" alt="Bounding Boxes">
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Combined Details Section -->
+  <div class="details-container">
+    <div class="details-group">
+      <!-- Processed Image Details -->
+      <h3>Zpracovaná fotka</h3>
+      <!-- Processed Photo Table -->
+      <div class="resizable-table-container">
+        <table class="resizable-table">
+          {% if user.user_type in ["admin", "super_admin"] %}
+          <tr>
+            <th>ID</th>
+            <td>
+              <span id="id-text">{{ processed_image.id }}</span>
+              {% if user.user_type == "super_admin" %}
+              <input type="text" id="id-input" value="{{ processed_image.id }}" class="hidden-input">
+              {% else %}
+              <input type="text" id="id-input" value="{{ processed_image.id }}" class="hidden-input" disabled>
+              {% endif %}
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+            <th>Dátum spracovania</th>
+            <td>
+              <span id="created-at-text">{{ processed_image.created_at }}</span>
+              <input type="text" id="created-at-input" value="{{ processed_image.created_at }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Metóda</th>
+            <td>
+              <span id="method-text">{{ processed_image.process_type.name }}</span>
+              <input type="text" id="method-input" value="{{ processed_image.process_type.name }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Stav spracovania</th>
+            <td>
+              <span id="status-text">{{ processed_image.status }}</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Poznámky</th>
+            <td>
+              <span id="technical-notes-text">{{ processed_image.technical_notes }}</span>
+              <textarea id="technical-notes-input" class="hidden-input">{{ processed_image.technical_notes }}</textarea>
+            </td>
+          </tr>
+          <tr>
+            <th>Diagnostické poznamky</th>
+            <td>
+              <span id="diagnostic-notes-text">{{ processed_image.diagnostic_notes }}</span>
+              <textarea id="diagnostic-notes-input" class="hidden-input">{{ processed_image.diagnostic_notes }}</textarea>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Button Below Processed Table -->
+      <div class="processed-table-button-container">
+        <button id="edit-details-button" class="action-button">Upraviť</button>
+        <button id="save-details-button" class="action-button action-button-green" style="display: none;">Uložiť</button>
+      </div>
+
+      <!-- Original Image Details -->
+      {% if original_image %}
+      <h3>Pôvodná fotka</h3>
+      <div class="resizable-table-container">
+        <table class="resizable-table">
+          <tr>
+            <th>ID</th>
+            <td>
+              <span id="original-id-text">{{ original_image.id if original_image else "N/A" }}</span>
+              {% if user.user_type == "super_admin" %}
+              <input type="text" id="original-id-input" value="{{ original_image.id }}" class="hidden-input">
+              {% else %}
+              <input type="text" id="original-id-input" value="{{ original_image.id }}" class="hidden-input" disabled>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>Názov</th>
+            <td>
+              <span id="original-name-text">{{ original_image.name if original_image else "N/A" }}</span>
+              <input type="text" id="original-name-input" value="{{ original_image.name }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Typ Zariadenia</th>
+            <td>
+              <span id="original-device-type-text">{{ original_image.device_type if original_image else "N/A" }}</span>
+              <input type="text" id="original-device-type-input" value="{{ original_image.device_type }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Typ Kamery</th>
+            <td>
+              <span id="original-camera-type-text">{{ original_image.camera_type if original_image else "N/A" }}</span>
+              <input type="text" id="original-camera-type-input" value="{{ original_image.camera_type }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Kvalita</th>
+            <td>
+              <span id="original-quality-text">{{ original_image.quality if original_image else "N/A" }}</span>
+              <input type="text" id="original-quality-input" value="{{ original_image.quality }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Diagnóza</th>
+            <td>
+              <span id="original-diagnosis-text">{{ original_image.diagnosis if original_image else "N/A" }}</span>
+              <input type="text" id="original-diagnosis-input" value="{{ original_image.diagnosis }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Oko</th>
+            <td>
+              <span id="original-eye-side-text">{{ original_image.eye_side if original_image else "N/A" }}</span>
+              <input type="text" id="original-eye-side-input" value="{{ original_image.eye_side }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+          <tr>
+            <th>Dátum Vytvorenia</th>
+            <td>
+              <span id="original-created-at-text">{{ original_image.created_at if original_image else "N/A" }}</span>
+              <input type="text" id="original-created-at-input" value="{{ original_image.created_at }}" class="hidden-input" disabled>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="back-button-container">
+        <button id="back-button" class="action-button back-to-list-button">Back</button>
+      </div>
+      {% else %}
+      <p>Informacie originalnej fotky su nedostupne</p>
+      {% endif %}
+    </div>
+
+    <!-- Back Button -->
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Pass processed_image, original_image, and urls to JavaScript
+  const processedImage = {{ processed_image | tojson }};
+  const originalImage = {{ original_image | tojson }};
+  const urls = {{ urls | tojson }};
+
+  console.log("Processed Image:", processedImage);
+  console.log("Original Image:", originalImage);
+  console.log("URLs:", urls);
+</script>
+<script src="{{ url_for('static', filename='js/results_details.js') }}"></script>
+{% endblock %}

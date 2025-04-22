@@ -1,40 +1,45 @@
 {% extends "base.html" %}
 
 {% block title %}
-Moji Lekári - Landing
+eVýsledky - Landing
 {% endblock %}
 
 {% block stylesheet %}
   {{ super() }}
-  <!-- Sem linkuješ samostatný CSS súbor pre landing page.
-       Napr. landing.css umiestnený v static/css/landing.css.
-  -->
+  <link rel="preload" href="{{ url_for('static', filename='css/landing.css') }}" as="style">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="landing-container">
-  <!-- Overlay cez celú stránku -->
-  <div class="landing-overlay"></div>
+
+  <!-- Overlay -->
+  <div class="landing-overlay" aria-hidden="true"></div>
 
   <!-- Horný pás -->
-  <div class="top-nav">
-    <a href="{{ url_for('auth.login_get') }}">Prihlásiť sa</a>
-    <a href="{{ url_for('register.register_form') }}">Registrovať sa</a>
-  </div>
+  <nav class="top-nav" role="navigation" aria-label="Hlavná navigácia">
+    <button type="button" id="btn-login" class="btn btn-login" aria-label="Prihlásiť sa">Prihlásiť sa</button>
+    <button type="button" id="btn-register" class="btn btn-register" aria-label="Registrovať sa">Registrovať sa</button>
+  </nav>
 
   <!-- Centrálne zarovnaný obsah -->
-  <div class="center-content">
-    <h1>Welcome to our Platform</h1>
-    <p>
-      This platform is designed for patients, doctors, and technicians to manage
-      medical records and facilitate communication in a secure and user-friendly environment.
+  <main class="center-content" role="main">
+    <h1 class="landing-title">Vitajte v systéme eVýsledky</h1>
+    <p class="landing-description">
+      Tento systém slúži pacientom, lekárom a technikom na správu zdravotných údajov,
+      efektívnu komunikáciu a bezpečné uchovávanie informácií.
     </p>
-  </div>
+  </main>
 
-  <!-- Spodný pás s informáciami -->
-  <div class="bottom-text">
-    <p>&copy; 2025 Medical Platform - All rights reserved.</p>
-  </div>
+  <!-- Footer -->
+  <footer class="bottom-text" role="contentinfo">
+    <p class="copyright">&copy; 2025 Medical Platform – Všetky práva vyhradené.</p>
+  </footer>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/landing.js') }}" defer></script>
 {% endblock %}

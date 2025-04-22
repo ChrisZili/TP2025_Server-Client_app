@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}
+Patient Registration
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <!-- Link na vlastný CSS súbor -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register_patient.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="registration-container">
+  <!-- Ikona + Text "Patient Registration" -->
+  <h1><i class="fas fa-user-plus"></i> Patient Registration</h1>
+
+  <!-- Blok pre flash správy (napr. success/error) -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!--
+    V metóde register_post, ak je chyba, posielaj:
+      render_template('register_patient.html', form_data=data_dict)
+    Kde data_dict = dict(data), s vyhodeným passwordom.
+
+    Tu potom pre každé pole čítame form_data[<key>], ak existuje.
+   -->
+  <form id="registration-form" method="POST" action="/register">
+      <!-- First Name -->
+      <div class="form-group">
+          <label for="first_name">First Name:</label>
+          <input
+            type="text"
+            id="first_name"
+            name="first_name"
+            required
+            value="{{ form_data.get('first_name', '') if form_data else '' }}"
+          >
+          <div class="field-error" id="first_name_error"></div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-group">
+          <label for="last_name">Last Name:</label>
+          <input
+            type="text"
+            id="last_name"
+            name="last_name"
+            required
+            value="{{ form_data.get('last_name', '') if form_data else '' }}"
+          >
+          <div class="field-error" id="last_name_error"></div>
+      </div>
+
+      <!-- Phone Number (+421 s vlajkou SR) -->
+      <div class="form-group">
+          <label for="phone_number">Phone Number:</label>
+          <div class="phone-group">
+              <span class="phone-prefix">
+                <img src="{{ url_for('static', filename='images/sk.svg') }}"
+                     alt="Slovakia Flag" class="flag-icon" />
+                +421
+              </span>
+              <input
+                type="text"
+                id="phone_number"
+                name="phone_number"
+                placeholder="Enter phone number"
+                required
+                value="{{ form_data.get('phone_number', '') if form_data else '' }}"
+              >
+          </div>
+          <div class="field-error" id="phone_number_error"></div>
+      </div>
+
+      <!-- Birth Date -->
+      <div class="form-group">
+          <label for="birth_date">Birth Date:</label>
+          <input
+            type="date"
+            id="birth_date"
+            name="birth_date"
+            required
+            value="{{ form_data.get('birth_date', '') if form_data else '' }}"
+          >
+          <div class="field-error" id="birth_date_error"></div>
+      </div>
+
+      <!-- Birth Number (Rodné číslo) -->
+      <div class="form-group">
+          <label for="birth_number">Birth Number:</label>
+          <input
+            type="text"
+            id="birth_number"
+            name="birth_number"
+            placeholder="Enter 10 digits"
+            maxlength="11"
+            required
+            value="{{ form_data.get('birth_number', '') if form_data else '' }}"
+          >
+          <div class="field-error" id="birth_number_error"></div>
+      </div>
+
+      <!-- Gender -->
+      <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+              <option value="">Select gender</option>
+              <option
+                value="Male"
+                {% if form_data and form_data.get('gender') == 'Male' %}
+                  selected
+                {% endif %}
+              >Male</option>
+              <option
+                value="Female"
+                {% if form_data and form_data.get('gender') == 'Female' %}
+                  selected
+                {% endif %}
+              >Female</option>
+              <option
+                value="Other"
+                {% if form_data and form_data.get('gender') == 'Other' %}
+                  selected
+                {% endif %}
+              >Other</option>
+          </select>
+          <div class="field-error" id="gender_error"></div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value="{{ form_data.get('email', '') if form_data else '' }}"
+          >
+          <div class="field-error" id="email_error"></div>
+      </div>
+
+      <!-- Password & Confirm Password -->
+      <div class="form-group">
+          <label for="password">Password:</label>
+          <!-- heslo z bezpečnostných dôvodov NEpredvyplňujeme -->
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+          >
+          <div class="field-error" id="password_error"></div>
+      </div>
+      <div class="form-group">
+          <label for="confirm_password">Confirm Password:</label>
+          <input
+            type="password"
+            id="confirm_password"
+            name="confirm_password"
+            required
+          >
+          <div class="field-error" id="confirm_password_error"></div>
+      </div>
+
+      <!-- GDPR Checkbox s linkom -->
+      <div class="form-group gdpr-group">
+          <input
+            type="checkbox"
+            id="gdpr"
+            name="gdpr"
+            {% if form_data and form_data.get('gdpr') %}
+              checked
+            {% endif %}
+          >
+          <label for="gdpr">
+            I agree to the processing of my personal data according to GDPR.
+            <a href="#">(Read GDPR)</a>
+          </label>
+      </div>
+      <div class="field-error" id="gdpr_error"></div>
+
+      <!-- Submit Button -->
+      <button type="submit" id="register-btn" disabled>Register</button>
+  </form>
+
+  <!-- Link pre prípad, že už existuje účet -->
+  <div class="already-account">
+    <p>Already have an account?
+      <a href="{{ url_for('auth.login_get') }}">Login here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <!-- Link na externý JS súbor -->
+  <script src="{{ url_for('static', filename='js/register_patient.js') }}"></script>
+{% endblock %}

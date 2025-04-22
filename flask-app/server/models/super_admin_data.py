@@ -15,3 +15,6 @@ class SuperAdminData(User):
         except AttributeError:
             pass
         return info
+
+    def get_full_name(self):
+        return "Super Admin"

@@ -1,6 +1,5 @@
 from server.database import db
 from server.models.user import User
-
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 class TechnicianData(User):
@@ -19,7 +18,7 @@ class TechnicianData(User):
         "Hospital", back_populates="technicians", lazy="select"
     )
 
-    def get_name(self):
+    def get_full_name(self):
         parts = []
         if self.first_name:
             parts.append(self.first_name.strip())
@@ -27,7 +26,6 @@ class TechnicianData(User):
             parts.append(self.last_name.strip())
 
         full_name = " ".join(parts) if parts else ""
-
         return full_name
 
     def get_info(self):

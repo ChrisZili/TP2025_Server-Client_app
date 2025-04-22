@@ -2,7 +2,6 @@ from server.database import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-import re
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,6 +14,8 @@ class User(db.Model):
     password_hash: Mapped[str] = mapped_column(db.String(1024), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    #id_creator: Mapped[int] = mapped_column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
     # Typ používateľa
     created_images: Mapped[list["OriginalImageData"]] = relationship(
         "OriginalImageData", back_populates="creator", lazy="select"

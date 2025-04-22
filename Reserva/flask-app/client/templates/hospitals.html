@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Nemocnice - STU FEI
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <!-- Vlastný CSS pre tabs a responzívny scroll -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/hospitals.css') }}">
+{% endblock %}
+
+{% block header %}
+Nemocnice
+{% endblock %}
+
+{% block content %}
+<div class="hospitals-container">
+
+  <!-- Horná lišta s 3 odkazmi (tabs) -->
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs">
+      <div class="tab active" id="tab-all">Všetky nemocnice</div>
+      <div class="tab" id="tab-search">Vyhľadať nemocnicu</div>
+      <div class="tab" id="tab-add">Pridať nemocnicu</div>
+    </div>
+  </div>
+
+  <!-- Obsah pre "Všetky nemocnice" -->
+  <div class="tab-content" id="tab-all-content">
+    <h2>Zoznam nemocníc</h2>
+    <div id="all-hospitals-list">
+      <!-- JavaScript tu dynamicky vloží zoznam nemocníc -->
+    </div>
+  </div>
+
+  <!-- Obsah pre "Vyhľadať nemocnicu" -->
+  <div class="tab-content hidden" id="tab-search-content">
+    <h2>Vyhľadávanie nemocníc</h2>
+    <input type="text" id="search-input" placeholder="Zadajte názov / mesto / PSČ" />
+    <div id="search-results">
+      <!-- JavaScript tu zobrazí výsledky vyhľadávania -->
+    </div>
+  </div>
+
+  <!-- Obsah pre "Pridať nemocnicu" -->
+  <div class="tab-content hidden" id="tab-add-content">
+      <h2>Pridať nemocnicu</h2>
+      <div id="add-hospital-message"></div>
+      <div class="form-group">
+        <label for="hospital-name">Názov nemocnice</label>
+        <input type="text" id="hospital-name" name="name" />
+      </div>
+      <div class="form-group">
+        <label for="hospital-country">Štát</label>
+        <input type="text" id="hospital-country" name="country" />
+      </div>
+      <div class="form-group">
+        <label for="hospital-city">Mesto</label>
+        <input type="text" id="hospital-city" name="city" />
+      </div>
+      <div class="form-group">
+        <label for="hospital-street">Ulica a číslo</label>
+        <input type="text" id="hospital-street" name="street" />
+      </div>
+      <div class="form-group">
+        <label for="hospital-postal">PSČ</label>
+        <input type="text" id="hospital-postal" name="postal_code" />
+      </div>
+      <button id="add-hospital-btn" class="add-btn">Pridať</button>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/hospitals.js') }}"></script>
+{% endblock %}

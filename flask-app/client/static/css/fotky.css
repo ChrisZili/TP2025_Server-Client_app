@@ -19,7 +19,8 @@ p {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  max-width: 1200px;
+  max-width: 60%;
+  width: auto;
   margin: 0 auto;
   padding: 20px;
   font-size: 1.1rem;
@@ -34,7 +35,8 @@ p {
   padding: 20px;
   background-color: #f9f9f9;
   margin: 20px auto;
-  max-width: 800px;
+  max-width: 100%;
+  width: 100%;
   text-align: center;
 }
 
@@ -58,7 +60,7 @@ p {
   max-height: 50px;
   overflow: hidden;
   text-align: center;
-  width: 100%;
+  width: 80%;
 }
 
 .action-button:hover, form button:hover, .form-button:hover {
@@ -104,8 +106,8 @@ p {
 }
 
 .photo-methods-container > div:last-child {
-  flex: 0 0 150px;
-  max-width: 150px;
+  flex: 0 0 auto;
+  max-width: 30%;
 }
 
 .photo-methods-container div {
@@ -113,13 +115,9 @@ p {
 }
 
 .photo-preview-container {
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
-  width: 200%;
-  height: 200%;
-  text-align: center;
-  position: relative;
 }
 
 #photo-preview-container {
@@ -166,13 +164,14 @@ form {
 
 form .form-group-row {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   justify-content: center;
   margin-bottom: 15px;
 }
 
 form .form-group {
-  margin-bottom: 15px;
+  align-items: center;
+  margin-bottom: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -298,18 +297,10 @@ h2 {
   margin-bottom: 20px;
 }
 
-.checkbox-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 20px;
-  justify-content: end;
-  align-items: flex;
-}
-
 .checkbox-group {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  gap: 5px;
 }
 
 .checkbox-group input[type="checkbox"] {
@@ -325,6 +316,20 @@ h2 {
   margin-top: 5px;
 }
 
+/* Checkbox container for larger screens (two columns) */
+.checkbox-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 10px;
+}
+
+/* Checkbox container for smaller screens (one column) */
+@media (max-width: 768px) {
+  .checkbox-container {
+    grid-template-columns: 1fr; /* One column */
+  }
+}
+
 @media (max-width: 600px) {
   .checkbox-container {
     grid-template-columns: 1fr;
@@ -338,11 +343,11 @@ h2 {
 .action-button {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #3498db;
+  background-color: #007bff;
   color: white;
   text-decoration: none;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -352,15 +357,16 @@ h2 {
 }
 
 .action-button:hover {
-  background-color: #2980b9;
+  background-color: #0056b3;
 }
 
 .photo-preview {
-  width: 400px;
-  height: 400px;
-  object-fit: contain;
-  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
   display: block;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .photo-detail-container {
@@ -379,10 +385,6 @@ h2 {
   max-width: 800px;
 }
 
-.photo-methods-container > div:last-child {
-  flex: 0 0 150px;
-  max-width: 150px;
-}
 
 .photo-methods-container > div:first-child {
   flex: 1;
@@ -424,8 +426,32 @@ h2 {
   border-radius: 0;
   padding: 20px;
   background-color: #f9f9f9;
-  max-width: 800px;
+  max-width: 80%;
+  width: 80%;
   text-align: center;
+}
+
+.details-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.details-container th,
+.details-container td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Default styles for larger screens */
+.details-container table th,
+.details-container table td {
+  font-size: 16px; /* Default font size */
+  padding: 10px; /* Default padding */
+}
+
+.action-button {
+  font-size: 14px; /* Default button font size */
+  padding: 10px 20px; /* Default button padding */
 }
 
 @media (max-width: 768px) {
@@ -445,20 +471,61 @@ h2 {
     max-width: 100%;
     max-height: auto;
   }
-}
 
-@media (max-width: 768px) {
-  .photo-detail-container {
-    flex-direction: column;
+  .details-container table {
+    font-size: 14px;
   }
 
-  .photo-detail-container > div {
-    width: 100%;
+  .details-container table th,
+  .details-container table td {
+    font-size: 14px; /* Smaller font size for table cells */
+    padding: 8px; /* Reduce padding */
+  }
+
+  .details-container label {
+    font-size: 14px; /* Smaller font size for labels */
+  }
+
+  .action-button {
+    font-size: 12px; /* Smaller font size for buttons */
+    padding: 8px 16px; /* Adjust button padding */
   }
 
   .photo-preview {
-    max-width: 100%;
-    max-height: auto;
+    max-width: 100%; /* Ensure the photo scales down */
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .details-container table th,
+  .details-container table td {
+    font-size: 12px; /* Even smaller font size for table cells */
+    padding: 5px; /* Further reduce padding */
+  }
+
+  .details-container label {
+    font-size: 12px; /* Even smaller font size for labels */
+  }
+
+  .action-button {
+    font-size: 10px; /* Smaller font size for buttons */
+    padding: 6px 12px; /* Adjust button padding */
+  }
+
+  .processed-images-container table {
+    display: block;
+    overflow-x: auto; /* Allow horizontal scrolling for tables */
+    white-space: nowrap;
+  }
+
+  .details-container table {
+    font-size: 12px;
+  }
+
+  .action-button {
+    padding: 8px 16px;
+    font-size: 14px;
   }
 }
 
@@ -494,9 +561,567 @@ h2 {
 }
 
 #photo-preview {
+  max-width: 500px;
+  max-height: 500px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: none; /* Hidden by default */
+}
+
+.form-button {
+  background-color: #007bff; /* Default blue background */
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px; /* Ensure consistent size */
+  border-radius: 5px;
+  text-align: center;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.button-group {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+}
+
+.upload-photo-button:hover {
+  background-color: #218838;
+}
+
+/* Container for the entire form */
+.fotky-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 70%;
+  width:50%;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 1.1rem;
+  text-align: center;
+  gap: 20px;
+}
+
+/* General form group styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* Input and select styling */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Photo preview container */
+.photo-preview-container {
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+/* File name styling */
+.file-name {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  display: none;
+}
+
+/* Button group styling */
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Specific button styles */
+.select-photo-button {
+  background-color: #007bff; /* Same as general button */
+  width: -webkit-fill-available; /* Matches the size of the submit button */
+  text-align: center;
+  cursor: pointer;
+}
+
+.upload-photo-button {
+  width: -webkit-fill-available;
+  background-color: #28a745;
+}
+
+.upload-photo-button:hover {
+  background-color: #218838;
+}
+
+/* Hide the default file input */
+.hidden-input {
+  display: none;
+  width: 100%;
+}
+
+/* Cancel button styling */
+.cancel-button {
+  background-color: #f44336; /* Red background */
+  color: white;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+  border: none;
+  width: -webkit-fill-available;
+}
+
+.cancel-button:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Responsive layout for fotky-container */
+.fotky-container {
+  max-width: 80%; /* Default width for larger screens */
+  width: 90%;
+  margin: 0 auto; /* Center the container */
+  padding: 2%; /* Add some padding */
+  transition: max-width 0.3s ease; /* Smooth resizing */
+}
+
+/* Adjust width for medium screens (e.g., tablets) */
+@media (max-width: 1000px) {
+  .fotky-container {
+    max-width: 90%; /* Slightly wider for medium screens */
+  }
+}
+
+/* Adjust width for small screens (e.g., phones) */
+@media (max-width: 600px) {
+  .fotky-container {
+    max-width: 100%; /* Almost full width for small screens */
+    padding: 5%; /* Add more padding for smaller screens */
+  }
+}
+
+/* Form input and button responsiveness */
+.form-input, .form-button {
+  width: 100%; /* Full width of the container */
+  max-width: 100%; /* Prevent overflow */
+  padding: 2%; /* Add padding for better usability */
+  font-size: 1rem; /* Adjust font size for readability */
+}
+
+@media (max-width: 600px) {
+  .form-input, .form-button {
+    font-size: 0.9rem; /* Slightly smaller font size for small screens */
+  }
+}
+
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.responsive-container {
+  max-width: 90%;
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.processed-images-container ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.processed-images-container li {
+  flex: 1 1 calc(33.333% - 10px); /* 3 items per row */
+  max-width: calc(33.333% - 10px);
+  box-sizing: border-box;
+}
+
+.processed-images-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .processed-images-container li {
+    flex: 1 1 calc(50% - 10px); /* 2 items per row on tablets */
+    max-width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .processed-images-container li {
+    flex: 1 1 100%; /* 1 item per row on small screens */
+    max-width: 100%;
+  }
+}
+
+/* Processed Images Table */
+.processed-images-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.processed-images-container th,
+.processed-images-container td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+@media (max-width: 768px) {
+  .processed-images-container table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+.processed-images-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.processed-images-table-container th,
+.processed-images-table-container td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.processed-images-table-container th {
+  background-color: #f4f4f4;
+}
+
+.processed-images-table-container a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.processed-images-table-container a:hover {
+  text-decoration: underline;
+}
+
+.buttons-container {
+  justify-content: center;
+  display: flex;
+  gap: 10px; /* Space between buttons */
+}
+
+.action-button {
+  width: 80%;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-align: center;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
+}
+
+.action-button-green {
+  background-color: #28a745; /* Green background */
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-align: center;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.action-button-green:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.action-button-red {
+  background-color: #dc3545; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px; /* Add spacing between buttons */
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.action-button-red:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+.processed-images-container {
+  max-width: 80%; /* Match the max-width of other containers */
+  margin: 0 auto; /* Center the container */
+  padding: 20px; /* Add padding for spacing */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.processed-images-container table {
+  width: 100%; /* Make the table take the full width of the container */
+  border-collapse: collapse; /* Ensure borders don't double up */
+}
+
+.processed-images-container th,
+.processed-images-container td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.processed-images-container th {
+  background-color: #f4f4f4;
+}
+
+.back-to-list-button {
+  width: 80%;
+  max-height: 50px;
+  background-color: #6c757d; /* Gray background for the back button */
+}
+
+.back-to-list-button:hover {
+  background-color: #5a6268; /* Darker gray on hover */
+}
+
+.result-photo-container {
+  display: flex;
+  gap: 20px; /* Space between images */
+  justify-content: space-between; /* Distribute space evenly between images */
+  align-items: flex-start; /* Align images to the top */
+  width: 100%; /* Ensure the container spans the full width */
+  margin-bottom: 20px;
+}
+
+/* Individual image preview */
+.result-photo-container .image-preview {
+  flex: 1; /* Allow images to take equal space */
+  text-align: center;
+}
+
+.result-photo-container .image-preview img {
+  width: 100%; /* Ensure images take up the full width of their container */
+  height: auto; /* Maintain aspect ratio */
+  border: 1px solid #ddd; /* Optional: Add a border around images */
+  padding: 5px; /* Optional: Add padding around images */
+  border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+.back-button-container {
+  text-align: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add spacing above the button */
+}
+
+.back-button-container .cancel-button {
+  display: inline-block; /* Ensure the button behaves like an inline element */
+  margin: 0 auto; /* Center the button */
+}
+
+.details-group {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.details-group h3 {
+  margin-top: 30px; /* Add space above the heading */
+  margin-bottom: 10px; /* Reduce space below the heading */
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.details-group table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.details-group th,
+.details-group td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.details-group th {
+  background-color: #f4f4f4;
+  text-align: left;
+  font-weight: bold;
+}
+
+.details-group td {
+  text-align: right;
+}
+
+.processed-table-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#edit-details-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#save-details-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+}
+
+/* Search Bar */
+#fulltext-search-container {
+  margin-bottom: 20px;
+}
+
+#filter-fulltext {
+  width: 300px;
+}
+
+/* Filters and Add Button Section */
+#filters-and-action {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Filters Section */
+#filters {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Add Photo Button */
+.btn.btn-green {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+/* Photo Table */
+.photo-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Photo preview */
+.photo-preview {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 5px;
-  object-fit: contain;
-  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.left-align {
+  text-align: left;
+  padding-right: 10px; /* Add spacing between name and value */
+}
+
+/* Ensure right alignment for variable values */
+.right-align {
+  text-align: right;
+  padding-left: 10px; /* Add spacing between name and value */
+}
+
+/* Hidden elements */
+.hidden-input {
+  display: none;
+  width: 100%;
+}
+
+.hidden-select {
+  display: none;
+  width: 100%;
+}
+
+.hidden-button {
+  display: none;
+}
+
+.back-to-list-container {
+    margin-top: 10px;
+    text-align: center; /* Center the button under the table */
+}
+
+/* Default styles for larger screens */
+.image-preview {
+  display: inline-block;
+  width: 30%; /* Display photos side by side */
+  margin: 10px;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .image-preview {
+    display: block; /* Stack photos vertically */
+    width: 100%; /* Full width for smaller screens */
+    margin: 10px 0;
+  }
+}
+
+/* Further adjustments for very small screens */
+@media (max-width: 480px) {
+  .image-preview {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+  }
 }

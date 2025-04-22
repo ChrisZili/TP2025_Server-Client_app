@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404 - Stránka nenájdená</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}" />
+    <link rel="manifest" href="{{ url_for('static', filename='icons/site.webmanifest') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/error_404.css')}}" />
+</head>
+<body>
+  <div class="container">
+    <h1>404</h1>
+    <p>Ups! Zdá sa, že táto stránka neexistuje.</p>
+    <a href="/dashboard" class="button">Vrátiť sa na domovskú stránku</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,301 @@
+/* Table Styling */
+.photo-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: #fff; /* Optional: Background color for the table */
+  border-radius: 8px; /* Rounded corners for the table */
+  overflow: hidden; /* Ensures rounded corners apply */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Subtle shadow for the table */
+}
+
+.photo-table th,
+.photo-table td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.photo-table thead tr {
+  background-color: #f5f5f5; /* Light gray background for the header */
+  border-bottom: 2px solid #ccc; /* Bottom border for the header */
+}
+
+.photo-table th {
+  padding: 10px;
+  text-align: left;
+  font-weight: bold;
+  color: #333; /* Darker text color for the header */
+}
+
+th.sorted-asc::after {
+  content: " ▲";
+}
+
+th.sorted-desc::after {
+  content: " ▼";
+}
+
+.photo-table tbody tr {
+  border-bottom: 1px solid #ccc; /* Line between rows */
+}
+
+.photo-table td {
+  padding: 10px;
+  color: #555; /* Slightly lighter text color for the body */
+}
+
+.photo-table tbody tr:last-child {
+  border-bottom: none; /* Remove the border for the last row */
+}
+
+/* Button Styling */
+.action-button {
+  padding: 8px 16px;
+  background-color: #3498db; /* Blue background */
+  color: white;
+  border: none;
+  border-radius: 4px; /* Rounded corners for the button */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Styling for the filters section */
+#filters-and-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  max-width: 100%; /* Ensure it doesn't exceed the container width */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+#filters {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap; /* Ensure filters wrap on smaller screens */
+}
+
+#filters label {
+  font-weight: bold;
+  margin-right: 5px; /* Space between the label and the dropdown */
+}
+
+#filters select {
+  width: 150px; /* Consistent width for dropdowns */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+#filters select:focus {
+  border-color: #3498db; /* Highlight border on focus */
+  outline: none;
+}
+
+#filters button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#filters button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+#filters button:active {
+  background-color: #1f5f8a; /* Even darker blue on click */
+}
+
+/* General Button Styling */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-green {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  white-space: nowrap; /* Prevent text wrapping */
+  order: 1; /* Default order */
+}
+
+.btn-blue {
+  background-color: blue;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Main container styling */
+.fotky-container {
+  max-width: 95%; /* Default width for larger screens */
+  margin: 0 auto; /* Center the container */
+  padding: 2%; /* Add some padding */
+  transition: max-width 0.3s ease; /* Smooth resizing */
+}
+
+/* Default styles for larger screens */
+.fotky-container label {
+  font-size: 16px; /* Default font size */
+}
+
+.fotky-container input,
+.fotky-container select {
+  font-size: 14px; /* Default input and select font size */
+  padding: 10px; /* Default padding */
+}
+
+/* Adjust width for medium screens (e.g., tablets) */
+@media (max-width: 1000px) {
+  .fotky-container {
+    max-width: 90%; /* Slightly wider for medium screens */
+  }
+}
+
+/* Adjust width for small screens (e.g., phones) */
+@media (max-width: 600px) {
+  .fotky-container {
+    max-width: 95%; /* Almost full width for small screens */
+    padding: 5%; /* Add more padding for smaller screens */
+  }
+
+  #filters-and-action {
+    flex-direction: column; /* Stack filters and button vertically */
+    align-items: flex-start; /* Align items to the left */
+  }
+
+  #filters {
+    width: 100%; /* Make filters take full width */
+    margin-bottom: 10px; /* Add spacing below filters */
+  }
+
+  .btn-green {
+    order: 2; /* Move button below filters */
+    align-self: flex-start; /* Align button to the left */
+    width: auto; /* Allow button to resize naturally */
+  }
+   
+  #filters {
+    flex-direction: column; /* Stack filters vertically */
+    gap: 10px; /* Add spacing between filter groups */
+    width: 100%; /* Make filters take full width */
+  }
+
+  #filters label {
+    margin-bottom: 5px; /* Move label above the filter box */
+    margin-right: 0; /* Remove right margin */
+    display: block; /* Ensure the label is on its own line */
+    text-align: left; /* Align the label to the left */
+  }
+
+  #filters select {
+    width: 100%; /* Make dropdowns take full width */
+  }
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .fotky-container label {
+    font-size: 14px; /* Smaller font size for labels */
+  }
+
+  .fotky-container input,
+  .fotky-container select {
+    font-size: 12px; /* Smaller font size for inputs and selects */
+    padding: 8px; /* Reduce padding */
+  }
+
+  .photo-table th,
+  .photo-table td {
+    font-size: 12px; /* Smaller font size for table headers and cells */
+    padding: 5px; /* Reduce padding */
+  }
+
+  .btn {
+    font-size: 14px; /* Smaller font size for buttons */
+    padding: 8px 12px; /* Adjust button padding */
+  }
+
+  .photo-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Further adjustments for very small screens */
+@media (max-width: 480px) {
+  .fotky-container label {
+    font-size: 12px; /* Even smaller font size for labels */
+  }
+
+  .fotky-container input,
+  .fotky-container select {
+    font-size: 10px; /* Even smaller font size for inputs and selects */
+    padding: 6px; /* Further reduce padding */
+  }
+
+  .photo-table th,
+  .photo-table td {
+    font-size: 10px; /* Even smaller font size for table headers and cells */
+    padding: 3px; /* Further reduce padding */
+  }
+
+  .btn {
+    font-size: 12px; /* Smaller font size for buttons */
+    padding: 6px 10px; /* Adjust button padding */
+  }
+
+  /* Ensure the table scrolls horizontally if it overflows */
+  .photo-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+#fulltext-search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px; /* Reduce the gap between the search bar and filters */
+}
+
+#filter-fulltext {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: auto;
+  max-width: 50%;
+}
+
+.custom-class {
+  font-weight: bold;
+  margin-right: 10px;
+}

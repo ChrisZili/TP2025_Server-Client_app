@@ -1,3 +1,6 @@
+// TODO: vycitat zakladne info o uzivatelovi user_type, full_name a nahradit permanentne posielanie a vycitavanie user
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // ===========================
   // 1) Responzívny sidebar (expanded / collapsed / hidden)
@@ -10,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getBreakpoint() {
     const w = window.innerWidth;
-    if (w >= 900) return "large";
+    if (w >= 1000) return "large";
     if (w >= 600) return "medium";
     return "small";
   }
@@ -29,10 +32,24 @@ document.addEventListener("DOMContentLoaded", () => {
       main.style.marginLeft = "0";
     }
   }
+
   window.addEventListener("load", () => {
-    setTimeout(setDefaultState, 50);
+    setTimeout(() => {
+      lastResizeWidth = window.innerWidth; // nastavíme na začiatku
+      setDefaultState();
+    }, 50);
   });
-  window.addEventListener("resize", setDefaultState);
+
+  // Zabránime prehnaným resize udalostiam (napr. pri scrollovaní na mobile)
+  let lastResizeWidth = window.innerWidth;
+
+  window.addEventListener("resize", () => {
+    const currentWidth = window.innerWidth;
+    if (Math.abs(currentWidth - lastResizeWidth) > 80) { // Reaguj len na väčšie zmeny (napr. orientácia)
+      lastResizeWidth = currentWidth;
+      setDefaultState();
+    }
+  });
 
   function toggleSidebar() {
     const bp = getBreakpoint();
@@ -82,58 +99,53 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuConfig = {
     patient: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
       { icon: "fa fa-flask",   label: "Výsledky",   link: "/vysledky" },
       { icon: "fa fa-user-md", label: "Doktor",     link: "/lekari" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-images",  label: "Fotky",        link: "/fotky" },
+      { icon: "fa fa-images",  label: "Fotky",        link: "/photos" },
       { icon: "fa fa-upload",  label: "Pridať fotku", link: "/fotky/pridat" },
-      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/pacient/new" },
+      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
       { icon: "fa fa-envelope", label: "Správy",      link: "/spravy" },
-      { icon: "fa fa-cog",      label: "Nastavenie",  link: "/nastavenie" },
+      { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
       { icon: "fa fa-sign-out", label: "Odhlásiť",    link: "/logout", isLogout: true },
     ],
     doctor: [
       { icon: "fa fa-home",    label: "Domov",         link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",        link: "/account" },
-      { icon: "fa fa-users",   label: "Pacienti",      link: "/doctor/patients" },
-      { icon: "fa fa-list",    label: "Zoznam",        link: "/doctor/list" },
-      { icon: "fa fa-images",  label: "Fotky",         link: "/fotky" },
       { icon: "fa fa-user-gear", label: "Technici",    link: "/technicians" },
+      { icon: "fa fa-users",   label: "Pacienti",      link: "/patients" },
+      { icon: "fa fa-images",  label: "Fotky",         link: "/photos" },
+      { icon: "fa fa-list",    label: "Zoznam",        link: "/doctor/list" },
       { icon: "fa fa-envelope", label: "Správy",       link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie",    link: "/nastavenie" },
+      { icon: "fa fa-cog",     label: "Nastavenie",    link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",      link: "/logout", isLogout: true },
     ],
     admin: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-users",   label: "Pacienti",   link: "/admin/patients" },
-      { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
-      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
       { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
+      { icon: "fa fa-users",   label: "Pacienti",   link: "/patients" },
+      { icon: "fa fa-images",  label: "Fotky",      link: "/photos" },
       { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
     super_admin: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-users",   label: "Pacienti",   link: "/admin/patients" },
-      { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
-      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
-      { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
-      { icon: "fa fa-user-shield", label: "Admini",    link: "/admins" },
       { icon: "fa fa-hospital",label: "Nemocnice",  link: "/hospitals" },
+      { icon: "fa fa-user-shield", label: "Admini",    link: "/admins" },
+      { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
+      { icon: "fa fa-users",   label: "Pacienti",   link: "/patients" },
+      { icon: "fa fa-images",  label: "Fotky",      link: "/photos" },
       { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
   };
@@ -141,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateSidebarMenu(userType) {
     if (!sidebarMenu) return;
 
-    // Vymažeme predošlé li
     sidebarMenu.innerHTML = "";
 
     const items = menuConfig[userType] || [];
@@ -149,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     items.forEach(item => {
       const li = document.createElement("li");
       li.innerHTML = `
-        <a href="${item.link}">
+        <a href="${item.link}" title="${item.label}" aria-label="${item.label}">
           <i class="${item.icon}"></i>
           <span class="sidebar-text">${item.label}</span>
         </a>
@@ -159,6 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     highlightActiveLink();
   }
+
 
   // Porovnáva pathname bez trailing slash
   function highlightActiveLink() {
@@ -193,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Po načítaní user-a: generujeme menu
   async function loadSideMenu() {
     try {
-      const response = await fetchWithAuth('/account/info');
+      const response = await fetchWithAuth('/settings/info');
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa (token?).');
       }
@@ -219,7 +231,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  loadSideMenu();
+  window.addEventListener("load", async () => {
+    await loadSideMenu();               // načítaj meno + menu
+    setDefaultState();                  // nastav sidebar
+    document.querySelectorAll('.hidden-js').forEach(el => el.classList.remove('hidden-js')); // zobraz až potom
+  });
 
   // Ak máš <li id="logout-btn">, event:
   const logoutBtn = document.getElementById("logout-btn");

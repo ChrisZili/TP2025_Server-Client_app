@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register - FEI STU
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <!-- Odkaz na vlastný CSS súbor -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+  <!-- Horná časť: Ikona a nadpis -->
+  <div class="register-logo">
+    <i class="fas fa-user-plus"></i>
+  </div>
+  <h1>Register</h1>
+
+  <!-- Tlačidlá výberu typu registrácie -->
+  <div class="button-group">
+    <a href="{{ url_for('register.register_form', user_type='patient') }}">
+      <button type="button" class="register-btn">
+        <i class="fas fa-user"></i>
+        Register as Patient
+      </button>
+    </a>
+    <a href="{{ url_for('register.register_form', user_type='doctor') }}">
+      <button type="button" class="register-btn">
+        <i class="fas fa-user-md"></i>
+        Register as Doctor
+      </button>
+    </a>
+    <a href="{{ url_for('register.register_form', user_type='technician') }}">
+      <button type="button" class="register-btn">
+        <i class="fas fa-tools"></i>
+        Register as Technician
+      </button>
+    </a>
+  </div>
+
+  <!-- Link na prihlasovaciu stránku (ak už má používateľ účet) -->
+  <div class="login-link">
+    <a href="{{ url_for('auth.login_get') }}">
+      Already have an account? Login here
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <!-- Ak potrebuješ JS logiku, vlož sem register.js -->
+  <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

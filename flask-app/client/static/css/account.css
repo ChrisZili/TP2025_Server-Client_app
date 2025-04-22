@@ -62,27 +62,6 @@
   cursor: not-allowed; /* aby bolo jasné, že to nejde upravovať */
 }
 
-.form-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  background-color: #fff;
-  appearance: none; /* Removes default dropdown arrow for consistency */
-}
-
-.form-input:focus {
-  border-color: #3498db;
-  outline: none;
-}
-
-select.form-input {
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%233498db' d='M2 0L0 2h4z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 10px;
-}
 
 .checkbox-group {
   flex-direction: row;

@@ -1,0 +1,199 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Detail Fotky - {{ photo.name if photo else "N/A" }}
+{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fotky.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="responsive-container">
+  <div class="photo-methods-container">
+    <!-- Photo Section -->
+    <div>
+      {% if photo.preview_url %}
+      <img src="{{ photo.preview_url }}" class="photo-preview">
+      {% else %}
+      <p>Photo URL is not available.</p>
+      {% endif %}
+    </div>
+
+    <!-- Methods Section -->
+    <div>
+      <div>
+        {% if medical_methods %}
+        {% for method in medical_methods %}
+        <div>
+          <input
+            type="checkbox"
+            id="method-{{ method.name }}"
+            name="methods"
+            value="{{ method.name }}"
+          >
+          <label for="method-{{ method.name }}">{{ method.name }}</label>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No medical methods available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Section -->
+  <div class="details-container">
+    <table>
+      {% if user.user_type in ["admin", "super_admin"] %}
+      <tr>
+        <th class="left-align">ID</th>
+        <td class="right-align">
+          <span id="id-text">{{ photo.id if photo else "N/A" }}</span>
+          {% if user.user_type == "super_admin" %}
+          <input type="text" id="id-input" value="{{ photo.id }}" class="hidden-input">
+          {% else %}
+          <input type="text" id="id-input" value="{{ photo.id }}" class="hidden-input" disabled>
+          {% endif %}
+        </td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th class="left-align">Dátum</th>
+        <td class="right-align">
+          <span id="created-at-text">{{ photo.created_at if photo else "N/A" }}</span>
+          <input type="text" id="created-at-input" value="{{ photo.created_at }}" class="hidden-input">
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Oko</th>
+        <td class="right-align">
+          <span id="eye-side-text">{{ photo.eye_side if photo else "N/A" }}</span>
+          <select id="eye-side-input" class="hidden-select">
+            <option value="prave" {% if photo.eye_side == "prave" %}selected{% endif %}>Pravé</option>
+            <option value="lave" {% if photo.eye_side == "lave" %}selected{% endif %}>Ľavé</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Kvalita</th>
+        <td class="right-align">
+          <span id="quality-text">{{ photo.quality if photo else "N/A" }}</span>
+          <select id="quality-input" class="hidden-select">
+            <option value="Vyborna" {% if photo.quality == "Vyborna" %}selected{% endif %}>Výborná</option>
+            <option value="Dobra" {% if photo.quality == "Dobra" %}selected{% endif %}>Dobrá</option>
+            <option value="Dostatocna" {% if photo.quality == "Dostatocna" %}selected{% endif %}>Dostatočná</option>
+            <option value="Nedostatocna" {% if photo.quality == "Nedostatocna" %}selected{% endif %}>Nedostatočná</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Diagnóza</th>
+        <td class="right-align">
+          <span id="diagnosis-text">{{ photo.diagnosis if photo else "N/A" }}</span>
+          <input type="text" id="diagnosis-input" value="{{ photo.diagnosis }}" class="hidden-input">
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Pacient</th>
+        <td class="right-align">
+          <span id="patient-text">{{ photo.patient if photo else "N/A" }}</span>
+          {% if user.user_type in ["admin", "super_admin"] %}
+          <input type="text" id="patient-input" value="{{ photo.patient }}" class="hidden-input">
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Doktor</th>
+        <td class="right-align">
+          <span id="doctor-text">{{ photo.doctor if photo else "N/A" }}</span>
+          {% if user.user_type in ["admin", "super_admin"] %}
+          <input type="text" id="doctor-input" value="{{ photo.doctor }}" class="hidden-input">
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Nemocnica</th>
+        <td class="right-align">
+          <span id="hospital-text">{{ photo.hospital if photo else "N/A" }}</span>
+          {% if user.user_type == "super_admin" %}
+          <input type="text" id="hospital-input" value="{{ photo.hospital }}" class="hidden-input">
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Typ Zariadenia</th>
+        <td class="right-align">
+          <span id="device-type-text">{{ photo.device_type if photo else "N/A" }}</span>
+          <input type="text" id="device-type-input" value="{{ photo.device_type }}" class="hidden-input">
+        </td>
+      </tr>
+      <tr>
+        <th class="left-align">Typ Kamery</th>
+        <td class="right-align">
+          <span id="camera-type-text">{{ photo.camera_type if photo else "N/A" }}</span>
+          <input type="text" id="camera-type-input" value="{{ photo.camera_type }}" class="hidden-input">
+        </td>
+      </tr>
+    </table>
+
+    <!-- Edit and Save Buttons -->
+    {% if user.user_type in ["doctor", "super_doctor", "admin", "super_admin"] %}
+    <div class="edit-buttons-container">
+      <button id="edit-details-button" class="action-button">Upraviť</button>
+      <button id="save-details-button" class="action-button action-button-green hidden-button">Save</button>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Processed Images Table -->
+  <div class="processed-images-container">
+    <h3>Spracované Obrázky</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Dátum Spracovania</th>
+            <th>Metóda</th>
+            <th>Stav Spracovania</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if processed_images %}
+          {% for image in processed_images %}
+          <tr class="clickable-row" data-href="{{ url_for('results_detail', image_name=image.id) }}">
+            <td>{{ image.id if image.id else "N/A" }}</td>
+            <td>{{ image.processing_date if image.processing_date else "N/A" }}</td>
+            <td>{{ image.method_used if image.method_used else "N/A" }}</td>
+            <td>{{ image.processing_state if image.processing_state else "N/A" }}</td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="4">No processed images available.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Back to List Button -->
+    <div class="back-to-list-container">
+      <a href="{{ url_for('photos_list') }}" class="action-button back-to-list-button">Späť na zoznam</a>
+      <button id="process-photo-button" class="action-button action-button-green hidden-button">Spracovať Nové Metódy</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Define processedImages and photoId globally before loading the JavaScript file
+    const processedImages = {{ processed_images | tojson }};
+    const photoId = {{ photo.id }};
+    console.log("Processed Images in Template:", processedImages);
+    console.log("Photo ID in Template:", photoId);
+</script>
+<script src="{{ url_for('static', filename='js/photos_detail.js') }}"></script>
+{% endblock %}

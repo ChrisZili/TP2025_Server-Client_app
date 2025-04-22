@@ -1,105 +1,148 @@
+// TODO: vycitat zakladne info o uzivatelovi user_type, full_name a nahradit permanentne posielanie a vycitavanie user
+
 document.addEventListener("DOMContentLoaded", () => {
   // ===========================
   // 1) Responzívny sidebar (expanded / collapsed / hidden)
   // ===========================
   const dashboardCards = document.getElementById("dashboard-cards"); // <ul id="sidebar-menu">
-
   const menuConfig = {
     patient: [
-      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-flask",   label: "Výsledky",   link: "/vysledky" },
-      { icon: "fa fa-user-md", label: "Doktor",     link: "/lekari" },
-      { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
+      { icon: "fa fa-flask",   label: "Výsledky",   link: "/vysledky", countTemplate: "${data.processed_image_count} Všetkých výsledkov" },
+      { icon: "fa fa-user-md", label: "Doktor",     link: "/lekari", countTemplate: "${data.doctor_count} Všetkých doktorov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings"},
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-images",  label: "Fotky",        link: "/fotky" },
-      { icon: "fa fa-upload",  label: "Pridať fotku", link: "/fotky/pridat" },
-      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/pacient/new" },
-      { icon: "fa fa-envelope", label: "Správy",      link: "/spravy" },
-      { icon: "fa fa-cog",      label: "Nastavenie",  link: "/nastavenie" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-upload", label: "Pridať fotku", link: "/fotky/pridat" },
+      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
       { icon: "fa fa-sign-out", label: "Odhlásiť",    link: "/logout", isLogout: true },
     ],
     doctor: [
       { icon: "fa fa-home",    label: "Domov",         link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",        link: "/account" },
-      { icon: "fa fa-users",   label: "Pacienti",      link: "/doctor/patients" },
-      { icon: "fa fa-list",    label: "Zoznam",        link: "/doctor/list" },
-      { icon: "fa fa-images",  label: "Fotky",         link: "/fotky" },
-      { icon: "fa fa-user-gear", label: "Technici",    link: "/technicians" },
-      { icon: "fa fa-envelope", label: "Správy",       link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie",    link: "/nastavenie" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians", countTemplate: "${data.technician_count} Všetkých technikov" },
+      { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-list", label: "Zoznam", link: "/doctor/list", countTemplate: "${data.processed_image_count} Všetkých záznamov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie",    link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",      link: "/logout", isLogout: true },
     ],
     admin: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-users",   label: "Pacienti",   link: "/admin/patients" },
-      { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
-      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
-      { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
-      { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
-      { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-user-md", label: "Doktori", link: "/doctors", countTemplate: "${data.doctor_count} Všetkých doktorov" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians", countTemplate: "${data.technician_count} Všetkých technikov" },
+      { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-list", label: "Zoznam", link: "/admin/list", countTemplate: "${data.processed_image_count} Všetkých záznamov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
     super_admin: [
-      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-user",    label: "Profil",     link: "/account" },
-      { icon: "fa fa-users",   label: "Pacienti",   link: "/admin/patients" },
-      { icon: "fa fa-images",  label: "Fotky",      link: "/fotky" },
-      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
-      { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
-      { icon: "fa fa-user-md", label: "Admini",    link: "/admins" },
-      { icon: "fa fa-hospital",label: "Nemocnice",  link: "/hospitals" },
-      { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
-      { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
-      { icon: "fa fa-cog",     label: "Nastavenie", link: "/nastavenie" },
+      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
+      { icon: "fa fa-hospital", label: "Nemocnice", link: "/hospitals", countTemplate: "${data.hospital_count} Všetkých nemocníc" },
+      { icon: "fa fa-user-shield", label: "Admini", link: "/admins", countTemplate: "${data.admin_count} Všetkých adminov" },
+      { icon: "fa fa-user-md", label: "Doktori", link: "/doctors", countTemplate: "${data.doctor_count} Všetkých doktorov" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians", countTemplate: "${data.technician_count} Všetkých technikov" },
+      { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-list", label: "Zoznam", link: "/admin/list", countTemplate: "${data.processed_image_count} Všetkých záznamov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
   };
 
-  function updateCards(userType) {
-  if (!dashboardCards) return;
+  function updateCards(data) {
+    if (!dashboardCards) return;
+    const userType = data.user_type;
+    console.log(data)
+    const items = menuConfig[userType].filter(item =>
+      !item.isLogout && !["Domov", "Profil", "Nastavenie"].includes(item.label)
+    );
 
-  // 1) Vyfiltrujeme z menuConfig položky, ktoré nechceme:
-  //    - isLogout (ak nechceš Odhlásiť),
-  //    - label === "Domov" alebo label === "Profil".
-  let items = menuConfig[userType].filter(item => {
-    if (item.isLogout) return false;
-    if (item.label === "Domov" || item.label === "Profil" || item.label === "Nastavenie") return false;
-    return true;
-  });
+    const labelToColorClass = {
+      "Nemocnice": "hospitalSky",
+      "Admini": "adminSteel",
+      "Doktori": "doctorOcean",
+      "Technici": "techNavy",
+      "Pacienti": "patientSoft",
+      "Fotky": "photoSky",
+      "Zoznam": "listBlue",
+      "Výsledky": "resultsIce",
+      "Správy": "messageCool",
+      "Pridať fotku": "addPhoto",
+      "Vytvoriť pacienta": "newPatient",
+    };
+    /*const labelToColorClass = {
+      "Nemocnice": "hospitalSky",
+      "Admini": "adminShield",
+      "Doktori": "doctorOcean",
+      "Pacienti": "patientCare",
+      "Technici": "techGear",
+      "Fotky": "photoFlow",
+      "Zoznam": "listView",
+      "Výsledky": "resultsGlow",
+      "Správy": "messagePulse",
+    };*/
 
-  // 2) Pole farieb, ktoré chceme použiť v cykle
-  //    Môžeš si ich dať, koľko chceš, alebo nastaviť ľubovoľne.
-  const colorClasses = ["purple", "red", "green", "orange", "teal"];
 
-  // 3) Začneme tvoriť HTML pre .cards
-  let html = `<div class="cards">`;
 
-  // 4) Pre každú položku:
-  items.forEach((item, index) => {
-    // Vyberieme farbu z colorClasses podľa indexu
-    const cardColor = colorClasses[index % colorClasses.length];
+    dashboardCards.innerHTML = "";
 
-    html += `
-      <div class="card ${cardColor}" onclick="location.href='${item.link}'">
-        <h3>${item.label}</h3>
-        <p>Popis pre položku "${item.label}"</p>
-      </div>
-    `;
-  });
+    const container = document.createElement("div");
+    container.classList.add("cards");
 
-  html += `</div>`; // koniec .cards
+    items.forEach((item) => {
+      const colorClass = labelToColorClass[item.label] || "defaultCard";
+      const countText = item.countTemplate
+      ? item.countTemplate.replace(/\${data\.(\w+)}/g, (_, key) => data[key] || 0)
+      : "0";
+      const card = document.createElement("div");
+      card.classList.add("card", colorClass);
+      card.dataset.link = item.link;
 
-  // 5) Vložíme do #dashboard-cards
-  dashboardCards.innerHTML = html;
-}
+      // HLAVIČKA – farebný pás s názvom a ikonou
+      const header = document.createElement("div");
+      header.classList.add("card-header");
+      header.innerHTML = `
+        <span><i class="${item.icon}"></i> ${item.label}</span>
+        <i class="fa fa-arrow-right"></i>
+      `;
+
+      // TELO – biela časť s popisom
+      const body = document.createElement("div");
+      body.classList.add("card-body");
+      body.innerHTML = `
+        <span>Popis pre položku <strong>${item.label}</strong></span>
+        <span class="highlight">${countText}</span>
+      `;
+
+      card.appendChild(header);
+      card.appendChild(body);
+      container.appendChild(card);
+    });
+
+    dashboardCards.appendChild(container);
+
+    // Kliknutie presmeruje na danú URL
+    container.addEventListener("click", (e) => {
+      const card = e.target.closest(".card");
+      if (card && card.dataset.link) {
+        window.location.href = card.dataset.link;
+      }
+    });
+  }
+
+
+
+
 
   // fetch s cookies
   function fetchWithAuth(url, options = {}) {
@@ -116,23 +159,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // Po načítaní user-a: generujeme menu, zobrazíme rolu
   async function loadDashboard() {
     try {
-      const response = await fetchWithAuth('/account/info');
+      const response = await fetchWithAuth('/dashboard/info');
+      console.log(response)
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa (token?).');
       }
-      const user = await response.json();
+      const data = await response.json();
 
-      updateCards(user.user_type);
+      updateCards(data);
       // Zobrazíme príslušný obsah (doctor, patient, atď.)
-      if (user.user_type === "doctor") {
+      if (data.user_type === "doctor") {
         loadDoctorDashboard();
-      } else if (user.user_type === "patient") {
+      } else if (data.user_type === "patient") {
         loadPatientDashboard();
-      } else if (user.user_type === "technician") {
+      } else if (data.user_type === "technician") {
         loadTechnicianDashboard();
-      } else if (user.user_type === "admin") {
+      } else if (data.user_type === "admin") {
         loadAdminDashboard();
-      } else if (user.user_type === "super_admin") {
+      } else if (data.user_type === "super_admin") {
         loadSuperAdminDashboard();
       } else {
         const dc = document.getElementById("dashboard-content");

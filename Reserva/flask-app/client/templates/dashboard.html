@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block stylesheet %}
+{{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block title %}
+Moji Lekári - Domov
+{% endblock %}
+
+{% block header %}
+Domov
+{% endblock %}
+
+{% block content %}
+<!-- Tu dáš čokoľvek, čo chceš zobraziť v "Dashboard" sekcii -->
+<div id="dashboard-cards"></div>
+
+<div id="dashboard-content" style="margin-top: 30px;">
+  <!-- Sem sa bude vkladať obsah z loadDashboard() (pacienti...) -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

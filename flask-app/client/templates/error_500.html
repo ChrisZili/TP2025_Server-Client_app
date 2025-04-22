@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <title>500 - Interná chyba servera</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- CSP: bezpečné načítanie len našich zdrojov + Google Fonts -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    style-src 'self' https://fonts.googleapis.com;
+    style-src-elem 'self' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    script-src 'self';" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Vlastné CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/error_500.css') }}" />
+
+  <!-- Favicony -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}" />
+  <link rel="manifest" href="{{ url_for('static', filename='icons/site.webmanifest') }}" />
+</head>
+<body>
+  <div class="container">
+  </div>
+
+  <!-- SVG animácia -->
+  <div class="svg-wrapper">
+    {% include 'svg/animated_500.svg' %}
+  </div>
+</body>
+</html>

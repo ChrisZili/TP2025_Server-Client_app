@@ -34,7 +34,7 @@ class PatientData(User):
         "OriginalImageData", back_populates="patient", cascade="all, delete-orphan", lazy="select"
     )
 
-    def get_name(self):
+    def get_full_name(self):
         parts = []
         if self.first_name:
             parts.append(self.first_name.strip())

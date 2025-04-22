@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/photos_list.css') }}">
+{% endblock %}
+
+{% block title %}
+Moji Lekári - Zoznam Fotiek
+{% endblock %}
+
+{% block header %}
+Zoznam Fotiek
+{% endblock %}
+
+{% block content %}
+<div class="fotky-container">
+  <!-- Fulltext Search Bar -->
+  <div id="fulltext-search-container">
+    <label for="filter-fulltext" class="custom-class">Hľadať zhodu:</label>
+    <input type="text" id="filter-fulltext" class="form-input" placeholder="Zadajte text">
+  </div>
+
+  <!-- Filters and Add Button -->
+  <div id="filters-and-action">
+    <!-- Filters Section -->
+    <div id="filters">
+      <!-- Filter: Patient -->
+      {% if user_type in ["super_admin", "admin", "doctor", "technician"] %}
+      <div id="filter-patient-container">
+        <label for="filter-patient">Pacient:</label>
+        <select id="filter-patient" class="form-input">
+          <option value="">Všetci</option>
+        </select>
+      </div>
+      {% endif %}
+
+      <!-- Filter: Hospital -->
+      {% if user_type in ["super_admin"] %}
+      <div id="filter-hospital-container">
+        <label for="filter-hospital">Nemocnica:</label>
+        <select id="filter-hospital" class="form-input">
+          <option value="">Všetky</option>
+        </select>
+      </div>
+      {% endif %}
+
+      <!-- Filter: Doctor -->
+      {% if user_type in ["super_admin", "technician","admin"] %}
+      <div id="filter-doctor-container">
+        <label for="filter-doctor">Doktor:</label>
+        <select id="filter-doctor" class="form-input">
+          <option value="">Všetci</option>
+        </select>
+      </div>
+      {% endif %}
+
+      <!-- Filter: Eye -->
+      {% if user_type in ["super_admin", "admin", "doctor", "technician"] %}
+      <div id="filter-eye-container">
+        <label for="filter-eye">Oko:</label>
+        <select id="filter-eye" class="form-input">
+          <option value="">Všetky</option>
+          <option value="prave">Pravé</option>
+          <option value="lave">Ľavé</option>
+        </select>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Add Photo Button -->
+    <a href="{{ url_for('photos_add') }}" class="btn btn-green">
+      Pridať Fotku
+    </a>
+  </div>
+
+  <!-- Photo Table -->
+  <table class="photo-table">
+    <thead>
+      <tr>
+        <th data-column="name" onclick="toggleSort('name')">Meno</th>
+        <th data-column="date" onclick="toggleSort('date')">Datum nahratia</th>
+        <th data-column="eye" onclick="toggleSort('eye')">Oko</th>
+        <th data-column="patient" onclick="toggleSort('patient')">Pacient</th>
+        <th data-column="doctor" onclick="toggleSort('doctor')">Doktor</th>
+        <th data-column="hospital" onclick="toggleSort('hospital')">Nemocnica</th>
+      </tr>
+    </thead>
+    <tbody id="photo-table-body">
+      {% for photo in photos %}
+      <tr 
+        data-photo-name="{{ photo.name }}" 
+        data-photo-date="{{ photo.date }}" 
+        data-photo-eye="{{ photo.eye }}" 
+        data-photo-patient="{{ photo.patient }}" 
+        data-photo-doctor="{{ photo.doctor }}" 
+        data-photo-hospital="{{ photo.hospital }}" 
+        data-patient-age="{{ photo.patient_data.age }}" 
+        data-patient-gender="{{ photo.patient_data.gender }}" 
+        data-patient-phone="{{ photo.patient_data.phone_number }}" 
+        data-patient-birth-number="{{ photo.patient_data.birth_number }}">
+        <td>{{ photo.name }}</td>
+        <td>{{ photo.date }}</td>
+        <td>{{ photo.eye }}</td>
+        <td>{{ photo.patient }}</td>
+        <td>{{ photo.doctor }}</td>
+        <td>{{ photo.hospital }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/photos.js') }}"></script>
+<script>
+  const userType = "{{ user_type }}";
+  const photoData = {{ photos | tojson }};
+</script>
+{% endblock %}

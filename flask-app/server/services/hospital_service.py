@@ -1,6 +1,6 @@
 import logging
 from server.database import db
-from server.models import User
+from server.models.user import User
 from server.models.hospital_data import Hospital
 
 logger = logging.getLogger(__name__)
@@ -132,4 +132,5 @@ class HospitalService:
 
 
     def check_user_id(self, user_id: int):
+        """Overenie, či používateľ má oprávnenie super_admin."""
         return User.check_user_type_required(user_id, "super_admin")
