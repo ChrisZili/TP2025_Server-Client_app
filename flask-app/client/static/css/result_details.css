@@ -21,7 +21,7 @@ body {
 .result-photo-container {
   display: flex;
   gap: 20px;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
   margin-bottom: 20px;
 }
@@ -29,6 +29,8 @@ body {
 .result-photo-container .image-preview {
   flex: 1;
   text-align: center;
+  max-width: 50%;
+  align-items: center;
 }
 
 .result-photo-container .image-preview h4 {
@@ -39,6 +41,7 @@ body {
 
 .result-photo-container .image-preview img {
   width: 100%;
+  max-width: 100%;
   height: auto;
   border: 1px solid #ddd;
   border-radius: 5px;

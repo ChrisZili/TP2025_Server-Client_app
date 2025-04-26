@@ -1,5 +1,6 @@
 import logging
 from flask import Flask, render_template, flash, request, jsonify, url_for, redirect
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from database_simulation import (
     HOSPITALS,
     ADMINS,
@@ -17,7 +18,7 @@ from database_simulation import (
 )
 
 # Set the current user type (can be changed dynamically)
-USER_DATA = DOCTOR_USER_DATA # Change this to the desired user type
+USER_DATA = SUPER_ADMIN_USER_DATA # Change this to the desired user type
 
 # Initialize Flask app
 app = Flask(__name__, template_folder="client/templates", static_folder="client/static")
@@ -40,31 +41,164 @@ def account_page():
 
 
 # Route: Hospitals Page
-@app.route("/hospitals", methods=["GET"])
-def get_hospitals_page():
+@app.route('/hospitals', methods=['GET'])
+def get_hospitals():
     """Render the hospitals page."""
-    logger.info("get_hospitals_page endpoint accessed")
-    return render_template("hospitals.html", hospitals=HOSPITALS)
+    logger.info("get_hospitals endpoint accessed")
+    return render_template("hospitals_list.html")
 
 
 # Route: Hospital Details
-@app.route("/hospitals/<int:hospital_id>", methods=["GET"])
-def get_hospital_details(hospital_id):
-    """Get details of a specific hospital."""
-    logger.info("get_hospital_details endpoint accessed for hospital_id: %s", hospital_id)
+@app.route('/hospitals/<int:hospital_id>', methods=['GET'])
+def get_hospital(hospital_id):
+    """Retrieve details of a specific hospital."""
+    logger.info("get_hospital endpoint accessed for hospital_id: %s", hospital_id)
+
+    # Check if the user is a Super Admin
+    user_type = USER_DATA["user_type"]  # Replace with actual user type logic
+    if user_type != "super_admin":
+        logger.warning("Unauthorized access attempt by user type: %s", user_type)
+        return render_template("error_403.html"), 403  # Return a 403 Forbidden error page
+
+    # Find the hospital by ID
+    hospital = next((h for h in HOSPITALS if h["id"] == hospital_id), None)
+    if not hospital:
+        logger.error("get_hospital: Hospital not found with id: %s", hospital_id)
+        if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
+            return jsonify({'error': 'Hospital not found'}), 404
+        else:
+            return render_template("error_404.html"), 404
+
+    # Return JSON or HTML based on the Accept header
+    if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
+        return jsonify(hospital), 200
+    else:
+        return render_template("hospitals_details.html", hospital=hospital, user_type=user_type), 200
+
+
+# Route: Add Hospital
+@app.route('/hospitals/add', methods=['POST'])
+def add_hospital_post():
+    """Add a new hospital."""
+    logger.info("add_hospital endpoint accessed")
+
+    if not (request.is_json and request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("add_hospital: Invalid input or Accept header")
+        return jsonify({'error': 'Invalid input or only JSON responses supported'}), 406
+
+    data = request.get_json()
+    logger.debug("add_hospital: Received data, keys: %s", list(data.keys()))
+
+    try:
+        new_hospital = {
+            "id": max(h["id"] for h in HOSPITALS) + 1 if HOSPITALS else 1,
+            "name": data["name"],
+            "city": data["city"],
+            "type": data.get("type", "Unknown"),
+            "capacity": data.get("capacity", "Unknown"),
+            "street": data["street"],
+            "postal_code": data["postal_code"]
+        }
+        HOSPITALS.append(new_hospital)
+        logger.info("add_hospital: New hospital added: %s", new_hospital)
+    except Exception as e:
+        logger.exception("add_hospital: Exception while adding hospital: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(new_hospital), 201
+
+
+@app.route('/hospitals/add', methods=['GET'])
+def add_hospital():
+    return render_template('add_hospital.html')
+
+
+# Route: Update Hospital
+@app.route('/hospitals/update/<int:hospital_id>', methods=['PUT'])
+def update_hospital(hospital_id):
+    """Update an existing hospital."""
+    logger.info("update_hospital endpoint accessed for hospital_id: %s", hospital_id)
+
+    if not (request.is_json and request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("update_hospital: Invalid input or Accept header")
+        return jsonify({'error': 'Invalid input or only JSON responses supported'}), 406
+
+    data = request.get_json()
+    logger.debug("update_hospital: Received data, keys: %s", list(data.keys()))
+
+    hospital = next((h for h in HOSPITALS if h["id"] == hospital_id), None)
+    if not hospital:
+        logger.error("update_hospital: Hospital not found with id: %s", hospital_id)
+        return jsonify({'error': 'Hospital not found'}), 404
+
+    try:
+        hospital.update({
+            "name": data.get("name", hospital["name"]),
+            "city": data.get("city", hospital["city"]),
+            "type": data.get("type", hospital.get("type", "Unknown")),
+            "capacity": data.get("capacity", hospital.get("capacity", "Unknown")),
+            "street": data.get("street", hospital["street"]),
+            "postal_code": data.get("postal_code", hospital["postal_code"])
+        })
+        logger.info("update_hospital: Hospital updated: %s", hospital)
+    except Exception as e:
+        logger.exception("update_hospital: Exception while updating hospital: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(hospital), 200
+
+
+# Route: List Hospitals
+@app.route('/hospitals/list', methods=['GET'])
+def list_hospitals():
+    """Retrieve a list of hospitals."""
+    logger.info("list_hospitals endpoint accessed")
+
+    if not (request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("list_hospitals: Frontend does not require JSON response")
+        return jsonify({'error': 'Only JSON responses supported'}), 406
+
+    try:
+        hospitals_data = [
+            {
+                "id": hospital["id"],
+                "name": hospital["name"],
+                "created_at": hospital.get("created_at", "Neznámy dátum"),
+                "city": hospital["city"],
+                "street": hospital["street"],
+                "postal_code": hospital["postal_code"],
+                "capacity": hospital.get("capacity", "Unknown"),
+            }
+            for hospital in HOSPITALS
+        ]
+        logger.info("list_hospitals: List of hospitals retrieved, count: %d", len(hospitals_data))
+    except Exception as e:
+        logger.exception("list_hospitals: Exception while retrieving hospitals: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(hospitals_data), 200
+
+
+# Route: Delete Hospital
+@app.route('/hospitals/delete/<int:hospital_id>', methods=['DELETE'])
+def delete_hospital(hospital_id):
+    """Delete a hospital."""
+    logger.info("delete_hospital endpoint accessed for hospital_id: %s", hospital_id)
 
     hospital = next((h for h in HOSPITALS if h["id"] == hospital_id), None)
     if not hospital:
         logger.error("Hospital not found with id: %s", hospital_id)
-        return render_template("error_404.html"), 404
+        return jsonify({'error': 'Hospital not found'}), 404
 
-    # Add related data
-    hospital["admins"] = [a for a in ADMINS if a["id"] in hospital["admins"]]
-    hospital["doctors"] = [d for d in DOCTORS if d["id"] in hospital["doctors"]]
-    hospital["technicians"] = [t for t in TECHNICIANS if t["id"] in hospital["technicians"]]
-    hospital["patients"] = [p for p in PATIENTS if p["id"] in hospital["patients"]]
+    try:
+        HOSPITALS.remove(hospital)
+        logger.info("Hospital deleted: %s", hospital)
+    except Exception as e:
+        logger.exception("Error while deleting hospital: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
 
-    return render_template("hospital_details.html", hospital=hospital)
+    return jsonify({'message': 'Hospital deleted successfully'}), 200
+
 
 # Route: Medical Methods Page
 @app.route("/methods", methods=["GET"])
