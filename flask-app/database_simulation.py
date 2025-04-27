@@ -148,32 +148,38 @@ ADMINS = [
         "last_name": "Johnson",
         "phone_number": "+421987654321",
         "gender": "female",
-        "hospital_id": [2, 1],  # Reference to hospital IDs
-        "user_type": "super_admin",  # Updated user type
+        "hospital_id": [2, 1],
+        "user_type": "super_admin",
+        "email": "super.admin.johnson@example.com",  # Added email
+        "created_at": "2025-01-01",  # Added created_at
     },
     {
         "id": 3,
-        "first_name": "admin",
+        "first_name": "Admin",
         "last_name": "Clark",
         "phone_number": "+421987654322",
         "gender": "female",
-        "hospital_id": 1,  # Reference to hospital ID
-        "user_type": "admin",  # Updated user type
+        "hospital_id": 1,
+        "user_type": "admin",
+        "email": "admin.clark@example.com",  # Added email
+        "created_at": "2025-02-01",  # Added created_at
     },
 ]
 
 DOCTORS = [
     {
         "id": 1,
-        "first_name": "Doctor",  # Updated first name
-        "last_name": "Doe",  # Last name remains consistent
+        "first_name": "Doctor",
+        "last_name": "Doe",
         "phone_number": "+421123456789",
         "gender": "male",
         "title": "Dr.",
         "suffix": "PhD",
         "super_doctor": True,
-        "hospital_id": 1,  # Reference to hospital ID
-        "patients": [101],  # References to patient IDs
+        "hospital_id": 1,
+        "patients": [101],
+        "email": "doctor.doe@example.com",  # Added email
+        "created_at": "2025-01-01",  # Added created_at
     },
     {
         "id": 2,
@@ -184,8 +190,10 @@ DOCTORS = [
         "title": "Dr.",
         "suffix": "MD",
         "super_doctor": False,
-        "hospital_id": 1,  # Reference to hospital ID
-        "patients": [102],  # References to patient IDs
+        "hospital_id": 1,
+        "patients": [102],
+        "email": "jane.smith@example.com",  # Added email
+        "created_at": "2025-01-15",  # Added created_at
     },
     {
         "id": 4,
@@ -196,8 +204,10 @@ DOCTORS = [
         "title": "Dr.",
         "suffix": "MD",
         "super_doctor": False,
-        "hospital_id": 2,  # Reference to hospital ID
-        "patients": [201, 204],  # References to patient IDs
+        "hospital_id": 2,
+        "patients": [201, 204],
+        "email": "michael.johnson@example.com",  # Added email
+        "created_at": "2025-02-01",  # Added created_at
     },
     {
         "id": 5,
@@ -208,8 +218,10 @@ DOCTORS = [
         "title": "Dr.",
         "suffix": "PhD",
         "super_doctor": True,
-        "hospital_id": 2,  # Reference to hospital ID
-        "patients": [202, 205],  # References to patient IDs
+        "hospital_id": 2,
+        "patients": [202, 205],
+        "email": "sarah.williams@example.com",  # Added email
+        "created_at": "2025-02-10",  # Added created_at
     },
     {
         "id": 6,
@@ -220,8 +232,10 @@ DOCTORS = [
         "title": "Dr.",
         "suffix": "MD",
         "super_doctor": False,
-        "hospital_id": 2,  # Reference to hospital ID
-        "patients": [203],  # References to patient IDs
+        "hospital_id": 2,
+        "patients": [203],
+        "email": "david.brown@example.com",  # Added email
+        "created_at": "2025-03-01",  # Added created_at
     },
 ]
 
@@ -1007,82 +1021,76 @@ MEDICAL_METHODS = [
 ]
 
 DOCTOR_USER_DATA = {
-    "id": 1,  # Matches the ID of the first doctor in the DOCTORS list
-    "email": "doctor.doe@example.com",  # Email for the doctor
-    "password_hash": "pbkdf2:sha256:150000$doctorhash",  # Example hashed password
-    "created_at": "2023-01-01T12:00:00Z",  # Timestamp when the user account was created
-    "user_type": "doctor",  # User type
-    "first_name": "Doctor",  # Updated first name
-    "last_name": "Doe",  # Last name remains consistent
-    "created_images": [201, 202],  # Only IDs of images created by the user
-    "info": {  # Additional information
-        "email": "doctor.doe@example.com",
-        "user_type": "doctor",
-        "created_at": "2023-01-01T12:00:00Z",
-    },
+    "id": 1,
+    "email": "doctor.doe@example.com",
+    "password_hash": "pbkdf2:sha256:150000$doctorhash",
+    "created_at": "2023-01-01T12:00:00Z",
+    "user_type": "doctor",
+    "first_name": "Doctor",
+    "last_name": "Doe",
+    "phone_number": "+421123456789",
+    "gender": "male",
+    "title": "Dr.",
+    "suffix": "PhD",
+    "super_doctor": True,
+    "hospital_id": 1,
+    "patients": [101],
+    "created_images": [201, 202],
 }
 
 SUPER_ADMIN_USER_DATA = {
-    "id": 1,  # Matches the ID of the first admin in the ADMINS list
-    "email": "admin.johnson@example.com",  # Email for the admin
-    "password_hash": "pbkdf2:sha256:150000$adminhash",  # Example hashed password
-    "created_at": "2023-02-01T09:00:00Z",  # Timestamp when the user account was created
-    "user_type": "super_admin",  # User type
-    "first_name": "Super Admin",  # Updated first name
-    "last_name": "Johnson",  # Last name remains consistent
-    "created_images": [],  # Admins typically don't create images
-    "info": {  # Additional information
-        "email": "admin.johnson@example.com",
-        "user_type": "admin",
-        "created_at": "2023-02-01T09:00:00Z",
-    },
+    "id": 1,
+    "email": "super.admin.johnson@example.com",
+    "password_hash": "pbkdf2:sha256:150000$adminhash",
+    "created_at": "2025-01-01",
+    "user_type": "super_admin",
+    "first_name": "Super Admin",
+    "last_name": "Johnson",
+    "phone_number": "+421987654321",
+    "gender": "female",
+    "hospital_id": [2, 1],  # Super admin manages multiple hospitals
 }
 
 ADMIN_USER_DATA = {
-    "id": 3,  # Matches the ID of the second admin in the ADMINS list
-    "email": "emily.clark@example.com",  # Static email for the admin
-    "password_hash": "pbkdf2:sha256:150000$adminhash",  # Example hashed password
-    "created_at": "2023-02-01T09:00:00Z",  # Example timestamp
-    "user_type": "admin",  # User type
-    "first_name": "admin",  # First name from the second admin
-    "last_name": "Clark",  # Last name from the second admin
-    "created_images": [],  # Admins typically don't create images
-    "info": {  # Additional information
-        "email": "emily.clark@example.com",
-        "user_type": "admin",
-        "created_at": "2023-02-01T09:00:00Z",
-    },
+    "id": 3,
+    "email": "admin.clark@example.com",
+    "password_hash": "pbkdf2:sha256:150000$adminhash",
+    "created_at": "2025-02-01",
+    "user_type": "admin",
+    "first_name": "Admin",
+    "last_name": "Clark",
+    "phone_number": "+421987654322",
+    "gender": "female",
+    "hospital_id": 2,
 }
 
 PATIENT_USER_DATA = {
-    "id": 101,  # Matches the ID of the first patient in the PATIENTS list
-    "email": "patient.smith@example.com",  # Email for the patient
-    "password_hash": "pbkdf2:sha256:150000$patienthash",  # Example hashed password
-    "created_at": "2023-03-01T15:00:00Z",  # Timestamp when the user account was created
-    "user_type": "patient",  # User type
-    "first_name": "Patient",  # Updated first name
-    "last_name": "Smith",  # Last name remains consistent
-    "created_images": [],  # Patients typically don't create images
-    "info": {  # Additional information
-        "email": "patient.smith@example.com",
-        "user_type": "patient",
-        "created_at": "2023-03-01T15:00:00Z",
-    },
+    "id": 101,
+    "email": "patient.smith@example.com",
+    "password_hash": "pbkdf2:sha256:150000$patienthash",
+    "created_at": "2023-03-01T15:00:00Z",
+    "user_type": "patient",
+    "first_name": "Patient",
+    "last_name": "Smith",
+    "phone_number": "+421987654321",
+    "birth_date": "1990-05-15",
+    "birth_number": "9005151234",
+    "gender": "female",
+    "doctor_id": 1,
+    "hospital_id": 1,
+    "images": [201],
 }
 
 TECHNICIAN_USER_DATA = {
-    "id": 1,  # Matches the ID of the first technician in the TECHNICIANS list
-    "email": "technician.brown@example.com",  # Email for the technician
-    "password_hash": "pbkdf2:sha256:150000$technicianhash",  # Example hashed password
-    "created_at": "2023-04-01T08:00:00Z",  # Timestamp when the user account was created
-    "user_type": "technician",  # User type
-    "first_name": "Technician",  # Updated first name
-    "last_name": "Brown",  # Last name remains consistent
-    "created_images": [301, 302],  # Only IDs of images created by the user
-    "info": {  # Additional information
-        "email": "technician.brown@example.com",
-        "user_type": "technician",
-        "created_at": "2023-04-01T08:00:00Z",
-    },
+    "id": 1,
+    "email": "technician.brown@example.com",
+    "password_hash": "pbkdf2:sha256:150000$technicianhash",
+    "created_at": "2023-04-01T08:00:00Z",
+    "user_type": "technician",
+    "first_name": "Technician",
+    "last_name": "Brown",
+    "phone_number": "+421555666777",
+    "gender": "female",
+    "hospital_id": 1,
 }
 

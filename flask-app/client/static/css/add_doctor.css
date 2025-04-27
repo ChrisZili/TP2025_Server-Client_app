@@ -1,0 +1,202 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+}
+
+.add-doctor-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-doctor-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 2%;
+  margin-top: 3%;
+  color: #555;
+}
+
+.form-group input {
+  width: 100%;
+  max-width: 80%;
+  padding: 10px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+form input, form select, form button {
+  width: 100%;
+  max-width: 80%;
+  padding: 10px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form input:focus, form select:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Ensure buttons are stacked vertically */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add spacing between buttons */
+}
+
+.action-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  max-height: 50px;
+  overflow: hidden;
+  text-align: center;
+  width: 80%;
+  margin-top: 1%;
+  margin-bottom: 0.5%;
+}
+
+.action-button:hover {
+  background-color: #2980b9;
+}
+
+.upload-photo-button {
+  background-color: #28a745;
+}
+
+.upload-photo-button:hover {
+  background-color: #218838;
+}
+
+/* Style for the back-to-list button */
+.back-to-list-button {
+  background-color: #6c757d; /* Grey background */
+  color: white; /* White text */
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%; /* Full width */
+  max-width: 80%; /* Limit width */
+  margin: 0 auto; /* Center the button */
+}
+
+.back-to-list-button:hover {
+  background-color: #5a6268; /* Darker grey on hover */
+}
+
+.back-to-list-button:active {
+  background-color: #4e555b; /* Even darker grey on click */
+}
+
+/* General styling for the container */
+#fotky-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: auto;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 1.1rem;
+  text-align: center;
+  gap: 20px;
+}
+
+.fotky-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 70%;
+  width: 50%;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 1.1rem;
+  text-align: center;
+  gap: 20px;
+}
+
+.form-container {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin: 20px auto;
+  max-width: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .fotky-container {
+    max-width: 90%;
+  }
+
+  .action-button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .fotky-container {
+    max-width: 95%;
+    padding: 5%;
+    width: 90%;
+  }
+
+  .action-button {
+    font-size: 10px;
+    padding: 6px 12px;
+    width: 90%;
+  }
+
+  .form-input, .form-button {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-button {
+    font-size: 10px;
+    padding: 6px 12px;
+    width: 100%;
+  }
+}

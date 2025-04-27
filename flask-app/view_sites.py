@@ -17,16 +17,31 @@ from database_simulation import (
     PATIENT_USER_DATA,
 )
 
+USER_DATA = ADMIN_USER_DATA # Change this to the desired user type
+
+# Configure logging to file only
+log_file = "app.log"  # Log file name
+
+# Set up the logging format
+log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Configure the root logger
+logging.basicConfig(
+    level=logging.DEBUG,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format=log_format,
+    handlers=[
+        logging.FileHandler(log_file)  # Log only to a file
+    ]
+)
+
+logger = logging.getLogger(__name__)  # Reuse the logger instance
+
 # Set the current user type (can be changed dynamically)
-USER_DATA = SUPER_ADMIN_USER_DATA # Change this to the desired user type
 
 # Initialize Flask app
 app = Flask(__name__, template_folder="client/templates", static_folder="client/static")
 app.secret_key = "your_secret_key_here"
 
-logger = logging.getLogger(__name__)
-
-# Route: Landing Page
 @app.route("/landing", methods=["GET"])
 def landing_page():
     logger.info("Landing page accessed.")
@@ -216,26 +231,150 @@ def get_admins_page():
     return render_template("admins.html", admins=ADMINS)
 
 
+# Route: Add Doctor (GET)
+@app.route('/doctors/add', methods=['GET'])
+def add_doctor_page():
+    """Render the Add Doctor page."""
+    logger.info("add_doctor_page endpoint accessed")
+    return render_template("add_doctor.html", user=USER_DATA)
+
+
+# Route: Add Doctor (POST)
+@app.route('/doctors/add', methods=['POST'])
+def add_doctor_post():
+    """Add a new doctor."""
+    logger.info("add_doctor_post endpoint accessed")
+
+    if not (request.is_json and request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("add_doctor_post: Invalid input or Accept header")
+        return jsonify({'error': 'Invalid input or only JSON responses supported'}), 406
+
+    data = request.get_json()
+    logger.debug("add_doctor_post: Received data, keys: %s", list(data.keys()))
+
+    try:
+        new_doctor = {
+            "id": max(d["id"] for d in DOCTORS) + 1 if DOCTORS else 1,
+            "first_name": data["first_name"],
+            "last_name": data["last_name"],
+            "title": data.get("title", ""),
+            "email": data["email"],
+            "phone_number": data["phone"],
+            "hospital_id": next((h["id"] for h in HOSPITALS if h["name"] == data["hospital"]), None),
+            "created_at": data["created_at"]
+        }
+
+        if not new_doctor["hospital_id"]:
+            logger.error("add_doctor_post: Invalid hospital name")
+            return jsonify({'error': 'Invalid hospital name'}), 400
+
+        DOCTORS.append(new_doctor)
+        logger.info("add_doctor_post: New doctor added: %s", new_doctor)
+    except Exception as e:
+        logger.exception("add_doctor_post: Exception while adding doctor: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(new_doctor), 201
+
+
+# Route: Update Doctor
+@app.route('/doctors/update/<int:doctor_id>', methods=['PUT'])
+def update_doctor(doctor_id):
+    """Update an existing doctor."""
+    logger.info("update_doctor endpoint accessed for doctor_id: %s", doctor_id)
+
+    if not (request.is_json and request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("update_doctor: Invalid input or Accept header")
+        return jsonify({'error': 'Invalid input or only JSON responses supported'}), 406
+
+    data = request.get_json()
+    logger.debug("update_doctor: Received data, keys: %s", list(data.keys()))
+
+    doctor = next((d for d in DOCTORS if d["id"] == doctor_id), None)
+    if not doctor:
+        logger.error("update_doctor: Doctor not found with id: %s", doctor_id)
+        return jsonify({'error': 'Doctor not found'}), 404
+
+    try:
+        # Update the doctor's details
+        doctor.update({
+            "first_name": data.get("first_name", doctor["first_name"]),
+            "last_name": data.get("last_name", doctor["last_name"]),
+            "title": data.get("title", doctor.get("title", "")),
+            "email": data.get("email", doctor["email"]),
+            "phone_number": data.get("phone_number", doctor["phone_number"]),
+            "hospital_id": next((h["id"] for h in HOSPITALS if h["name"] == data.get("hospital")), doctor["hospital_id"]),
+            "super_doctor": data.get("is_superdoctor", doctor.get("is_superdoctor", False)),
+        })
+
+        # Check if the hospital_id is valid
+        if not doctor["hospital_id"]:
+            logger.error("update_doctor: Invalid hospital name")
+            return jsonify({'error': 'Invalid hospital name'}), 400
+
+        logger.info("update_doctor: Doctor updated: %s", doctor)
+    except Exception as e:
+        logger.exception("update_doctor: Exception while updating doctor: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(doctor), 200
+
+
+# Route: List Doctors
+@app.route('/doctors/list', methods=['GET'])
+def list_doctors():
+    """Retrieve a list of doctors."""
+    logger.info("list_doctors endpoint accessed")
+
+    try:
+        doctors_data = [
+            {
+                "id": doctor["id"],
+                "name": f"{doctor.get('title', '')} {doctor.get('first_name', '')} {doctor.get('last_name', '')}".strip(),
+                "hospital": next((h["name"] for h in HOSPITALS if h["id"] == doctor.get("hospital_id")), "Unknown"),
+                "created_at": doctor.get("created_at", "Unknown"),
+                "phone_number": doctor.get("phone_number", "Unknown"),
+                "email": doctor.get("email", "Unknown"),
+            }
+            for doctor in DOCTORS
+        ]
+        logger.info("list_doctors: List of doctors retrieved, count: %d", len(doctors_data))
+    except Exception as e:
+        logger.exception("list_doctors: Exception while retrieving doctors: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(doctors_data), 200
+
+
+# Route: Doctor Details
+@app.route('/doctors/<int:doctor_id>', methods=['GET'])
+def get_doctor_details(doctor_id):
+    """Retrieve details of a specific doctor."""
+    logger.info("get_doctor_details endpoint accessed for doctor_id: %s", doctor_id)
+
+    # Find the doctor by ID
+    doctor = next((d for d in DOCTORS if d["id"] == doctor_id), None)
+    if not doctor:
+        logger.error("get_doctor_details: Doctor not found with id: %s", doctor_id)
+        return jsonify({'error': 'Doctor not found'}), 404
+    logger.info("Doctor: %s", doctor)
+    # Add hospital name to the doctor details
+    doctor["hospital"] = next((h["name"] for h in HOSPITALS if h["id"] == doctor.get("hospital_id")), "Unknown")
+
+    # Return JSON if requested via JavaScript
+    if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
+        return jsonify(doctor), 200
+
+    # Render the doctor details page
+    return render_template("doctor_details.html", doctor=doctor, user=USER_DATA)
+
+
 # Route: Doctors Page
 @app.route('/doctors', methods=['GET'])
 def get_doctors_page():
     """Render the doctors page."""
     logger.info("get_doctors_page endpoint accessed")
-
-    # Get the current admin data
-    def get_admin_data(admin_id):
-        return next((admin for admin in ADMINS if admin["id"] == admin_id), None)
-
-    current_admin = get_admin_data(SUPER_ADMIN_USER_DATA["id"])
-    if not current_admin:
-        logger.error("Admin not found.")
-        return render_template("error_404.html"), 404
-
-    # Restrict access to doctors based on hospital_id
-    admin_hospital_id = current_admin.get("hospital_id")
-    doctors = [doctor for doctor in DOCTORS if doctor["hospital_id"] == admin_hospital_id]
-
-    return render_template("doctors.html", doctors=doctors)
+    return render_template("doctors_list.html")
 
 
 # Route: Fotky Page
@@ -327,6 +466,7 @@ def settings_info():
     # Use USER_DATA from dummy_data.py
     user_data = {
         "user_type": USER_DATA["user_type"],
+        "user_id": USER_DATA["id"],
         "first_name": USER_DATA.get("first_name", "Unknown"),  # Use top-level keys
         "last_name": USER_DATA.get("last_name", "Unknown"),
     }
@@ -583,6 +723,16 @@ def results_detail(image_name):
         urls=urls,
         user=USER_DATA
     )
+
+
+# Route: Get User Data
+@app.route('/user/data', methods=['GET'])
+def get_user_data():
+    """Provide all user data to the frontend."""
+    logger.info("get_user_data endpoint accessed")
+
+    # Send all user data to the frontend
+    return jsonify(USER_DATA), 200
 
 
 # Run the app
