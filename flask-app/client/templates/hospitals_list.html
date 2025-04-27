@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hospitals_list.css') }}">
+{% endblock %}
+
+{% block title %}
+Zoznam Nemocníc
+{% endblock %}
+
+{% block header %}
+Zoznam Nemocníc
+{% endblock %}
+
+{% block content %}
+<div class="hospitals-container">
+      <!-- Toggle View Button -->
+  <div id="toggle-view-container">
+    <button id="toggle-view-btn" class="btn btn-yellow">Zobraziť ako Karty</button>
+  </div>
+  <!-- Fulltext Search Bar -->
+  <div id="fulltext-search-container" class="centered-container">
+    <label for="filter-fulltext" class="custom-class">Hľadať zhodu:</label>
+    <input type="text" id="filter-fulltext" class="form-input" placeholder="Zadajte text">
+  </div>
+
+  <!-- Filters and Add Button -->
+  <div id="filters-and-action">
+    <!-- Filters Section -->
+    <div id="filters">
+      <div id="filter-city-container">
+        <label for="filter-city">Mesto:</label>
+        <select id="filter-city"></select>
+      </div>
+    </div>
+
+    <!-- Add Hospital Button -->
+    <a href="{{ url_for('add_hospital') }}" class="btn btn-green">
+      Pridať Nemocnicu
+    </a>
+  </div>
+
+  <!-- Hospital Table -->
+  <div id="hospital-table-container">
+    <table class="hospital-table">
+      <thead>
+        <tr>
+          <th data-column="name">Názov</th>
+          <th data-column="created_at">Dátum Vytvorenia</th>
+          <th data-column="city">Mesto</th>
+          <th data-column="street">Ulica</th>
+          <th data-column="postal_code">PSČ</th>
+        </tr>
+      </thead>
+      <tbody id="hospital-table-body">
+        <!-- Rows will be dynamically populated by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Hospital Cards -->
+  <div id="hospital-cards-container" style="display: none;">
+    <div id="hospital-cards" class="card-container">
+      <!-- Cards will be dynamically populated by JavaScript -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/hospitals_list.js') }}"></script>
+{% endblock %}

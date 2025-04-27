@@ -192,8 +192,6 @@ Detail Fotky - {{ photo.name if photo else "N/A" }}
     // Define processedImages and photoId globally before loading the JavaScript file
     const processedImages = {{ processed_images | tojson }};
     const photoId = {{ photo.id }};
-    console.log("Processed Images in Template:", processedImages);
-    console.log("Photo ID in Template:", photoId);
 </script>
 <script src="{{ url_for('static', filename='js/photos_detail.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/hospital_details.css') }}">
+{% endblock %}
+
+{% block title %}
+Moji Lekári - Detaily Nemocnice
+{% endblock %}
+
+{% block header %}
+Detaily Nemocnice
+{% endblock %}
+
+{% block content %}
+<div id="hospital-details-container" class="details-container">
+  <form id="hospital-details-form" class="form-container">
+    <div class="form-group">
+      <label for="hospital-id">Kód Nemocnice:</label>
+      <input type="text" id="hospital-id" name="hospital-id" value="{{ hospital.id }}" class="form-input" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="hospital-name">Názov Nemocnice:</label>
+      <input type="text" id="hospital-name" name="hospital-name" value="{{ hospital.name }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="hospital-city">Mesto:</label>
+      <input type="text" id="hospital-city" name="hospital-city" value="{{ hospital.city }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="hospital-street">Ulica a Číslo:</label>
+      <input type="text" id="hospital-street" name="hospital-street" value="{{ hospital.street }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="hospital-psc">PSČ:</label>
+      <input type="text" id="hospital-psc" name="hospital-psc" value="{{ hospital.postal_code }}" class="form-input" required>
+    </div>
+
+    <div class="form-group button-group">
+      <button type="submit" id="save-hospital-button" class="action-button save-button">Uložiť Zmeny</button>
+      <button type="button" id="cancel-button" class="action-button cancel-button">
+        Späť na Zoznam
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/hospital_details.js') }}"></script>
+{% endblock %}

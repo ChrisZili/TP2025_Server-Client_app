@@ -1,94 +1,110 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("dynamic-hospital-form");
-  const saveBtn = document.getElementById("save-hospital-btn");
+  console.log("DOM fully loaded and parsed."); // Debugging
 
-  // Pomocná funkcia pre fetch s cookies
-  function fetchWithAuth(url, options = {}) {
-    return fetch(url, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        ...(options.headers || {}),
-        'Accept': 'application/json'
-      }
-    });
-  }
-
-  // Funkcia na získanie hospital_id z URL (predpokladáme, že URL je vo formáte /hospitals/<id>/detail)
-  function getHospitalIdFromURL() {
-    const parts = window.location.pathname.split('/');
-    // Napríklad: ["", "hospitals", "123", "detail"]
-    return parts.length >= 3 ? parts[2] : null;
-  }
-
-  async function loadHospitalDetails() {
-    try {
-      const hospitalId = getHospitalIdFromURL();
-      if (!hospitalId) throw new Error("Chýba hospital ID v URL.");
-      const response = await fetchWithAuth(`/hospitals/${hospitalId}`);
-      if (!response.ok) {
-        throw new Error('Nepodarilo sa načítať údaje nemocnice.');
-      }
-      const hospital = await response.json();
-      renderHospitalForm(hospital);
-    } catch (err) {
-      console.error(err);
-      container.innerHTML = `<p>Chyba pri načítaní údajov nemocnice: ${err.message}</p>`;
+  // Check if the user is a Super Admin
+  const userTypeElement = document.getElementById("user-type");
+  if (userTypeElement) {
+    const userType = userTypeElement.value; // Assuming this is passed from the backend
+    if (userType !== "super_admin") {
+      alert("You do not have permission to access this page.");
+      window.location.href = "/dashboard"; // Redirect to a safe page
+      return;
     }
+  } else {
+    console.warn("User type element not found. Skipping user type check."); // Debugging
   }
 
-  function renderHospitalForm(hospital) {
-    // Vygenerujeme formulár s údajmi o nemocnici
-    let html = `<div class="form-group">
-      <label>Názov nemocnice</label>
-      <input type="text" name="name" value="${hospital.name || ''}" />
-    </div>`;
-    html += `<div class="form-group">
-      <label>Mesto</label>
-      <input type="text" name="city" value="${hospital.city || ''}" />
-    </div>`;
-    html += `<div class="form-group">
-      <label>Ulica a číslo</label>
-      <input type="text" name="street" value="${hospital.street || ''}" />
-    </div>`;
-    html += `<div class="form-group">
-      <label>PSČ</label>
-      <input type="text" name="postal_code" value="${hospital.postal_code || ''}" />
-    </div>`;
-    // Hospital code nie je editovateľný
-    html += `<div class="form-group">
-      <label>Kód nemocnice</label>
-      <input type="text" name="hospital_code" value="${hospital.hospital_code || ''}" readonly />
-    </div>`;
-    container.innerHTML = html;
+  // Extract the hospital ID from the URL path
+  const pathParts = window.location.pathname.split("/");
+  const hospitalId = pathParts[pathParts.length - 1]; // Get the last part of the path
+  console.log("Extracted Hospital ID:", hospitalId); // Debugging
+
+  // Validate the hospital ID
+  if (!hospitalId || isNaN(hospitalId)) {
+    alert("Hospital ID is missing or invalid in the URL. Redirecting to the hospitals list.");
+    window.location.href = "/hospitals";
+    return;
   }
 
-  if (saveBtn) {
-    saveBtn.addEventListener("click", async () => {
-      // Získame hospital_id z URL
-      const hospitalId = getHospitalIdFromURL();
-      // Získame hodnoty zo všetkých inputov vo formulári
-      const inputs = container.querySelectorAll("input");
-      let dataToSave = {};
-      inputs.forEach(inp => {
-        dataToSave[inp.name] = inp.value;
+  // Function to fetch hospital details with retry logic
+  function fetchHospitalDetails(retry = false) {
+    fetch(`/hospitals/${hospitalId}`)
+      .then((response) => {
+        console.log("Response status:", response.status); // Debugging
+        if (!response.ok) {
+          throw new Error(`Failed to fetch hospital data: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Hospital data:", data); // Debugging
+
+        // Populate the form with hospital details
+        document.getElementById("hospital-id").value = data.id;
+        document.getElementById("hospital-name").value = data.name;
+        document.getElementById("hospital-city").value = data.city;
+        document.getElementById("hospital-street").value = data.street;
+        document.getElementById("hospital-psc").value = data.postal_code;
+      })
+      .catch((error) => {
+        console.error("Error fetching hospital details:", error);
+
+        // Retry fetching hospital details if not already retried
+        if (!retry) {
+          console.log("Retrying to fetch hospital details...");
+          fetchHospitalDetails(true);
+        } else {
+          // Only show the error message after the second failure
+          alert("Nepodarilo sa načítať údaje nemocnice.");
+        }
       });
-      console.log("Chcem uložiť nemocnicu:", dataToSave);
-      try {
-        const response = await fetchWithAuth(`/hospitals/update/${hospitalId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dataToSave)
-        });
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.error || "Chyba pri aktualizácii nemocnice");
-        alert(result.message || "Nemocnica aktualizovaná.");
-      } catch (err) {
-        console.error(err);
-        alert(err.message || "Nepodarilo sa aktualizovať nemocnicu.");
-      }
-    });
   }
 
-  loadHospitalDetails();
+  // Fetch hospital details for the first time
+  fetchHospitalDetails();
+
+  // Handle form submission
+  document.getElementById("hospital-details-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    // Collect updated hospital data
+    const updatedData = {
+      name: document.getElementById("hospital-name").value.trim(),
+      city: document.getElementById("hospital-city").value.trim(),
+      street: document.getElementById("hospital-street").value.trim(),
+      postal_code: document.getElementById("hospital-psc").value.trim(),
+    };
+
+    fetch(`/hospitals/update/${hospitalId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Údaje nemocnice boli úspešne aktualizované.");
+          window.location.href = "/hospitals";
+        } else {
+          throw new Error("Failed to update hospital details.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating hospital details:", error);
+        alert("Nepodarilo sa aktualizovať údaje nemocnice.");
+      });
+  });
+
+  // Handle "Back to List" button click
+  const cancelButton = document.getElementById("cancel-button");
+  if (cancelButton) {
+    console.log("Cancel button found:", cancelButton); // Debugging
+    cancelButton.addEventListener("click", () => {
+      console.log("Cancel button clicked. Redirecting to /hospitals."); // Debugging
+      window.location.href = "/hospitals"; // Redirect to the hospitals list page
+    });
+  } else {
+    console.error("Cancel button not found in the DOM."); // Debugging
+  }
 });

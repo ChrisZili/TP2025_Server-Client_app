@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/doctors_list.css') }}">
+{% endblock %}
+
+{% block title %}
+Zoznam Doktorov
+{% endblock %}
+
+{% block header %}
+Zoznam Doktorov
+{% endblock %}
+
+{% block content %}
+<div class="doctors-container">
+  <!-- Toggle View Button -->
+  <div id="toggle-view-container">
+    <button id="toggle-view-btn" class="btn btn-yellow">Zobraziť ako Karty</button>
+  </div>
+  <!-- Fulltext Search Bar -->
+  <div id="fulltext-search-container" class="centered-container">
+    <label for="filter-fulltext" class="custom-class">Hľadať zhodu:</label>
+    <input type="text" id="filter-fulltext" class="form-input" placeholder="Zadajte text">
+  </div>
+
+  <!-- Filters and Add Button -->
+  <div id="filters-and-action">
+    <!-- Filters Section -->
+    <div id="filters">
+      <div id="filter-hospital-container">
+        <label for="filter-hospital">Nemocnica:</label>
+        <select id="filter-hospital">
+          <option value="">Všetky</option> <!-- Default option for all hospitals -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Add Doctor Button -->
+    <a href="{{ url_for('add_doctor_page') }}" class="btn btn-green">
+      Pridať Doktora
+    </a>
+  </div>
+
+  <!-- Doctor Table -->
+  <div id="doctor-table-container">
+    <table class="doctor-table">
+      <thead>
+        <tr>
+          <th data-column="name">Celé Meno</th>
+          <th data-column="hospital">Nemocnica</th>
+          <th data-column="created_at">Dátum Vytvorenia</th>
+          <th data-column="phone_number">Telefón</th>
+          <th data-column="email">E-mail</th>
+        </tr>
+      </thead>
+      <tbody id="doctor-table-body">
+        <!-- Rows will be dynamically populated by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Doctor Cards -->
+  <div id="doctor-cards-container" style="display: none;">
+    <div id="doctor-cards" class="card-container">
+      <!-- Cards will be dynamically populated by JavaScript -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/doctors_list.js') }}"></script>
+{% endblock %}

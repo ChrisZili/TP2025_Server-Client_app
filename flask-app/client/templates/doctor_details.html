@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/doctor_details.css') }}">
+{% endblock %}
+
+{% block title %}
+Moji Lekári - Detaily Doktora
+{% endblock %}
+
+{% block header %}
+Detaily Doktora
+{% endblock %}
+
+{% block content %}
+<div id="doctor-details-container" class="details-container">
+  <form id="doctor-details-form" class="form-container" data-user-type="{{ user.user_type }}">
+    <div class="form-group">
+      <label for="doctor-id">Kód Doktora:</label>
+      <input type="text" id="doctor-id" name="doctor-id" value="{{ doctor.id }}" class="form-input" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="doctor-first-name">Meno:</label>
+      <input type="text" id="doctor-first-name" name="doctor-first-name" value="{{ doctor.first_name }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="doctor-last-name">Priezvisko:</label>
+      <input type="text" id="doctor-last-name" name="doctor-last-name" value="{{ doctor.last_name }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="doctor-title">Titul:</label>
+      <input type="text" id="doctor-title" name="doctor-title" value="{{ doctor.title }}" class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label for="doctor-email">E-mail:</label>
+      <input type="email" id="doctor-email" name="doctor-email" value="{{ doctor.email }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="doctor-phone">Telefón:</label>
+      <input type="tel" id="doctor-phone" name="doctor-phone" value="{{ doctor.phone_number }}" class="form-input" required>
+    </div>
+
+    <div class="form-group">
+      <label for="doctor-hospital">Nemocnica:</label>
+      <input type="text" id="doctor-hospital" name="doctor-hospital" value="{{ doctor.hospital }}" class="form-input" readonly>
+    </div>
+
+    <!-- Superdoctor Checkbox -->
+    <div class="form-group">
+      <label for="superdoctor-checkbox">Superdoctor:</label>
+      <input type="checkbox" id="superdoctor-checkbox" name="superdoctor-checkbox" class="form-input">
+    </div>
+
+    <div class="form-group button-group">
+      <button type="submit" id="save-doctor-button" class="action-button save-button">Uložiť Zmeny</button>
+      <button type="button" id="cancel-button" class="action-button cancel-button">
+        Späť na Zoznam
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/doctor_details.js') }}"></script>
+{% endblock %}
