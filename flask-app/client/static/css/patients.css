@@ -5,7 +5,7 @@ html, body {
   flex-direction: column;
 }
 
-.hospitals-container {
+.patients-container {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -13,6 +13,7 @@ html, body {
   box-sizing: border-box;
   overflow: hidden;
 }
+
 /* == Tabs == */
 .tabs-wrapper {
   overflow-x: auto;
@@ -57,8 +58,16 @@ html, body {
   flex-direction: column;
 }
 
+
 .hidden {
   display: none !important;
+}
+
+.hidden-js {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in;
 }
 
 /* == Nadpis + tlačidlá == */
@@ -106,7 +115,7 @@ html, body {
   background-color: #ccc;
 }
 
-/* == Sort options (len pre KARTY) == */
+/* == Sort options == */
 .sort-options {
   display: flex;
   align-items: center;
@@ -131,8 +140,7 @@ html, body {
   background: #fff;
 }
 
-#sort-select-all,
-#sort-select-search {
+#sort-select {
   min-width: 180px;
 }
 
@@ -191,7 +199,7 @@ html, body {
   border-radius: 4px;
 }
 
-.hospital-list-table {
+.patients-list-table {
   width: 100%;
   min-width: 1000px;
   border-collapse: collapse;
@@ -200,11 +208,11 @@ html, body {
   table-layout: fixed;
 }
 
-.hospital-list-table thead tr {
+.patients-list-table thead tr {
   background-color: #f7f7f7;
 }
 
-.hospital-list-table thead th {
+.patients-list-table thead th {
   text-align: left;
   padding: 14px 16px;
   font-weight: bold;
@@ -220,46 +228,46 @@ html, body {
   text-overflow: ellipsis;
 }
 
-.hospital-list-table thead th i {
+.patients-list-table thead th i {
   margin-left: 6px;
   color: #999;
   font-size: 0.85rem;
 }
 
-.hospital-list-table thead th.sort-asc i {
-  color: #1a7891;
+.patients-list-table thead th.sort-asc i {
+  color: #3a7bd5;
   transform: rotate(180deg);
 }
 
-.hospital-list-table thead th.sort-desc i {
-  color: #1a7891;
+.patients-list-table thead th.sort-desc i {
+  color: #3a7bd5;
   transform: rotate(0deg);
 }
 
-.hospital-list-table tbody {
+.patients-list-table tbody {
   display: block;
   height: 100%;
   overflow-y: auto;
   width: 100%;
 }
 
-.hospital-list-table thead,
-.hospital-list-table tbody tr {
+.patients-list-table thead,
+.patients-list-table tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed;
 }
 
-.hospital-list-table tbody tr {
+.patients-list-table tbody tr {
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
 }
 
-.hospital-list-table tbody tr:hover {
+.patients-list-table tbody tr:hover {
   background-color: #fafafa;
 }
 
-.hospital-list-table tbody td {
+.patients-list-table tbody td {
   padding: 14px 16px;
   font-size: 1.05rem;
   color: #444;
@@ -292,15 +300,34 @@ html, body {
   color: #888;
   pointer-events: none;
 }
-
+.field-error {
+  display: none;     /* skrytý, kým nie je chyba */
+  color: red;
+  font-size: 13px;
+}
+.field-error.active {
+  display: block;
+  margin-top: 5px;
+}
 /* == Formuláre == */
+#tab-add-content {
+  padding-bottom: 40px;
+}
+#tab-assign-content {
+  padding-bottom: 40px;
+}
 #tab-add-content form {
   max-width: 600px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 20px auto; /* Add bottom margin */
   box-sizing: border-box;
 }
-
+#tab-assign-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 20px auto;
+  box-sizing: border-box;
+}
 .form-group {
   display: flex;
   flex-direction: column;
@@ -321,8 +348,10 @@ html, body {
 .form-group input[type="email"],
 .form-group input[type="password"],
 .form-group input[type="tel"],
+.form-group input[type="date"],
 .form-group select {
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -342,7 +371,7 @@ html, body {
   color: #555;
   cursor: not-allowed;
 }
-/* Voliteľné: zväčšenie ikony */
+
 .form-title {
   text-align: center;
   font-size: 1.8rem;
@@ -351,15 +380,23 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #1a7891;
+  color: #3a7bd5;
 }
 
 .form-title i {
   font-size: 1.5rem;
-  color: #1a7891;
+  color: #3a7bd5;
 }
+
 /* == Hlásenia == */
-#add-hospital-message {
+#add-patient-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+#assign-patient-message {
   margin-bottom: 15px;
   padding: 10px;
   border-radius: 5px;
@@ -367,21 +404,44 @@ html, body {
   text-align: center;
 }
 
-#add-hospital-message.error {
+#add-patient-message.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
-#add-hospital-message.success {
+#add-patient-message.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
+#assign-patient-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
 
+#assign-patient-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
 /* == Tlačidlo == */
 .add-btn {
-  background: #1a7891;
+  background: #3a7bd5;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.assign-btn {
+  background: #3a7bd5;
   color: #fff;
   padding: 12px 20px;
   border: none;
@@ -395,12 +455,71 @@ html, body {
 }
 
 .add-btn:hover {
-  background-color: #155e70;
+  background-color: #2a5ca0;
+}
+.assign-btn:hover {
+  background-color: #2a5ca0;
+}
+.add-btn i {
+  margin-right: 8px;
+}
+.assign-btn i {
+  margin-right: 8px;
+}
+.gdpr-group {
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 
-/* == Responzívne == */
+.gdpr-group label {
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+/* Password toggle button */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 50px;
+  box-sizing: border-box;
+}
+
+.toggle-pw {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.toggle-pw i {
+  font-size: 1.2rem;
+  color: #666;
+  pointer-events: none;
+}
+
+.toggle-pw:hover i {
+  color: #333;
+}
+
+/* == Responz��vne == */
 @media (max-width: 600px) {
-  .hospitals-container {
+  .patients-container {
     padding: 10px;
     height: auto;
   }
@@ -436,19 +555,33 @@ html, body {
     font-size: 0.9rem;
   }
 
-  .hospital-list-table thead th,
-  .hospital-list-table tbody td {
+  #sort-select {
+    min-width: 20px;
+  }
+
+  .patients-list-table thead th,
+  .patients-list-table tbody td {
     padding: 8px 10px;
     font-size: 0.95rem;
   }
 
   .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group input[type="tel"],
+  .form-group input[type="date"],
   .form-group select {
     font-size: 0.95rem;
     padding: 8px;
   }
 
   .add-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+  .assign-btn {
+    width: 100%;
     font-size: 0.95rem;
     padding: 10px 16px;
   }

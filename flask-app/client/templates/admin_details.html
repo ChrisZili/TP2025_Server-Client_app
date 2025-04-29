@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/admin_details.css') }}" as="style">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_details.css') }}">
+{% endblock %}
+
+{% block title %}
+Detaily Admina
+{% endblock %}
+
+{% block header %}
+Detaily Admina
+{% endblock %}
+
+{% block content %}
+<div class="admin-container  hidden-js">
+  <form id="admin-details-form">
+    <div class="form-columns">
+      <!-- Ľavý stĺpec - Informácie o adminovi -->
+      <div class="form-column">
+        <div class="form-group">
+          <label for="first_name">Meno</label>
+          <input type="text" id="first_name" name="first_name" required>
+        </div>
+        <div class="form-group">
+          <label for="last_name">Priezvisko</label>
+          <input type="text" id="last_name" name="last_name" required>
+        </div>
+        <div class="form-group">
+          <label for="created_at">Čas vytvorenia</label>
+          <input type="text" id="created_at" name="created_at" readonly>
+        </div>
+        <div class="form-group">
+          <label for="phone_number">Telefónne číslo</label>
+          <input type="tel" id="phone_number" name="phone_number" required>
+        </div>
+        <div class="form-group">
+          <label for="gender">Pohlavie</label>
+          <select id="gender" name="gender" required>
+            <option value="">Vyberte pohlavie</option>
+            <option value="Muž">Muž</option>
+            <option value="Žena">Žena</option>
+            <option value="Iné">Iné</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Nové Heslo</label>
+          <div class="input-wrapper password-wrapper">
+            <input type="password" id="password" name="password" autocomplete="new-password" required>
+            <button type="button" class="toggle-pw" id="toggle-password" aria-label="Zobraziť alebo skryť heslo">
+              <i class="fas fa-eye-slash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pravý stĺpec - Nemocnica admina -->
+      <div class="form-column">
+        <div class="form-group">
+          <label for="hospital_name">Nemocnica</label>
+          <input type="text" id="hospital_name" name="hospital_name" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_street">Ulica</label>
+          <input type="text" id="hospital_street" name="hospital_street" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_city">Mesto</label>
+          <input type="text" id="hospital_city" name="hospital_city" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_postal">PSČ</label>
+          <input type="text" id="hospital_postal" name="hospital_postal" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_code">Kód nemocnice</label>
+          <input type="text" id="hospital_code" name="hospital_code">
+        </div>
+      </div>
+    </div>
+  </form>
+  <!-- Tlačidlo na uloženie zmien -->
+  <button id="save-admin-btn" class="save-btn">Uložiť zmeny</button>
+</div>
+
+<!-- Potvrdzovacie okno -->
+<div id="confirmation-modal">
+  <div class="modal-content">
+    <p>Si si istý, že chceš uložiť zmeny?</p>
+    <div class="modal-buttons">
+      <button class="confirm" id="confirm-save-btn">Áno, uložiť</button>
+      <button class="cancel" id="cancel-save-btn">Zrušiť</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admin_details.js') }}" defer></script>
+{% endblock %}

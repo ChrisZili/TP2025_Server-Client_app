@@ -208,5 +208,5 @@ Doctor Registration
   {{ super() }}
   <!-- Skript register_doctor.js alebo iný JS,
        ktorý validuje a sleduje doctor_code atď. -->
-<script src="{{ url_for('static', filename='js/register_doctor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/register_doctor.js') }}" defer></script>
 {% endblock %}

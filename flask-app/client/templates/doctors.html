@@ -1,0 +1,257 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Správa doktorov - STU FEI
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/doctors.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/doctors.css') }}">
+{% endblock %}
+
+{% block header %}
+Správa doktorov
+{% endblock %}
+
+{% block content %}
+<div class="doctors-container">
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs">
+      <div class="tab active" id="tab-all">Všetci doktori</div>
+      <div class="tab" id="tab-search">Vyhľadať doktora</div>
+      <div class="tab" id="tab-add">Pridať doktora</div>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- Tab ALL (Všetci doktori) -->
+  <!-- ========================== -->
+  <div class="tab-content" id="tab-all-content">
+    <!-- Riadok: nadpis + tlačidlá vpravo -->
+    <div class="all-header">
+      <h2>Zoznam doktorov</h2>
+      <div class="header-buttons">
+        <button id="view-cards" class="view-toggle" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Select na triedenie pre KARTY -->
+    <div class="sort-options" id="sort-options-all">
+      <label for="sort-select">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="sort-select">
+        <option value="creation" selected>Od starších po novších</option>
+        <option value="newest">Od novších po starších</option>
+        <option value="alphabetical-asc">Abecedne A → Z</option>
+        <option value="alphabetical-desc">Abecedne Z → A</option>
+      </select>
+    </div>
+
+    <!-- Karty -->
+    <div id="all-cards-container">
+      <div class="cards" id="all-doctors-cards"></div>
+    </div>
+
+    <!-- Tabuľka (list) -->
+    <div id="all-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+          <table class="doctors-list-table">
+            <thead>
+              <tr>
+                <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
+                <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
+                <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
+                <th data-column="email">Email <i class="fas fa-sort"></i></th>
+                <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              </tr>
+            </thead>
+            <tbody id="all-list-body">
+              <!-- Generované v JS -->
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================== -->
+  <!-- Tab SEARCH (Vyhľadávanie)   -->
+  <!-- =========================== -->
+  <div class="tab-content hidden" id="tab-search-content">
+    <div class="search-header">
+      <h2>Vyhľadávanie doktorov</h2>
+      <div class="header-buttons">
+        <button id="search-view-cards" class="view-toggle" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="search-view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tu je vstup pre hľadanie -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Meno, priezvisko, telefón alebo nemocnica" />
+    </div>
+
+    <!-- Select na triedenie pre KARTY -->
+    <div class="sort-options" id="sort-options-search">
+      <label for="search-sort-select">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="search-sort-select">
+        <option value="creation" selected>Od starších po novších</option>
+        <option value="newest">Od novších po starších</option>
+        <option value="alphabetical-asc">Abecedne A → Z</option>
+        <option value="alphabetical-desc">Abecedne Z → A</option>
+      </select>
+    </div>
+
+    <!-- Karty -->
+    <div id="search-cards-container">
+      <div class="cards" id="search-results-cards"></div>
+    </div>
+
+    <!-- Tabuľka (list) -->
+    <div id="search-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+          <table class="doctors-list-table">
+            <thead>
+              <tr>
+                <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
+                <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
+                <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
+                <th data-column="email">Email <i class="fas fa-sort"></i></th>
+                <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              </tr>
+            </thead>
+            <tbody id="search-list-body">
+              <!-- Generované v JS -->
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== -->
+  <!-- Tab ADD (formulár) -->
+  <!-- =================== -->
+  <div class="tab-content hidden hidden-js" id="tab-add-content">
+    <h2 class="form-title">
+    <i class="fas fa-user-plus"></i> Pridať doktora
+    </h2>
+
+
+    <form id="add-doctor-form">
+      <!-- Výber typu doktora -->
+      <div class="form-group">
+        <label for="doctor-type">Typ doktora</label>
+        <select id="doctor-type" name="doctor_type" required>
+          <option value="" disabled selected>Vyberte typ doktora</option>
+          <option value="doctor">Doctor</option>
+          <option value="super_doctor">Super Doctor</option>
+        </select>
+      </div>
+
+      <!-- Meno -->
+      <div class="form-group">
+        <label for="doctor-first-name">Meno</label>
+        <input type="text" id="doctor-first-name" name="first_name" required />
+      </div>
+
+      <!-- Priezvisko -->
+      <div class="form-group">
+        <label for="doctor-last-name">Priezvisko</label>
+        <input type="text" id="doctor-last-name" name="last_name" required />
+      </div>
+
+      <!-- Telefónne číslo -->
+      <div class="form-group">
+        <label for="doctor-phone">Telefónne číslo</label>
+        <input type="tel" id="doctor-phone" name="phone_number" pattern="\d+" inputmode="numeric" required />
+      </div>
+
+      <!-- Pohlavie -->
+      <div class="form-group">
+        <label for="doctor-gender">Pohlavie</label>
+        <select id="doctor-gender" name="gender" required>
+          <option value="" disabled selected>Vyberte pohlavie</option>
+          <option value="Muž">Muž</option>
+          <option value="Žena">Žena</option>
+          <option value="Iné">Iné</option>
+        </select>
+      </div>
+
+      <!-- Titul -->
+      <div class="form-group">
+        <label for="doctor-title">Titul</label>
+        <input type="text" id="doctor-title" name="title" />
+      </div>
+
+      <!-- Sufix -->
+      <div class="form-group">
+        <label for="doctor-suffix">Sufix</label>
+        <input type="text" id="doctor-suffix" name="suffix" />
+      </div>
+
+      <!-- Kód nemocnice -->
+      <div class="form-group">
+        <label for="doctor-hospital-code">Kód nemocnice</label>
+        <input type="text" id="doctor-hospital-code" name="hospital_code" required />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="doctor-email">Email</label>
+        <input type="email" id="doctor-email" name="email" required />
+      </div>
+
+      <!-- Heslo -->
+      <div class="form-group">
+        <label for="doctor-password">Heslo</label>
+        <div class="input-wrapper password-wrapper">
+            <input type="password" id="doctor-password" name="password" autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" id="toggle-password" aria-label="Zobraziť alebo skryť heslo" tabindex="-1">
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+            </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="doctor-password-confirm">Potvrdenie hesla</label>
+        <div class="input-wrapper password-wrapper">
+            <input type="password" id="doctor-password-confirm" name="confirm_password" required />
+            <button type="button" class="toggle-pw" id="toggle-password-confirm" aria-label="Zobraziť alebo skryť heslo" tabindex="-1">
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+            </button>
+        </div>
+      </div>
+
+      <!-- GDPR súhlas -->
+      <div class="form-group gdpr-group">
+        <input type="checkbox" id="gdpr" name="gdpr" required />
+        <label for="gdpr">
+          Súhlasím so spracovaním osobných údajov podľa GDPR.
+          <a href="#">(Zobraziť podmienky)</a>
+        </label>
+      </div>
+      <div id="add-doctor-message"></div>
+      <!-- Tlačidlo na pridanie doktora -->
+       <button id="add-doctor-btn" class="add-btn" type="button">Pridať doktora</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/doctors.js') }}" defer></script>
+{% endblock %}

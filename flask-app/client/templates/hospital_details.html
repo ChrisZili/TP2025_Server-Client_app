@@ -2,6 +2,7 @@
 
 {% block stylesheet %}
   {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/hospital_details.css') }}" as="style">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/hospital_details.css') }}">
 {% endblock %}
 
@@ -15,14 +16,33 @@ Detaily Nemocnice
 
 {% block content %}
 <div class="hospital-container">
-  <!-- Dynamicky vygenerovaný formulár s údajmi o nemocnici -->
-  <div id="dynamic-hospital-form"></div>
-  <!-- Tlačidlo na uloženie zmien -->
-  <button id="save-hospital-btn" class="save-btn">Uložiť zmeny</button>
+  <form id="hospital-form" class="hospital-form">
+    <div class="form-group">
+      <label for="name">Názov nemocnice</label>
+      <input type="text" name="name" id="name" value="" required />
+    </div>
+    <div class="form-group">
+      <label for="city">Mesto</label>
+      <input type="text" name="city" id="city" value="" required />
+    </div>
+    <div class="form-group">
+      <label for="street">Ulica a číslo</label>
+      <input type="text" name="street" id="street" value="" required />
+    </div>
+    <div class="form-group">
+      <label for="postal_code">PSČ</label>
+      <input type="text" name="postal_code" id="postal_code" value="" required />
+    </div>
+    <div class="form-group">
+      <label for="hospital_code">Kód nemocnice</label>
+      <input type="text" name="hospital_code" id="hospital_code" value="" readonly />
+    </div>
+    <button type="submit" class="save-btn">Uložiť zmeny</button>
+  </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='js/hospital_details.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/hospital_details.js') }}" defer></script>
 {% endblock %}
