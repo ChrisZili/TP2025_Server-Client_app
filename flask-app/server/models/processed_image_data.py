@@ -13,8 +13,8 @@ class ProcessedImageData(db.Model):
     diagnostic_notes: Mapped[str] = mapped_column(db.Text, nullable=True)
 
     #process_type: Mapped[str] = mapped_column(db.String(20), default='process_image')
-    process_type:Mapped["ProcessTypeData"] = relationship("ProcessTypeData", backref="processed_image_data")
-    #Spytat sa ze ci kazdy typ spracovania ma dane veci a ak nie mozme robit co to bud dedia alebo to ukladat do json
+    process_type_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("process_type.id"), nullable=False)
+    process_type: Mapped["ProcessTypeData"]= db.relationship("ProcessTypeData",back_populates="processed_images")    #Spytat sa ze ci kazdy typ spracovania ma dane veci a ak nie mozme robit co to bud dedia alebo to ukladat do json
     processed_image_path: Mapped[str] = mapped_column(db.String(255), nullable=True)
     segmentation_mask_path: Mapped[str] = mapped_column(db.String(255), nullable=True)
     bounding_boxes_path: Mapped[str] = mapped_column(db.String(255), nullable=True)

@@ -11,4 +11,4 @@ class ProcessTypeData(db.Model):
     description: Mapped[str] = mapped_column(db.Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now())
 
-
+    processed_images: Mapped[list["ProcessedImageData"]] = db.relationship("ProcessedImageData", back_populates="process_type", cascade="all, delete-orphan")
