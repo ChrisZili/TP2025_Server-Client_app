@@ -16,10 +16,11 @@ if __name__ == '__main__':
         try:
             print("📌 Checking and creating tables if necessary...")
             db.create_all()
+            init_admin()
+            init_process_types()
             print("✅ Database initialized successfully.")
         except Exception as e:
             print(f"❌ Database initialization error: {e}")
-        init_admin()
-        init_process_types()
+
 
     app.run(debug=False, host='0.0.0.0', port=8080)
