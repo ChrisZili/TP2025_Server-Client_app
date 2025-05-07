@@ -1,66 +1,62 @@
-.hospital-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-size: 1.1rem;
+.hospital-container{
+  max-width:600px;
+  margin:0 auto;
+  padding:20px;
+  font-size:1.05rem;
 }
 
-.form-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
+.form-group{
+  margin-bottom:15px;
+  display:flex;
+  flex-direction:column;
 }
 
-.form-group label {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 5px;
-  color: #444;
+.form-group label{
+  font-weight:bold;
+  margin-bottom:6px;
+  color:#444;
 }
 
-.form-group input[type="text"] {
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  padding: 8px 12px;
-  outline: none;
-  transition: border-color 0.2s ease;
-  font-size: 1.1rem;
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group select{
+  border:1px solid #ccc;
+  border-radius:20px;
+  padding:10px 14px;
+  font-size:1rem;
+  outline:none;
+  transition:border-color .2s;
 }
 
-.form-group input[type="text"]:focus {
-  border-color: #66b2ff;
+.form-group input:focus,
+.form-group select:focus{border-color:#66b2ff;}
+
+.form-group input[readonly]{
+  background:#f0f0f0;color:#555;cursor:not-allowed;
 }
 
-.form-group input[readonly] {
-  background-color: #f0f0f0;
-  color: #555;
-  cursor: not-allowed;
+.save-btn{
+  background:#1a7891;color:#fff;
+  padding:12px 26px;border:none;border-radius:20px;
+  cursor:pointer;transition:background .3s;
+  display:block;margin:30px auto 0;font-size:1.05rem;
 }
+.save-btn:hover{background:#155e70;}
 
-.save-btn {
-  background: #1a7891;
-  color: #fff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-top: 20px;
-}
+#confirmation-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;}
+#confirmation-modal .modal-content{background:#fff;padding:30px 20px;border-radius:10px;text-align:center;width:90%;max-width:400px;}
+#confirmation-modal p{font-size:1.1rem;margin-bottom:20px;}
+.modal-buttons{display:flex;justify-content:space-around;}
+.modal-buttons button{padding:10px 18px;border-radius:20px;border:none;cursor:pointer;font-weight:bold;}
+.modal-buttons .confirm{background:#1a7891;color:#fff;}
+.modal-buttons .cancel {background:#ccc;}
 
-.save-btn:hover {
-  opacity: 0.9;
-}
+.hidden-js{display:none!important;}
+.text-danger{color:#c0392b;}
 
-/* Pre responzívne usporiadanie, ak by bolo potrebné */
-@media (max-width: 600px) {
-  .hospital-container {
-    padding: 10px;
-  }
-  .form-group input[type="text"] {
-    font-size: 1rem;
-  }
-  .save-btn {
-    font-size: 0.95rem;
-    padding: 10px 16px;
-  }
+@media(max-width:480px){
+  .hospital-container{padding:10px;}
+  .form-group input,.form-group select{font-size:.95rem;padding:8px 12px;}
+  .save-btn{font-size:.95rem;padding:10px 20px;}
 }
