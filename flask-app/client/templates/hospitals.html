@@ -6,75 +6,197 @@ Nemocnice - STU FEI
 
 {% block stylesheet %}
   {{ super() }}
-  <!-- Vlastný CSS pre tabs a responzívny scroll -->
+  <link rel="preload" href="{{ url_for('static', filename='css/hospitals.css') }}" as="style">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/hospitals.css') }}">
 {% endblock %}
 
 {% block header %}
-Nemocnice
+Správa Nemocníc
 {% endblock %}
 
 {% block content %}
 <div class="hospitals-container">
-
-  <!-- Horná lišta s 3 odkazmi (tabs) -->
   <div class="tabs-wrapper">
     <div class="tabs" id="tabs">
       <div class="tab active" id="tab-all">Všetky nemocnice</div>
-      <div class="tab" id="tab-search">Vyhľadať nemocnicu</div>
       <div class="tab" id="tab-add">Pridať nemocnicu</div>
     </div>
   </div>
 
-  <!-- Obsah pre "Všetky nemocnice" -->
-  <div class="tab-content" id="tab-all-content">
-    <h2>Zoznam nemocníc</h2>
-    <div id="all-hospitals-list">
-      <!-- JavaScript tu dynamicky vloží zoznam nemocníc -->
+  <!-- ========================== -->
+<!-- Tab ALL (Všetky nemocnice) -->
+<!-- ========================== -->
+<div class="tab-content" id="tab-all-content">
+  <!-- Riadok: nadpis + tlačidlá vpravo -->
+  <div class="all-header">
+    <h2></h2>
+    <div class="header-buttons">
+      <button id="view-cards" class="view-toggle" title="Karty">
+        <i class="fas fa-th-large"></i>
+      </button>
+      <button id="view-list" class="view-toggle" title="Zoznam">
+        <i class="fas fa-list"></i>
+      </button>
     </div>
   </div>
 
-  <!-- Obsah pre "Vyhľadať nemocnicu" -->
-  <div class="tab-content hidden" id="tab-search-content">
-    <h2>Vyhľadávanie nemocníc</h2>
+  <!-- Search Input (moved from Search tab) -->
+  <div class="search-bar">
+    <i class="fas fa-search search-icon"></i>
     <input type="text" id="search-input" placeholder="Zadajte názov / mesto / PSČ" />
-    <div id="search-results">
-      <!-- JavaScript tu zobrazí výsledky vyhľadávania -->
+  </div>
+
+  <div class="sort-and-filter">
+    <!-- Sort Dropdown -->
+    <div class="sort-options" id="sort-options-all">
+      <label for="sort-select-all">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="sort-select-all">
+        <option value="alphabetical-asc" selected>Abecedne A → Z</option>
+        <option value="alphabetical-desc">Abecedne Z → A</option>
+        <option value="newest">Od novších po staršie</option>
+        <option value="creation">Od starších po novšie</option>
+      </select>
+    </div>
+
+    <!-- City Filter Dropdown -->
+    <div class="filter-options">
+      <label for="city-filter">
+        <i class="fas fa-filter"></i> Mesto:
+      </label>
+      <select id="city-filter">
+        <option value="">Všetky mestá</option>
+        <!-- Options will be dynamically populated -->
+      </select>
     </div>
   </div>
 
-  <!-- Obsah pre "Pridať nemocnicu" -->
-  <div class="tab-content hidden" id="tab-add-content">
-      <h2>Pridať nemocnicu</h2>
-      <div id="add-hospital-message"></div>
+  <!-- Karty -->
+  <div id="all-cards-container">
+    <div class="cards" id="all-hospitals-cards"></div>
+  </div>
+
+  <!-- Tabuľka (list) -->
+  <div id="all-list-container" class="hidden">
+    <div class="table-scroll-wrapper">
+      <table class="hospital-list-table">
+        <thead>
+          <tr>
+            <th data-column="name">Meno <i class="fas fa-sort"></i></th>
+            <th data-column="created_at">Vytvorenie <i class="fas fa-sort"></i></th>
+            <th data-column="city">Mesto <i class="fas fa-sort"></i></th>
+            <th data-column="street">Ulica <i class="fas fa-sort"></i></th>
+            <th data-column="postal_code">PSČ <i class="fas fa-sort"></i></th>
+          </tr>
+        </thead>
+        <tbody id="all-list-body">
+          <!-- Generované v JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- =========================== -->
+<!-- Tab SEARCH (Vyhľadávanie)   -->
+<!-- =========================== -->
+<div class="tab-content hidden" id="tab-search-content">
+  <div class="search-header">
+    <h2>Vyhľadávanie nemocníc</h2>
+    <div class="header-buttons">
+      <button id="search-view-cards" class="view-toggle" title="Karty">
+        <i class="fas fa-th-large"></i>
+      </button>
+      <button id="search-view-list" class="view-toggle" title="Zoznam">
+        <i class="fas fa-list"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Select na triedenie pre KARTY -->
+  <div class="sort-options" id="sort-options-search">
+    <label for="sort-select-search">
+      <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+    </label>
+    <select id="sort-select-search">
+      <option value="alphabetical-asc" selected>Abecedne A → Z</option>
+      <option value="alphabetical-desc">Abecedne Z → A</option>
+      <option value="newest">Od novších po staršie</option>
+      <option value="creation">Od starších po novšie</option>
+    </select>
+  </div>
+
+  <!-- Karty -->
+  <div id="search-cards-container">
+    <div class="cards" id="search-results-cards"></div>
+  </div>
+
+  <!-- Tabuľka (list) -->
+  <div id="search-list-container" class="hidden">
+    <div class="table-scroll-wrapper">
+        <table class="hospital-list-table">
+          <thead>
+            <tr>
+              <th data-column="name">Meno <i class="fas fa-sort"></i></th>
+              <th data-column="created_at">Vytvorenie <i class="fas fa-sort"></i></th>
+              <th data-column="city">Mesto <i class="fas fa-sort"></i></th>
+              <th data-column="street">Ulica <i class="fas fa-sort"></i></th>
+              <th data-column="postal_code">PSČ <i class="fas fa-sort"></i></th>
+            </tr>
+          </thead>
+          <tbody id="search-list-body">
+            <!-- Generované v JS -->
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+<!-- =================== -->
+<!-- Tab ADD (formulár) -->
+<!-- =================== -->
+
+<div class="tab-content hidden" id="tab-add-content">
+  <h2 class="form-title">
+    <i class="fas fa-hospital"></i> Pridať nemocnicu
+  </h2>
+
+    <form id="add-hospital-form">
       <div class="form-group">
         <label for="hospital-name">Názov nemocnice</label>
-        <input type="text" id="hospital-name" name="name" />
+        <input type="text" id="hospital-name" name="name" required />
       </div>
+
       <div class="form-group">
         <label for="hospital-country">Štát</label>
-        <input type="text" id="hospital-country" name="country" />
+        <select id="hospital-country" name="country" required>
+          <option value="">-- Vyber štát --</option>
+        </select>
       </div>
+
       <div class="form-group">
         <label for="hospital-city">Mesto</label>
-        <input type="text" id="hospital-city" name="city" />
+        <input type="text" id="hospital-city" name="city" required />
       </div>
+
       <div class="form-group">
         <label for="hospital-street">Ulica a číslo</label>
-        <input type="text" id="hospital-street" name="street" />
+        <input type="text" id="hospital-street" name="street" required />
       </div>
+
       <div class="form-group">
         <label for="hospital-postal">PSČ</label>
-        <input type="text" id="hospital-postal" name="postal_code" />
+        <input type="text" id="hospital-postal" name="postal_code" pattern="\d+" inputmode="numeric" required />
       </div>
-      <button id="add-hospital-btn" class="add-btn">Pridať</button>
-    </div>
-
-
+      <div id="add-hospital-message"></div>
+      <button id="add-hospital-btn" class="add-btn" type="button">Pridať nemocnicu</button>
+    </form>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='js/hospitals.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/hospitals.js') }}" defer></script>
 {% endblock %}

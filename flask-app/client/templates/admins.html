@@ -1,0 +1,239 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Správa adminov - STU FEI
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/admins.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admins.css') }}">
+{% endblock %}
+
+{% block header %}
+Správa adminov
+{% endblock %}
+
+{% block content %}
+<div class="admins-container">
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs">
+      <div class="tab active" id="tab-all">Všetci admini</div>
+
+      <div class="tab" id="tab-add">Pridať admina</div>
+    </div>
+  </div>
+
+  <!-- Zoznam adminov -->
+  <div class="tab-content" id="tab-all-content">
+    <!-- Add header with view toggle buttons -->
+    <div class="all-header">
+      <h2></h2>
+      <div class="header-buttons">
+        <button id="view-cards" class="view-toggle" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Vyhľadajte adminov podľa mena, emailu, telefónu alebo nemocnice" />
+    </div>
+
+    <!-- Sort options and new dropdown -->
+    <div class="dropdowns-container">
+      <!-- Sort Dropdown -->
+      <div class="dropdown" id="sort-options-all">
+        <label for="sort-select">
+          <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+        </label>
+        <select id="sort-select">
+          <option value="creation" selected>Od starších po novších</option>
+          <option value="newest">Od novších po starších</option>
+          <option value="alphabetical-asc">Abecedne A → Z</option>
+          <option value="alphabetical-desc">Abecedne Z → A</option>
+        </select>
+      </div>
+
+      <!-- Filter Dropdown -->
+      <div class="dropdown" id="filter-options">
+        <label for="admin-hospital-filter">
+          <i class="fas fa-hospital"></i> Filter by Hospital:
+        </label>
+        <select id="admin-hospital-filter">
+          <option value="">All Hospitals</option>
+          <!-- Dynamically populated -->
+        </select>
+      </div>
+    </div>
+
+    <!-- Cards container -->
+    <div id="all-cards-container">
+      <div class="cards" id="all-admins-cards"></div>
+    </div>
+
+    <!-- Table (list) container -->
+    <div id="all-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+        <table class="admins-list-table">
+          <thead>
+            <tr>
+              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
+              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
+              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
+              <th data-column="email">Email <i class="fas fa-sort"></i></th>
+              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+            </tr>
+          </thead>
+          <tbody id="all-list-body">
+            <!-- Generované v JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vyhľadávanie -->
+  <div class="tab-content hidden" id="tab-search-content">
+    <!-- Add header with view toggle buttons -->
+    <div class="search-header">
+      <h2>Vyhľadávanie adminov</h2>
+      <div class="header-buttons">
+        <button id="search-view-cards" class="view-toggle" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="search-view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Meno, priezvisko, telefón alebo nemocnica" />
+    </div>
+
+    <!-- Sort options for cards view -->
+    <div class="sort-options" id="sort-options-search">
+      <label for="search-sort-select">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="search-sort-select">
+        <option value="creation" selected>Od starších po novších</option>
+        <option value="newest">Od novších po starších</option>
+        <option value="alphabetical-asc">Abecedne A → Z</option>
+        <option value="alphabetical-desc">Abecedne Z → A</option>
+      </select>
+    </div>
+
+    <!-- Cards container -->
+    <div id="search-cards-container">
+      <div class="cards" id="search-results-cards"></div>
+    </div>
+
+    <!-- Table (list) container -->
+    <div id="search-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+        <table class="admins-list-table">
+          <thead>
+            <tr>
+              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
+              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
+              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
+              <th data-column="email">Email <i class="fas fa-sort"></i></th>
+              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+            </tr>
+          </thead>
+          <tbody id="search-list-body">
+            <!-- Generované v JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pridať admina -->
+  <div class="tab-content hidden hidden-js" id="tab-add-content">
+    <h2 class="form-title">
+      <i class="fas fa-user-plus"></i> Pridať admina
+    </h2>
+    <form id="add-admin-form">
+      <!-- Form content remains the same -->
+      <div class="form-group">
+        <label for="admin-first-name">Meno</label>
+        <input type="text" id="admin-first-name" name="first_name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="admin-last-name">Priezvisko</label>
+        <input type="text" id="admin-last-name" name="last_name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="admin-phone">Telefónne číslo</label>
+        <input type="tel" id="admin-phone" name="phone_number" pattern="\d+" inputmode="numeric" required />
+      </div>
+
+      <div class="form-group">
+        <label for="admin-gender">Pohlavie</label>
+        <select id="admin-gender" name="gender" required>
+          <option value="" disabled selected>Vyberte pohlavie</option>
+          <option value="Muž">Muž</option>
+          <option value="Žena">Žena</option>
+          <option value="Iné">Iné</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="admin-hospital-code">Kód nemocnice</label>
+        <input type="text" id="admin-hospital-code" name="hospital_code" required />
+      </div>
+
+      <div class="form-group">
+        <label for="admin-email">Email</label>
+        <input type="email" id="admin-email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="admin-password">Heslo</label>
+        <div class="input-wrapper password-wrapper">
+            <input type="password" id="admin-password" name="password"  autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" id="toggle-password" aria-label="Zobraziť alebo skryť heslo" tabindex="-1">
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+            </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+          <label for="admin-password-confirm">Potvrdenie hesla</label>
+          <div class="input-wrapper password-wrapper">
+            <input type="password" id="admin-password-confirm" name="confirm_password" autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" id="toggle-password-confirm" aria-label="Zobraziť alebo skryť heslo" tabindex="-1">
+                <i class="fas fa-eye-slash" aria-hidden="true"></i>
+            </button>
+          </div>
+      </div>
+
+      <div class="form-group gdpr-group">
+        <input type="checkbox" id="gdpr" name="gdpr" />
+        <label for="gdpr">
+          Súhlasím so spracovaním osobných údajov podľa GDPR.
+          <a href="#">(Zobraziť podmienky)</a>
+        </label>
+      </div>
+      <div id="add-admin-message" class="error-message"></div>
+       <button id="add-admin-btn" class="add-btn" type="button">Pridať admin</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/admins.js') }}" defer></script>
+{% endblock %}
