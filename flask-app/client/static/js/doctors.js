@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let allDoctorsData = [];
   let currentSortColumn = "last_name"; // Default sort column
   let currentSortDirection = "asc"; // Default sort direction
+  let userType = "";
 
   // DOM elements
   const searchInput = document.getElementById("search-input");
@@ -14,7 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const viewListBtn = document.getElementById("view-list");
   const allCardsContainer = document.getElementById("all-cards-container");
   const allListContainer = document.getElementById("all-list-container");
-  const tableHeaders = document.querySelectorAll("#all-list-container thead th"); // Table headers for sorting
+  const tableHeaders = document.querySelectorAll("#all-list-container thead th");
+  const addDoctorBtn = document.getElementById("add-doctor-btn");
+  const addDoctorMessage = document.getElementById("add-doctor-message");
+  const addDoctorForm = document.getElementById("add-doctor-form");
 
   // Tab elements
   const tabAll = document.getElementById("tab-all");
@@ -42,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Perform search and render results
-  function performSearch() {
+  function performSearch(shouldRender = true) {
     const query = searchInput?.value.trim().toLowerCase();
     const selectedHospital = hospitalFilter?.value || "";
 
@@ -61,8 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesQuery && matchesHospital;
     });
 
-    renderAllListTable(filtered);
-    renderDoctors(filtered);
+    if (shouldRender) {
+      const sortedDoctors = sortDoctors(filtered);
+      renderAllListTable(sortedDoctors);
+      renderDoctors(sortedDoctors);
+    }
+
+    return filtered; // Return filtered data for further processing
   }
 
   // Sort doctors based on the current column and direction
@@ -73,9 +82,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (currentSortColumn === "full_name") {
         valA = getFullName(a);
         valB = getFullName(b);
+      } else if (currentSortColumn === "phone_number") {
+        valA = a.phone_number || "";
+        valB = b.phone_number || "";
       } else if (currentSortColumn === "hospital") {
         valA = (a.hospital?.name || "").toLowerCase();
         valB = (b.hospital?.name || "").toLowerCase();
+      } else if (currentSortColumn === "created_at") {
+        valA = new Date(a.created_at);
+        valB = new Date(b.created_at);
       } else {
         valA = (a[currentSortColumn] || "").toString().toLowerCase();
         valB = (b[currentSortColumn] || "").toString().toLowerCase();
@@ -97,9 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const sorted = sortDoctors(doctors);
-
-    sorted.forEach((doctor) => {
+    doctors.forEach((doctor) => {
       const tr = document.createElement("tr");
       const fullName = getFullName(doctor);
       const hospitalName = doctor.hospital?.name || "-";
@@ -130,10 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Sort the doctors before rendering
-    const sorted = sortDoctors(doctors);
-
-    sorted.forEach((doctor) => {
+    doctors.forEach((doctor) => {
       const card = document.createElement("div");
       card.classList.add("card");
       card.addEventListener("click", () => {
@@ -172,51 +182,70 @@ document.addEventListener("DOMContentLoaded", () => {
       tableHeaders.forEach((th) => th.classList.remove("sort-asc", "sort-desc"));
       header.classList.add(currentSortDirection === "asc" ? "sort-asc" : "sort-desc");
 
-      // Re-render the table and cards with the new sorting
-      performSearch();
+      // Re-render both views
+      const filteredDoctors = performSearch(false); // Get filtered data without re-rendering
+      const sortedDoctors = sortDoctors(filteredDoctors);
+      renderAllListTable(sortedDoctors);
+      renderDoctors(sortedDoctors);
     });
+  });
+
+  // Add event listener for sorting dropdown
+  sortSelect?.addEventListener("change", () => {
+    const sortValue = sortSelect.value;
+
+    // Map dropdown values to columns and directions
+    if (sortValue === "alphabetical-asc") {
+      currentSortColumn = "full_name";
+      currentSortDirection = "asc";
+    } else if (sortValue === "alphabetical-desc") {
+      currentSortColumn = "full_name";
+      currentSortDirection = "desc";
+    } else if (sortValue === "newest") {
+      currentSortColumn = "created_at";
+      currentSortDirection = "desc";
+    } else {
+      // Default: "creation" (Oldest first)
+      currentSortColumn = "created_at";
+      currentSortDirection = "asc";
+    }
+
+    // Re-render both views
+    const filteredDoctors = performSearch(false); // Get filtered data without re-rendering
+    const sortedDoctors = sortDoctors(filteredDoctors);
+    renderAllListTable(sortedDoctors);
+    renderDoctors(sortedDoctors);
   });
 
   // Switch between cards and list views
   function switchView(mode) {
-    const sortDropdownContainer = sortSelect?.parentElement; // Parent container of the sort dropdown
-    const hospitalDropdownContainer = hospitalFilter?.parentElement; // Parent container of the hospital dropdown
+    const sortDropdownContainer = sortSelect?.parentElement;
+    const hospitalDropdownContainer = hospitalFilter?.parentElement;
 
     if (mode === "cards") {
-      // Show card view
       allCardsContainer?.classList.remove("hidden");
       allListContainer?.classList.add("hidden");
       viewCardsBtn?.classList.add("active");
       viewListBtn?.classList.remove("active");
-
-      // Show the sort dropdown
       sortDropdownContainer?.classList.remove("hidden");
     } else if (mode === "list") {
-      // Show list view
       allCardsContainer?.classList.add("hidden");
       allListContainer?.classList.remove("hidden");
       viewCardsBtn?.classList.remove("active");
       viewListBtn?.classList.add("active");
-
-      // Hide the sort dropdown
       sortDropdownContainer?.classList.add("hidden");
     }
 
-    // Ensure the hospital dropdown is always visible
     hospitalDropdownContainer?.classList.remove("hidden");
   }
 
   // Helper function to switch tabs
   function switchTab(tab) {
-    // Hide all tabs
     tabAllContent?.classList.add("hidden");
     tabAddContent?.classList.add("hidden");
-
-    // Remove active class from all tabs
     tabAll?.classList.remove("active");
     tabAdd?.classList.remove("active");
 
-    // Show the selected tab
     if (tab === "all") {
       tabAllContent?.classList.remove("hidden");
       tabAll?.classList.add("active");
@@ -249,84 +278,115 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Debounce function
+  function debounce(func, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  // Helper function to reset the form
+  function resetDoctorForm() {
+    if (addDoctorForm) {
+      addDoctorForm.reset();
+    }
+    if (addDoctorMessage) {
+      addDoctorMessage.textContent = "";
+      addDoctorMessage.classList.remove("error", "success");
+    }
+  }
+
   // Add Doctor functionality
-  const addDoctorBtn = document.getElementById("add-doctor-btn");
   if (addDoctorBtn) {
     addDoctorBtn.addEventListener("click", async () => {
-      const addDoctorMessage = document.getElementById("add-doctor-message");
       addDoctorMessage.textContent = "";
       addDoctorMessage.classList.remove("error", "success");
 
+      const role = document.getElementById("doctor-type").value;
       const firstName = document.getElementById("doctor-first-name").value.trim();
       const lastName = document.getElementById("doctor-last-name").value.trim();
+      const email = document.getElementById("doctor-email").value.trim();
       const phone = document.getElementById("doctor-phone").value.trim();
       const gender = document.getElementById("doctor-gender").value;
-      const hospitalCode = document.getElementById("doctor-hospital-code").value.trim();
-      const email = document.getElementById("doctor-email").value.trim();
+      const title = document.getElementById("doctor-title").value.trim();
+      const suffix = document.getElementById("doctor-suffix").value.trim();
+      const hospitalCode = document.getElementById("doctor-hospital-code")?.value.trim();
       const password = document.getElementById("doctor-password").value;
-      const passwordConfirm = document.getElementById("doctor-password-confirm").value;
-      const gdprChecked = document.getElementById("gdpr").checked;
-
-      // Log all input values for debugging
-      console.log("First Name:", firstName);
-      console.log("Last Name:", lastName);
-      console.log("Phone:", phone);
-      console.log("Gender:", gender);
-      console.log("Hospital Code:", hospitalCode);
-      console.log("Email:", email);
-      console.log("Password:", password);
-      console.log("Password Confirm:", passwordConfirm);
-      console.log("GDPR Checked:", gdprChecked);
+      const confirmPassword = document.getElementById("doctor-password-confirm").value;
+      const gdprChecked = document.getElementById("gdpr")?.checked;
 
       // Validation regex patterns
       const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/; // Allows letters, accents, and spaces (2-255 characters)
       const phoneRegex = /^(?:\+421|421|0)\d{9}$/; // E.164 format for phone numbers
+      const noNumbersRegex = /^[^\d]*$/; // Ensures no numbers are present
 
       // Validation checks
       if (!nameRegex.test(firstName)) {
-        console.error("Validation Error: Invalid First Name");
         addDoctorMessage.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
         addDoctorMessage.classList.add("error");
         return;
       }
 
       if (!nameRegex.test(lastName)) {
-        console.error("Validation Error: Invalid Last Name");
         addDoctorMessage.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
         addDoctorMessage.classList.add("error");
         return;
       }
 
       if (!phoneRegex.test(phone)) {
-        console.error("Validation Error: Invalid Phone Number");
         addDoctorMessage.textContent = "Telefónne číslo musí byť vo formáte E.164 (napr. +421123456789).";
         addDoctorMessage.classList.add("error");
         return;
       }
 
-      if (!firstName || !lastName || !phone || !gender || !hospitalCode || !email || !password || !passwordConfirm) {
-        console.error("Validation Error: Missing Required Fields");
-        addDoctorMessage.textContent = "Vyplňte všetky polia vrátane emailu a hesla.";
+      if (title && !noNumbersRegex.test(title)) {
+        addDoctorMessage.textContent = "Titul nesmie obsahovať čísla.";
         addDoctorMessage.classList.add("error");
         return;
       }
 
-      if (password !== passwordConfirm) {
-        console.error("Validation Error: Passwords Do Not Match");
+      if (suffix && !noNumbersRegex.test(suffix)) {
+        addDoctorMessage.textContent = "Sufix nesmie obsahovať čísla.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        !phone ||
+        !gender ||
+        !password ||
+        !confirmPassword ||
+        (!hospitalCode && userType === "super_admin")
+      ) {
+        addDoctorMessage.textContent = "Vyplňte všetky povinné polia.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
+      if (!role && userType === "super_admin") {
+        addDoctorMessage.textContent = "Vyberte typ doktora.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
         addDoctorMessage.textContent = "Heslá sa nezhodujú.";
         addDoctorMessage.classList.add("error");
         return;
       }
 
       if (!gdprChecked) {
-        console.error("Validation Error: GDPR Not Checked");
         addDoctorMessage.textContent = "Musíte súhlasiť so spracovaním údajov (GDPR).";
         addDoctorMessage.classList.add("error");
         return;
       }
 
       try {
-        console.log("Sending data to the server...");
         const response = await fetch("/doctors/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -341,39 +401,25 @@ document.addEventListener("DOMContentLoaded", () => {
             suffix,
             password,
             hospital_code: hospitalCode,
-            role
-          })
+            role,
+          }),
         });
 
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Chyba pri vytváraní doktora.");
 
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || "Chyba pri vytváraní doktora.");
-
-        console.log("Doctor added successfully:", data);
-        addDoctorMessage.textContent = data.message || "Doktor úspešne pridaný.";
+        addDoctorMessage.textContent = result.message || "Doktor úspešne pridaný.";
         addDoctorMessage.classList.add("success");
+
         resetDoctorForm();
         switchTab("all");
         loadAllDoctors();
       } catch (err) {
-        console.error("Error Adding Doctor:", err);
+        console.error(err);
         addDoctorMessage.textContent = err.message || "Nepodarilo sa pridať doktora.";
         addDoctorMessage.classList.add("error");
       }
     });
-  }
-
-  // Helper function to reset the "Add Doctor" form
-  function resetDoctorForm() {
-    const addDoctorForm = document.getElementById("add-doctor-form");
-    if (addDoctorForm) {
-      addDoctorForm.reset();
-    }
-    const addDoctorMessage = document.getElementById("add-doctor-message");
-    if (addDoctorMessage) {
-      addDoctorMessage.textContent = "";
-      addDoctorMessage.classList.remove("error", "success");
-    }
   }
 
   // Add event listeners
@@ -384,17 +430,8 @@ document.addEventListener("DOMContentLoaded", () => {
   tabAll?.addEventListener("click", () => switchTab("all"));
   tabAdd?.addEventListener("click", () => switchTab("add"));
 
-  // Debounce function
-  function debounce(func, delay) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-  }
-
-  // Initial load
+  // Initial setup
   loadAllDoctors();
-  switchTab("all"); // Default to "All Doctors" tab
+  switchTab("all");
   switchView("cards");
 });
