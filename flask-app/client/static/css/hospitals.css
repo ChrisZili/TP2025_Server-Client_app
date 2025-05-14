@@ -248,6 +248,7 @@ html, body {
   display: table;
   width: 100%;
   table-layout: fixed;
+  cursor: pointer;
 }
 
 .hospital-list-table tbody tr {

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Správa doktorov - STU FEI
+eVýsledky - Správa doktorov
 {% endblock %}
 
 {% block stylesheet %}
@@ -160,6 +160,11 @@ Správa doktorov
           <option value="super_doctor">Super Doctor</option>
         </select>
       </div>
+      <!-- Titul -->
+      <div class="form-group">
+        <label for="doctor-title">Titul pred menom</label>
+        <input type="text" id="doctor-title" name="title" />
+      </div>
 
       <!-- Meno -->
       <div class="form-group">
@@ -171,6 +176,12 @@ Správa doktorov
       <div class="form-group">
         <label for="doctor-last-name">Priezvisko</label>
         <input type="text" id="doctor-last-name" name="last_name" required />
+      </div>
+
+      <!-- Sufix -->
+      <div class="form-group">
+        <label for="doctor-suffix">Titul za menom</label>
+        <input type="text" id="doctor-suffix" name="suffix" />
       </div>
 
       <!-- Telefónne číslo -->
@@ -188,18 +199,6 @@ Správa doktorov
           <option value="Žena">Žena</option>
           <option value="Iné">Iné</option>
         </select>
-      </div>
-
-      <!-- Titul -->
-      <div class="form-group">
-        <label for="doctor-title">Titul</label>
-        <input type="text" id="doctor-title" name="title" />
-      </div>
-
-      <!-- Sufix -->
-      <div class="form-group">
-        <label for="doctor-suffix">Sufix</label>
-        <input type="text" id="doctor-suffix" name="suffix" />
       </div>
 
       <!-- Kód nemocnice -->

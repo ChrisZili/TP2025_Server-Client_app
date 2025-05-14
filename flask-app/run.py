@@ -7,8 +7,8 @@ app = create_app()
 def init_admin():
     create_super_admin()
 def init_process_types():
-    from server.services.process_type_service import create_default_process_types
-    create_default_process_types()
+    from server.services.methods_service import create_default_methods
+    create_default_methods()
 # Inicializácia databázy v rámci kontextu aplikácie
 
 if __name__ == '__main__':
@@ -23,4 +23,4 @@ if __name__ == '__main__':
             print(f"❌ Database initialization error: {e}")
 
 
-    app.run(debug=False, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=8080)

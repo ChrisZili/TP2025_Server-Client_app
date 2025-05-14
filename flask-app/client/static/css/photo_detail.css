@@ -1,0 +1,363 @@
+/* Photo Detail Page Styles */
+
+body {
+  background-color: #ffffff;
+}
+
+#photo-detail-wrapper {
+  max-width: 100%;
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.photo-methods-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  max-width: 1100px;
+  border: none;
+  box-shadow: none;
+}
+
+/* Image container and preview styles */
+.photo-preview-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.photo-preview {
+  width: 512px;
+  height: 512px;
+  object-fit: contain;
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/* Methods Section */
+.methods-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 0;
+  width: auto;
+  padding: 0 10px;
+}
+
+.method-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+}
+
+h3 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.photo-methods-container input[type="checkbox"] {
+  margin-right: 5px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.photo-methods-container label {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Details Container */
+.details-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: none;
+  border: none;
+  width: 100%;
+  max-width: 1100px;
+  margin: 20px auto;
+}
+
+.photo-detail-table {
+  width: 100%;
+  min-width: unset;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  table-layout: fixed;
+  margin: 10px 0;
+}
+
+.photo-detail-table thead tr {
+  background-color: #f7f7f7;
+}
+
+.photo-detail-table thead th {
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: bold;
+  font-size: 1rem;
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+  z-index: 2;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.sortable {
+  cursor: pointer;
+  position: relative;
+}
+
+.sort-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.sortable.asc .sort-icon::after {
+  content: '↑';
+  position: absolute;
+  right: 0;
+}
+
+.sortable.desc .sort-icon::after {
+  content: '↓';
+  position: absolute;
+  right: 0;
+}
+
+.photo-detail-table tbody {
+  display: table-row-group;
+  width: 100%;
+}
+
+.photo-detail-table thead,
+.photo-detail-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.photo-detail-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.photo-detail-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.photo-detail-table td,
+.photo-detail-table th {
+  padding: 14px 16px;
+  text-align: left;
+}
+
+/* Action Buttons */
+.action-button {
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.action-button:hover {
+  background-color: #2980b9;
+}
+
+.action-button:active {
+  background-color: #1f5f8a;
+}
+
+#download-button {
+  margin-top: 15px;
+  width: auto;
+  min-width: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+}
+
+/* Center the methods section content */
+.photo-methods-container > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .photo-methods-container,
+  .details-container {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .photo-preview {
+    width: 100%;
+    max-width: 512px;
+    height: auto;
+    aspect-ratio: 1/1;
+  }
+  
+  .methods-list {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.methods-list-and-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.photo-detail-th {
+  text-align: left;
+  font-weight: bold;
+}
+
+/* Remove old filter styles */
+.header-filter,
+.header-filter-select,
+.table-filters,
+.filter-group {
+  display: none;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-dot[data-status="Čaká na spracovanie"] {
+  background-color: #ffa500; /* orange */
+}
+
+.status-dot[data-status="Spracované"] {
+  background-color: #2ecc71; /* green */
+}
+
+/* Edit functionality styles */
+.diagnosis-cell {
+  position: relative;
+}
+
+.diagnosis-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.diagnosis-edit {
+  margin-top: 10px;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.edit-button {
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.edit-button:hover {
+  background-color: #e0e0e0;
+}
+
+.edit-input {
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+  font-size: 14px;
+}
+
+.save-button, .cancel-button {
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.save-button {
+  background-color: #4CAF50;
+  color: white;
+  border: 1px solid #45a049;
+}
+
+.save-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  border: 1px solid #da190b;
+}
+
+.cancel-button:hover {
+  background-color: #da190b;
+} 

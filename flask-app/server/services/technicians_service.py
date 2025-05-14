@@ -75,10 +75,13 @@ class TechniciansService:
                 return {"error": "Nemáte oprávnenie upravovať tohto technika"}, 403
         else:
             return {"error": "Neoprávnený prístup"}, 403
-
         try:
             technician.first_name = data.get("first_name", technician.first_name)
             technician.last_name = data.get("last_name", technician.last_name)
+            User.query.get(technician_id).email = data.get("email", User.query.get(technician_id).email)
+            password = data.get("password", "")
+            if password != "":
+                User.query.get(technician_id).set_password(password)
 
             if user.is_super_admin():
                 new_code = data.get("hospital_code")

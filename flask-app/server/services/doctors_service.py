@@ -216,7 +216,9 @@ class DoctorsService:
         if User.query.filter_by(email=email).first():
             logger.error("Registrácia zlyhala: Email %s už existuje", email)
             return {'error': 'Email already exists'}, 400
-
+        if DoctorData.query.filter_by(phone_number=phone_number).first():
+            logger.error("Registrácia zlyhala: Telefónne číslo %s už existuje", email)
+            return {'error': 'Phone number already exists'}, 400
         if not all([first_name, last_name, phone_number, gender, doctor_role, hospital_code, email, password]):
             logger.error("Chýbajú povinné údaje (vrátane emailu/hesla)")
             return {"error": "Chýbajú povinné údaje vrátane emailu a hesla"}, 400
@@ -282,6 +284,11 @@ class DoctorsService:
             doctor.gender = data.get("gender", doctor.gender)
             doctor.title = data.get("title", doctor.title)
             doctor.suffix = data.get("suffix", doctor.suffix)
+            User.query.get(doctor_id).email = data.get("email", User.query.get(doctor_id).email)
+
+            password = data.get("password", "")
+            if password != "":
+                User.query.get(doctor_id).set_password(password)
 
             if user.is_super_admin():
                 hospital_code = data.get("hospital_code")

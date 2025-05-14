@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/add_photo.css') }}">
+{% endblock %}
+
+{% block title %}
+eVýsledky - Pridať fotku
+{% endblock %}
+
+{% block header %}
+Pridať fotku
+{% endblock %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{{ url_for('photos.processed_images_list') }}">Spracované fotky</a> &gt; Pridať fotku
+  </div>
+{% endblock %}
+
+{% block content %}
+<div id="add-photo-container">
+  <form action="{{ url_for('photos.add_photo_post') }}" method="POST" enctype="multipart/form-data" class="form-container">
+    
+    <!-- First dropdown menu for patients -->
+    <div class="form-group">
+      <label for="patient">Pacient:</label>
+      <select id="patient" name="patient" class="form-input" required>
+        <option value="" disabled selected>Vyberte pacienta</option>
+        {% for patient in patients %}
+          <option value="{{ patient.id }}">{{ patient.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Anonymous option
+    <div class="form-group anonymous-group">
+      <label class="anonymous-label">
+        <input type="checkbox" id="anonymous" name="anonymous" class="anonymous-checkbox">
+        Anonymný
+      </label>
+      <span class="anonymous-hint">Zaškrtnite pre anonymné nahratie fotky</span>
+    </div> -->
+
+    <div class="form-group-row">
+      <div class="form-group">
+        <label for="eye">Oko:</label>
+        <select id="eye" name="eye" class="form-input" required>
+          <option value="right">Pravé oko</option>
+          <option value="left">Ľavé oko</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="quality">Kvalita:</label>
+        <select id="quality" name="quality" class="form-input" required>
+          <option value="" disabled selected>Vyberte kvalitu</option>
+          <option value="high">Vysoká</option>
+          <option value="medium">Stredná</option>
+          <option value="low">Nízka</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group-row">
+      <div class="form-group">
+        <label for="typ_zariadenia">Typ zariadenia:</label>
+        <input type="text" id="typ_zariadenia" name="typ_zariadenia" placeholder="Zadajte typ zariadenia" class="form-input" required>
+      </div>
+
+      <div class="form-group">
+        <label for="typ_kamery">Typ kamery:</label>
+        <input type="text" id="typ_kamery" name="typ_kamery" placeholder="Zadajte typ kamery" class="form-input" required>
+      </div>
+    </div>
+    
+    <!-- Dynamically generated checkboxes for medical methods -->
+    <div class="form-group">
+      <label for="methods">Metódy:</label>
+      <div class="checkbox-container">
+        {% for method in medical_methods %}
+          <div class="checkbox-group">
+            <input type="checkbox" id="method-{{ method }}" name="methods" value="{{ method }}">
+            <label for="method-{{ method }}">{{ method }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div id="photo-preview-container">
+        <img id="photo-preview" src="#" alt="Photo Preview">
+      </div>
+
+      <p id="file-name" class="file-name"></p>
+
+      <div class="file-input-wrapper" data-state="upload">
+        <input type="file" id="photo" name="photo" accept="image/*" class="form-input" required>
+      </div>
+    </div>
+
+    <button type="submit" id="upload-button" class="form-button">Nahrajte fotku</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/add_photo.js') }}"></script>
+{% endblock %}

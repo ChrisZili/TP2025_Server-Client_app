@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}eVýsledky – Detaily spracovanej fotky{% endblock %}
+{% block header %}Detaily spracovanej fotky{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/processed_image_details.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="processed-image-container hidden-js">
+
+  <!-- náhľad + ovládanie -------------------------------------------- -->
+  <div class="canvas-section">
+    <div class="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+      <label class="switch-wrapper">
+        <span>Originál</span>
+        <input type="checkbox" id="overlay-switch" checked>
+        <span class="slider"></span>
+        <span>S maskou</span>
+      </label>
+
+      <label class="color-picker">
+        Farba masky:
+        <input type="color" id="mask-color" value="#ffffff">
+      </label>
+    </div>
+  </div>
+
+  <!-- textové detaily ------------------------------------------------- -->
+  <div class="details-container">
+    <h3>Detaily spracovanej fotky</h3>
+    <table class="photo-detail-table">
+      <tr><th>Metóda</th>   <td id="detail-method">-</td></tr>
+      <tr><th>Stav</th>     <td id="detail-status">-</td></tr>
+      <tr><th>Dátum</th>    <td id="detail-date">-</td></tr>
+      <tr><th>Výsledok</th> <td id="detail-answer">-</td></tr>
+    </table>
+
+    <div class="button-container">
+      <a href="{{ url_for('photos.processed_images_list') }}"
+         class="action-button">Späť</a>
+      <a id="original-photo-link" href="#"
+         class="action-button">Zobraziť pôvodnú fotku</a>
+    </div>
+  </div>
+</div>
+
+<!-- JSON pre JS -->
+<div id="processed-image-data"
+     data-json='{{ processed_image | tojson | safe }}'
+     hidden></div>
+
+<!-- MODAL panel ------------------------------------------------------- -->
+<div class="modal" id="img-modal">
+  <div class="modal-content">
+    <button class="modal-close" id="modal-close">&times;</button>
+
+    <canvas id="modal-canvas"></canvas>
+
+    <div class="modal-controls">
+      <label class="switch-wrapper modal-switch">
+        <span>Originál</span>
+        <input type="checkbox" id="modal-overlay-switch" checked>
+        <span class="slider"></span>
+        <span>S maskou</span>
+      </label>
+
+      <label class="color-picker modal-color">
+        Farba masky:
+        <input type="color" id="modal-mask-color" value="#ffffff">
+      </label>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/UTIF.js') }}" defer></script>
+  <script src="{{ url_for('static',
+                           filename='js/processed_image_details.js') }}"
+          defer></script>
+{% endblock %}

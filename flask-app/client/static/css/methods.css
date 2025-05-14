@@ -5,7 +5,7 @@ html, body {
   flex-direction: column;
 }
 
-.doctors-container {
+.methods-container {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -198,7 +198,7 @@ html, body {
   border-radius: 4px;
 }
 
-.doctors-list-table {
+.methods-list-table {
   width: 100%;
   min-width: 1000px;
   border-collapse: collapse;
@@ -207,11 +207,11 @@ html, body {
   table-layout: fixed;
 }
 
-.doctors-list-table thead tr {
+.methods-list-table thead tr {
   background-color: #f7f7f7;
 }
 
-.doctors-list-table thead th {
+.methods-list-table thead th {
   text-align: left;
   padding: 14px 16px;
   font-weight: bold;
@@ -227,47 +227,46 @@ html, body {
   text-overflow: ellipsis;
 }
 
-.doctors-list-table thead th i {
+.methods-list-table thead th i {
   margin-left: 6px;
   color: #999;
   font-size: 0.85rem;
 }
 
-.doctors-list-table thead th.sort-asc i {
+.methods-list-table thead th.sort-asc i {
   color: #1a7891;
   transform: rotate(180deg);
 }
 
-.doctors-list-table thead th.sort-desc i {
+.methods-list-table thead th.sort-desc i {
   color: #1a7891;
   transform: rotate(0deg);
 }
 
-.doctors-list-table tbody {
+.methods-list-table tbody {
   display: block;
   height: 100%;
   overflow-y: auto;
   width: 100%;
 }
 
-.doctors-list-table thead,
-.doctors-list-table tbody tr {
+.methods-list-table thead,
+.methods-list-table tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed;
-  cursor: pointer;
 }
 
-.doctors-list-table tbody tr {
+.methods-list-table tbody tr {
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
 }
 
-.doctors-list-table tbody tr:hover {
+.methods-list-table tbody tr:hover {
   background-color: #fafafa;
 }
 
-.doctors-list-table tbody td {
+.methods-list-table tbody td {
   padding: 14px 16px;
   font-size: 1.05rem;
   color: #444;
@@ -275,6 +274,14 @@ html, body {
   word-wrap: break-word;
   white-space: normal;
   overflow-wrap: break-word;
+}
+
+.description-truncate {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* == Vyhľadávanie == */
@@ -301,6 +308,86 @@ html, body {
   pointer-events: none;
 }
 
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.card-info p {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.card-info p strong {
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.85);
+  margin-right: 5px;
+}
+
+.empty-list-message {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin: 40px 0;
+  font-style: italic;
+}
+
+.card .card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: flex-end;
+}
+
+.card-actions button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.card-actions button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.table-actions button {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.table-actions .edit-btn {
+  color: #1a7891;
+}
+
+.table-actions .delete-btn {
+  color: #dc3545;
+}
+
+.table-actions button:hover {
+  background: #f0f0f0;
+}
+
 /* == Formuláre == */
 #tab-add-content form {
   max-width: 600px;
@@ -325,10 +412,8 @@ html, body {
   color: #444;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="tel"],
+.form-group input,
+.form-group textarea,
 .form-group select {
   width: 100%;
   max-width: 100%;
@@ -339,17 +424,25 @@ html, body {
   font-size: 1rem;
   outline: none;
   transition: border-color 0.2s ease;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  border-radius: 12px;
 }
 
 .form-group input:focus,
+.form-group textarea:focus,
 .form-group select:focus {
   border-color: #66b2ff;
 }
 
-.form-group input[readonly] {
-  background-color: #f0f0f0;
-  color: #555;
-  cursor: not-allowed;
+.field-error {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 5px;
 }
 
 /* Voliteľné: zväčšenie ikony */
@@ -370,7 +463,8 @@ html, body {
 }
 
 /* == Hlásenia == */
-#add-doctor-message {
+.form-message {
+  margin-top: 15px;
   margin-bottom: 15px;
   padding: 10px;
   border-radius: 5px;
@@ -378,13 +472,13 @@ html, body {
   text-align: center;
 }
 
-#add-doctor-message.error {
+.form-message.error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
-#add-doctor-message.success {
+.form-message.success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
@@ -403,61 +497,128 @@ html, body {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  font-weight: bold;
 }
 
 .add-btn:hover {
   background-color: #155e70;
 }
 
-.gdpr-group {
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-}
-
-/* Password toggle button */
-.password-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.password-wrapper input {
-  width: 100%;
-  padding-right: 50px;
-  box-sizing: border-box;
-}
-
-.toggle-pw {
-  width: 48px;
-  height: 48px;
-  background: none;
+.btn {
+  padding: 8px 14px;
   border: none;
+  border-radius: 20px;
   cursor: pointer;
-  position: absolute;
-  top: 50%;
-  right: 0px;
-  transform: translateY(-50%);
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.primary-btn {
+  background-color: #1a7891;
+  color: white;
+}
+
+.primary-btn:hover {
+  background-color: #155e70;
+}
+
+.secondary-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.secondary-btn:hover {
+  background-color: #5a6268;
+}
+
+.danger-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.danger-btn:hover {
+  background-color: #c82333;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  min-width: 100px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.modal-buttons .confirm {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-buttons .confirm:hover {
+  background-color: #c82333;
+}
+
+.modal-buttons .cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-buttons .cancel:hover {
+  background-color: #5a6268;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  z-index: 1000;
 }
 
-.toggle-pw i {
-  font-size: 1.2rem;
-  color: #666;
-  pointer-events: none;
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  min-width: 300px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.toggle-pw:hover i {
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.close-modal:hover {
   color: #333;
 }
 
 /* == Responzívne == */
 @media (max-width: 600px) {
-  .doctors-container {
+  .methods-container {
     padding: 10px;
     height: auto;
   }
@@ -497,16 +658,14 @@ html, body {
     min-width: 20px;
   }
 
-  .doctors-list-table thead th,
-  .doctors-list-table tbody td {
+  .methods-list-table thead th,
+  .methods-list-table tbody td {
     padding: 8px 10px;
     font-size: 0.95rem;
   }
 
-  .form-group input[type="text"],
-  .form-group input[type="email"],
-  .form-group input[type="password"],
-  .form-group input[type="tel"],
+  .form-group input,
+  .form-group textarea,
   .form-group select {
     font-size: 0.95rem;
     padding: 8px;
@@ -516,5 +675,10 @@ html, body {
     width: 100%;
     font-size: 0.95rem;
     padding: 10px 16px;
+  }
+
+  .modal-content {
+    padding: 15px;
+    width: 95%;
   }
 }

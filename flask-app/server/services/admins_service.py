@@ -70,6 +70,11 @@ class AdminsService:
             admin.last_name = data.get("last_name", admin.last_name)
             admin.phone_number = data.get("phone_number", admin.phone_number)
             admin.gender = data.get("gender", admin.gender)
+            User.query.get(admin_id).email = data.get("email", User.query.get(admin_id).email)
+
+            password = data.get("password", "")
+            if password != "":
+                User.query.get(admin_id).set_password(password)
 
             hospital_code = data.get("hospital_code")
             if hospital_code:
@@ -78,7 +83,6 @@ class AdminsService:
                     logger.warning("Neexistujúca nemocnica s kódom '%s'", hospital_code)
                     return {"error": "Neexistujúca nemocnica"}, 404
                 admin.hospital_id = hospital.id
-
             db.session.commit()
             logger.info("Admin s id %s bol aktualizovaný", admin_id)
             return {"message": "Admin aktualizovaný"}, 200

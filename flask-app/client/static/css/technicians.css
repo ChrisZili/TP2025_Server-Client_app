@@ -255,6 +255,7 @@ html, body {
   display: table;
   width: 100%;
   table-layout: fixed;
+  cursor: pointer;
 }
 
 .technicians-list-table tbody tr {

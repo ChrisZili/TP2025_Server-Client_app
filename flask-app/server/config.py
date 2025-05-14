@@ -15,3 +15,7 @@ class Config:
     JWT_COOKIE_SECURE = False               # Nastav na True v produkcii (použitie HTTPS)
     JWT_ACCESS_COOKIE_PATH = '/'            # Cesta, kde je cookie platná
     JWT_COOKIE_CSRF_PROTECT = False         # V produkcii odporúčam povoliť CSRF ochranu, tu pre testovanie False
+
+    UPLOAD_FOLDER = "/home/michal/Desktop/TP/TP2025_Server-Client_app/flask-app/images"
+    PROCESSING_SERVICE_URL = "http://0.0.0.0:5000"
+    RECIEVING_ENDPOINT = "http://localhost:8080/photos/processed/recieve"
