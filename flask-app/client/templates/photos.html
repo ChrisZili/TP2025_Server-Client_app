@@ -1,122 +1,156 @@
 {% extends "layout.html" %}
 
 {% block stylesheet %}
-{{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/photos_list.css') }}">
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/photos.css') }}">
 {% endblock %}
 
 {% block title %}
-Moji Lekári - Zoznam Fotiek
+  eVýsledky - Zoznam Fotiek
 {% endblock %}
 
 {% block header %}
-Zoznam Fotiek
+  Zoznam Fotiek
 {% endblock %}
 
 {% block content %}
-<div class="fotky-container">
-  <!-- Fulltext Search Bar -->
-  <div id="fulltext-search-container">
-    <label for="filter-fulltext" class="custom-class">Hľadať zhodu:</label>
-    <input type="text" id="filter-fulltext" class="form-input" placeholder="Zadajte text">
+<div class="photos-container">
+  <!-- Tabs Bar -->
+  <div class="tabs-wrapper">
+    <div class="tabs" id="photo-tabs">
+      <div class="tab active" id="tab-all-photos">Všetky fotky</div>
+      <div class="tab" id="tab-search-photo">Vyhľadať fotku</div>
+    </div>
   </div>
 
-  <!-- Filters and Add Button -->
-  <div id="filters-and-action">
+  <!-- All Photos Content -->
+  <div id="photos-list-container">
     <!-- Filters Section -->
-    <div id="filters">
-      <!-- Filter: Patient -->
-      {% if user_type in ["super_admin", "admin", "doctor", "technician"] %}
-      <div id="filter-patient-container">
-        <label for="filter-patient">Pacient:</label>
-        <select id="filter-patient" class="form-input">
-          <option value="">Všetci</option>
-        </select>
-      </div>
-      {% endif %}
-
-      <!-- Filter: Hospital -->
-      {% if user_type in ["super_admin"] %}
-      <div id="filter-hospital-container">
-        <label for="filter-hospital">Nemocnica:</label>
-        <select id="filter-hospital" class="form-input">
-          <option value="">Všetky</option>
-        </select>
-      </div>
-      {% endif %}
-
-      <!-- Filter: Doctor -->
-      {% if user_type in ["super_admin", "technician","admin"] %}
-      <div id="filter-doctor-container">
-        <label for="filter-doctor">Doktor:</label>
-        <select id="filter-doctor" class="form-input">
-          <option value="">Všetci</option>
-        </select>
-      </div>
-      {% endif %}
-
-      <!-- Filter: Eye -->
-      {% if user_type in ["super_admin", "admin", "doctor", "technician"] %}
-      <div id="filter-eye-container">
+    <div id="filters" class="filters-container">
+      <!-- Dropdown for Oko -->
+      <div class="filter-group">
         <label for="filter-eye">Oko:</label>
-        <select id="filter-eye" class="form-input">
+        <select id="filter-eye" class="form-input filter-input">
           <option value="">Všetky</option>
-          <option value="prave">Pravé</option>
-          <option value="lave">Ľavé</option>
+          <option value="pravé">Pravé</option>
+          <option value="ľavé">Ľavé</option>
+        </select>
+      </div>
+
+      <!-- Dropdown for Hospital -->
+      <div class="filter-group">
+        <label for="filter-hospital">Nemocnica:</label>
+        <select id="filter-hospital" class="form-input filter-input">
+          <option value="">Všetky</option>
+          {% set unique_hospitals = [] %}
+          {% for photo in photos %}
+            {% if photo.hospital and photo.hospital != '-' and photo.hospital not in unique_hospitals %}
+              {% set _ = unique_hospitals.append(photo.hospital) %}
+              <option value="{{ photo.hospital }}">{{ photo.hospital }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Dropdown for Doctor -->
+      <div class="filter-group">
+        <label for="filter-doctor">Doktor:</label>
+        <select id="filter-doctor" class="form-input filter-input">
+          <option value="">Všetci</option>
+          {% set unique_doctors = [] %}
+          {% for photo in photos %}
+            {% if photo.doctor and photo.doctor != '-' and photo.doctor not in unique_doctors %}
+              {% set _ = unique_doctors.append(photo.doctor) %}
+              <option value="{{ photo.doctor }}">{{ photo.doctor }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Dropdown for Patient (admin only) -->
+      {% if user_type == 'admin' %}
+      <div class="filter-group">
+        <label for="filter-patient">Pacient:</label>
+        <select id="filter-patient" class="form-input filter-input">
+          <option value="">Všetci</option>
+          {% set unique_patients = [] %}
+          {% for photo in photos %}
+            {% if photo.patient and photo.patient != '-' and photo.patient not in unique_patients %}
+              {% set _ = unique_patients.append(photo.patient) %}
+              <option value="{{ photo.patient }}">{{ photo.patient }}</option>
+            {% endif %}
+          {% endfor %}
         </select>
       </div>
       {% endif %}
     </div>
 
-    <!-- Add Photo Button -->
-    <a href="{{ url_for('photos_add') }}" class="btn btn-green">
-      Pridať Fotku
-    </a>
+    <!-- Table to display photos -->
+    <table class="photo-table">
+      <thead>
+        <tr>
+          <th class="sortable" data-column="date">Dátum</th>
+          <th class="sortable" data-column="eye">Oko</th>
+          <th class="sortable" data-column="patient">Pacient</th>
+          <th class="sortable" data-column="doctor">Doktor</th>
+          <th class="sortable" data-column="hospital">Nemocnica</th>
+        </tr>
+      </thead>
+      <tbody id="photo-table-body">
+        {% for photo in photos %}
+        <tr class="photo-row" 
+            data-detail-url="{{ url_for('photos.photo_detail', photo_id=photo.id) }}" 
+            style="cursor:pointer;">
+          <td>{{ photo.date|default('-', true) }}</td>
+          <td>{{ photo.eye|default('-', true) }}</td>
+          <td>{{ photo.patient|default('-', true) }}</td>
+          <td>{{ photo.doctor|default('-', true) }}</td>
+          <td>{{ photo.hospital|default('-', true) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 
-  <!-- Photo Table -->
-  <table class="photo-table">
-    <thead>
-      <tr>
-        <th data-column="name" onclick="toggleSort('name')">Meno</th>
-        <th data-column="date" onclick="toggleSort('date')">Datum nahratia</th>
-        <th data-column="eye" onclick="toggleSort('eye')">Oko</th>
-        <th data-column="patient" onclick="toggleSort('patient')">Pacient</th>
-        <th data-column="doctor" onclick="toggleSort('doctor')">Doktor</th>
-        <th data-column="hospital" onclick="toggleSort('hospital')">Nemocnica</th>
-      </tr>
-    </thead>
-    <tbody id="photo-table-body">
-      {% for photo in photos %}
-      <tr 
-        data-photo-name="{{ photo.name }}" 
-        data-photo-date="{{ photo.date }}" 
-        data-photo-eye="{{ photo.eye }}" 
-        data-photo-patient="{{ photo.patient }}" 
-        data-photo-doctor="{{ photo.doctor }}" 
-        data-photo-hospital="{{ photo.hospital }}" 
-        data-patient-age="{{ photo.patient_data.age }}" 
-        data-patient-gender="{{ photo.patient_data.gender }}" 
-        data-patient-phone="{{ photo.patient_data.phone_number }}" 
-        data-patient-birth-number="{{ photo.patient_data.birth_number }}">
-        <td>{{ photo.name }}</td>
-        <td>{{ photo.date }}</td>
-        <td>{{ photo.eye }}</td>
-        <td>{{ photo.patient }}</td>
-        <td>{{ photo.doctor }}</td>
-        <td>{{ photo.hospital }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Search Tab Content -->
+  <div id="tab-search-photos-content">
+    <div class="search-bar search-bar-fullwidth">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="photo-search-input" placeholder="Názov fotky, pacient, doktor alebo nemocnica" />
+    </div>
+    <div class="sort-options" id="photo-sort-options-search">
+      <label for="photo-search-sort-select">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="photo-search-sort-select">
+        <option value="date-desc" selected>Od novších po starších</option>
+        <option value="date-asc">Od starších po novších</option>
+        <option value="name-asc">Abecedne A → Z</option>
+        <option value="name-desc">Abecedne Z → A</option>
+      </select>
+    </div>
+    <div id="photo-search-list-container">
+      <div class="table-scroll-wrapper">
+        <table class="photo-table">
+          <thead>
+            <tr>
+              <!-- <th>Názov Fotky</th> -->
+              <th>Dátum</th>
+              <th>Oko</th>
+              <th>Pacient</th>
+              <th>Doktor</th>
+              <th>Nemocnica</th>
+            </tr>
+          </thead>
+          <tbody id="photo-search-results-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-{{ super() }}
-<script src="{{ url_for('static', filename='js/photos.js') }}"></script>
-<script>
-  const userType = "{{ user_type }}";
-  const photoData = {{ photos | tojson }};
-</script>
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/photos.js') }}"></script>
 {% endblock %}

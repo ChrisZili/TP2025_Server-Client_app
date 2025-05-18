@@ -1,0 +1,556 @@
+import logging
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash, send_from_directory
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from server.models.methods_data import MethodsData
+from server.models.original_image_data import OriginalImageData
+from server.models.processed_image_data import ProcessedImageData
+from server.models.user import User
+from server.models.doctor_data import DoctorData
+from server.models.patient_data import PatientData
+from server.services.patients_service import PatientsService
+from server.services.photo_service import PhotoService
+from server.database import db
+from server.config import Config
+import os
+
+bp = Blueprint('photos', __name__, url_prefix='/photos')
+logger = logging.getLogger(__name__)
+
+# Create service instances
+patient_service = PatientsService()
+photo_service = PhotoService()
+
+def get_process_types():
+    process_types = MethodsData.query.all()
+    return process_types
+
+# Helper function to get current user ID
+def get_current_user_id():
+    user_id = get_jwt_identity()
+    logger.info(f"JWT Identity: {user_id}")
+    
+    try:
+        if user_id:
+            user_id = int(user_id)
+            # Debug: Get the user details
+            user = db.session.get(User, user_id)
+            logger.info(f"Current user ID: {user_id}, User type: {user.user_type if user else 'None'}")
+            return user_id
+        else:
+            # For testing purposes, use a default admin or doctor ID if needed
+            logger.warning("No JWT token found, using default admin ID")
+            # Try to find a doctor in the system
+            doctor = DoctorData.query.first()
+            if doctor:
+                user_id = doctor.id
+                logger.info(f"Using default doctor ID: {user_id}")
+                return user_id
+            else:
+                # If no doctor found, use ID 1 as fallback
+                logger.warning("No doctor found, using fallback ID: 1")
+                return 1
+    except (ValueError, TypeError) as e:
+        logger.error(f"Invalid user_id from token: {user_id}, error: {str(e)}")
+        # Continue with a default ID for testing
+        return 1
+
+# Helper function to get available patients
+def get_available_patients(user_id):
+    logger.info("Attempting to get patients data via service")
+    patients = []
+    
+    # First try to get patients through the service (preferred method)
+    try:
+        logger.info(f"Using PatientsService to get patients for user ID: {user_id}")
+        patients_data, status = patient_service.get_patients(user_id)
+        
+        logger.info(f"PatientsService returned status: {status}")
+        
+        if status == 200 and isinstance(patients_data, list):
+            for patient in patients_data:
+                logger.info(f"Service found patient: {patient.get('first_name', '')} {patient.get('last_name', '')}")
+                patients.append({
+                    "id": patient["id"],
+                    "name": f"{patient['first_name']} {patient['last_name']}",
+                    "eye": "right"  # Default value
+                })
+        else:
+            logger.warning(f"PatientsService returned non-200 status or invalid data format: {status}")
+    except Exception as e:
+        logger.exception(f"Exception getting patients via PatientsService: {str(e)}")
+    
+    # Only use direct DB access as a fallback if service approach failed
+    if not patients:
+        logger.warning("PatientsService failed, falling back to direct database access")
+        try:
+            patients_query = PatientData.query.all()
+            logger.info(f"Direct query found {len(patients_query) if patients_query else 0} patients")
+            
+            if patients_query:
+                for patient in patients_query:
+                    logger.info(f"Found patient: ID={patient.id}, Name={patient.first_name} {patient.last_name}")
+                    patients.append({
+                        "id": patient.id,
+                        "name": f"{patient.first_name} {patient.last_name}",
+                        "eye": "right"  # Default value
+                    })
+            else:
+                logger.warning("No patients found in database")
+        except Exception as db_error:
+            logger.exception(f"Error in direct DB query: {str(db_error)}")
+    
+    
+    logger.info(f"Retrieved {len(patients)} patients")
+    return patients
+
+@bp.route('/list', methods=['GET'])
+@jwt_required(optional=True)
+def photos_list():
+    logger.info("==== Accessing photos list page ====")
+    
+    # Get the current user
+    user_id = get_current_user_id()
+    user = db.session.get(User, user_id) if user_id else None
+    user_type = user.user_type if user else "guest"
+    
+    # Get photos for the current user
+    photos, status, message = photo_service.get_user_photos(user_id)
+    
+    if status != 200:
+        flash(message, 'error')
+        photos = []
+    
+    # Extract unique values for doctors, patients, and hospitals
+    doctors = set()
+    patients = set()
+    hospitals = set()
+    
+    # Process photos to get unique values
+    photos_data = []
+    for photo in photos:
+        # Get patient info
+        patient = photo.patient
+        patient_name = patient.get_full_name() if patient else "Unknown Patient"
+        
+        # Get doctor info
+        doctor = patient.doctor if patient else None
+        doctor_name = doctor.get_full_name() if doctor else "Unknown Doctor"
+        
+        # Get hospital info
+        hospital = doctor.hospital if doctor else None
+        hospital_name = hospital.name if hospital else "Unknown Hospital"
+        
+        # Add to sets
+        doctors.add(doctor_name)
+        patients.add(patient_name)
+        hospitals.add(hospital_name)
+        
+        # Get relative path from the upload folder
+        relative_path = os.path.relpath(photo.original_image_path, Config.UPLOAD_FOLDER)
+        
+        # Create photo data dictionary
+        photo_data = {
+            "id": photo.id,
+            "name": os.path.basename(photo.original_image_path),
+            "eye": "Pravé" if photo.eye_side == "right" else "Ľavé",
+            "patient": patient_name,
+            "hospital": hospital_name,
+            "doctor": doctor_name,
+            "date": photo.created_at.strftime("%d.%m.%Y"),
+            "url": url_for('photos.serve_photo', path=photo.original_image_path)
+        }
+        photos_data.append(photo_data)
+
+    return render_template(
+        'photos.html',
+        photos=photos_data,
+        doctors=sorted(doctors),
+        patients=sorted(patients),
+        hospitals=sorted(hospitals),
+        user_type=user_type,
+        user_data=user)
+
+@bp.route('/detail/<photo_id>', methods=['GET'])
+@jwt_required(optional=True)
+def photo_detail(photo_id):
+    logger.info(f"==== Accessing photo detail page for {photo_id} ====")
+    
+    # Get the photo
+    photo, status, message = photo_service.get_photo_by_id(photo_id)
+    
+    if status != 200:
+        flash(message, 'error')
+        return redirect(url_for('photos.photos_list'))
+    
+    # Get relative path from the upload folder
+    full_path = photo.original_image_path
+    # Create photo data dictionary
+    photo_data = {
+        "id": photo.id,
+        "name": os.path.basename(photo.original_image_path),
+        "eye": "Pravé" if photo.eye_side == "right" else "Ľavé",
+        "patient": photo.patient.get_full_name() if photo.patient else "Unknown Patient",
+        "hospital": photo.patient.doctor.hospital.name if photo.patient and photo.patient.doctor and photo.patient.doctor.hospital else "Unknown Hospital",
+        "doctor": photo.patient.doctor.get_full_name() if photo.patient and photo.patient.doctor else "Unknown Doctor",
+        "date": photo.created_at.strftime("%d.%m.%Y"),
+        "url": url_for('photos.serve_photo', path=full_path),
+        # "methods": [method.name for method in photo.processed_images] if photo.processed_images else [],
+        "patient_id": photo.patient.id if photo.patient else "",
+        "diagnosis": photo.diagnosis if hasattr(photo, "diagnosis") else "",
+        "device_name": photo.device.device_name if hasattr(photo, "device") and photo.device else "",
+        "device_type": photo.device.device_type if hasattr(photo, "device") and photo.device else "",
+        "camera_type": photo.device.camera_model if hasattr(photo, "device") and photo.device else "",
+    }
+    
+    # Prepare processed images for the table
+    processed_images = []
+    for img in getattr(photo, 'processed_images', []):
+        processed_images.append({
+            "id": img.id,
+            "method": getattr(img, 'process_type', ''),
+            "status": getattr(img, 'status', ''),
+            "created_at": img.created_at.strftime("%d.%m.%Y") if img.created_at else '',
+            "url": url_for('photos.serve_photo', path=img.processed_image_path) if img.processed_image_path else '',
+            "name": os.path.basename(img.processed_image_path) if img.processed_image_path else ''
+        })
+    
+    # Define available medical methods - pass the full method objects
+    medical_methods = get_process_types()
+    
+    user_id = get_current_user_id()
+    user = db.session.get(User, user_id) if user_id else None
+    
+    return render_template(
+        'photo_detail.html',
+        photo=photo_data,
+        medical_methods=medical_methods,
+        processed_images=processed_images,
+        current_user=user
+    )
+
+@bp.route('/add_photo', methods=['GET'])
+@jwt_required(optional=True)
+def add_photo_get():
+    logger.info("==== Accessing the add_photo page (GET) ====")
+    
+    # Get current user ID
+    user_id = get_current_user_id()
+    
+    # Get available patients
+    patients = get_available_patients(user_id)
+    logger.info(f"Available patients: {patients}")
+    
+    # Get available methods
+    method_names = [method.name for method in get_process_types()]
+    
+    logger.info(f"Rendering template with {len(patients)} patients")
+    
+    return render_template("add_photo.html", medical_methods=method_names, patients=patients)
+
+@bp.route('/add_photo', methods=['POST'])
+@jwt_required(optional=True)
+def add_photo_post():
+    logger.info("==== Processing add_photo form submission (POST) ====")
+    
+    try:
+        # Get current user ID
+        user_id = get_current_user_id()
+        
+        # Get form data
+        patient_id = request.form.get('patient')
+        eye_side = request.form.get('eye')
+        quality = request.form.get('quality')
+        device_name = request.form.get('typ_kamery')
+        device_type = request.form.get('typ_zariadenia')
+        camera_type = request.form.get('typ_kamery')
+        photo_file = request.files.get('photo')
+        methods_to_process = request.form.getlist('methods')
+
+        for method in methods_to_process:
+            logger.info(f"Method to process: {method}")
+        # Log the received data
+        logger.info(f"Received form data: patient_id={patient_id}, eye={eye_side}, quality={quality}, "
+                  f"device_name={device_name}, device_type={device_type}")
+        
+        # Save photo using PhotoService
+        photo_data, status, message = photo_service.save_photo(
+            photo_file=photo_file,
+            user_id=user_id,
+            patient_id=patient_id,
+            eye_side=eye_side,
+            quality=quality,
+            device_name=device_name,
+            device_type=device_type,
+            camera_type=camera_type
+        )
+        photo_id = int(photo_data.id)
+        user_id = int(user_id)
+        patient_id = int(patient_id)
+        methods_to_process = [method for method in get_process_types() if method.name in methods_to_process]
+        if methods_to_process:
+            for method in methods_to_process:
+                success, status, message = photo_service.sent_image_to_processing(
+                    photo_id, method.name, method.parameters, user_id, patient_id,
+                    eye_side, quality, device_name, device_type, camera_type
+                )
+        
+        if status != 200:
+            raise Exception(message)
+
+        # Return JSON response for AJAX request or redirect for form submit
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return {"status": "success", "message": "Photo uploaded successfully", "photo_id": photo_id}, 200
+        else:
+            flash('Photo uploaded successfully!', 'success')
+            return redirect(url_for('photos.add_photo_get'))
+        
+    except Exception as e:
+        logger.exception(f"Error processing form: {str(e)}")
+        # Return JSON response for AJAX request or redirect for form submit
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return {"status": "error", "message": str(e)}, 500
+        else:
+            flash('An error occurred while processing your request.', 'error')
+            return redirect(url_for('photos.add_photo_get'))
+
+@bp.route('/delete/<photo_id>', methods=['POST'])
+@jwt_required(optional=True)
+def delete_photo(photo_id):
+    logger.info(f"==== Deleting photo {photo_id} ====")
+    
+    try:
+        # Get current user ID
+        user_id = get_current_user_id()
+        
+        # Delete photo using PhotoService
+        success, status, message = photo_service.delete_photo(photo_id, user_id)
+        
+        if not success:
+            raise Exception(message)
+            
+        flash('Photo deleted successfully!', 'success')
+        return redirect(url_for('photos.photos_list'))
+        
+    except Exception as e:
+        logger.exception(f"Error deleting photo: {str(e)}")
+        flash(str(e), 'error')
+        return redirect(url_for('photos.photos_list'))
+
+@bp.route('/uploads/<path:path>')
+def serve_photo(path):
+    """Serve uploaded photos."""
+    # Remove any leading slashes to prevent double-slash issues
+    # Get the filename from the path
+    filename = path.split('/')[-1]
+    patient_id = path.split('/')[-2]
+    
+    # Check if the path is absolute and starts with upload folder
+    return send_from_directory(os.path.join(Config.UPLOAD_FOLDER, patient_id), filename)
+    
+@bp.route('/sent_to_processing', methods=['POST'])
+@jwt_required(optional=True)
+def sent_to_processing():
+    data = request.json
+    logger.info(f"Received data: {data}")
+
+    # Extract data
+    photo_id = data.get('photo_id')
+    method_name = data.get('method_name')
+    method_parameters = data.get('method_parameters', {})
+    user_id = data.get('user_id')
+    patient_id = data.get('patient_id')
+    eye_side = data.get('eye_side')
+    diagnosis = data.get('diagnosis')
+    device_name = data.get('device_name')
+    device_type = data.get('device_type')
+    camera_type = data.get('camera_type')
+
+    # Call your service
+    success, status, message = photo_service.sent_image_to_processing(
+        photo_id, method_name, method_parameters, user_id, patient_id,
+        eye_side, diagnosis, device_name, device_type, camera_type
+    )
+    # success = True
+    # message = "Image sent to processing successfully"
+
+    if success:
+        return jsonify({"status": "success", "message": message}), 200
+    else:
+        return jsonify({"status": "error", "message": message}), 500
+
+@bp.route('/processed/recieve', methods=['POST'])
+def recieve():
+    logger.info("==== Processing receive form submission (POST) ====")
+    data = request.json
+    logger.info(f"Received data: {data}")
+    
+    try:
+        # Extract data from the request
+        status = data.get('status')
+        answer = data.get('answer')
+        file_data = data.get('file', {})
+        
+        if not all([status, file_data]):
+            return jsonify({"status": "error", "message": "Missing required data"}), 400
+            
+        # Process the received data
+        success, message = photo_service.process_received_data(
+            status=status,
+            answer=answer,
+            file_id=file_data.get('id'),
+            file_data=file_data.get('data'),
+            file_extension=file_data.get('extension')
+        )
+        
+        if success:
+            return jsonify({"status": "success", "message": message}), 200
+        else:
+            return jsonify({"status": "error", "message": message}), 500
+            
+    except Exception as e:
+        logger.exception("Error processing received data: %s", str(e))
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
+
+@bp.route('/processed/<int:processed_image_id>', methods=['GET'])
+@jwt_required(optional=True)
+def processed_image_detail(processed_image_id):
+    logger.info("==== Accessing processed image detail %s ====", processed_image_id)
+
+    processed = ProcessedImageData.query.get(processed_image_id)
+    if not processed:
+        flash("Processed image not found", "error")
+        return redirect(url_for("photos.photos_list"))
+
+    # ---------- pôvodný obrázok -------------------------------------------
+    original_url  = ""
+    original_name = ""
+    if processed.original_image and processed.original_image.original_image_path:
+        rel_orig = os.path.relpath(
+            processed.original_image.original_image_path,
+            Config.UPLOAD_FOLDER
+        )
+        original_url  = url_for("photos.serve_photo", path=rel_orig)
+        original_name = os.path.basename(processed.original_image.original_image_path)
+
+    # ---------- spracovaný obrázok -----------------------------------------
+    processed_url  = ""
+    processed_name = ""
+    if processed.processed_image_path:
+        rel_proc = os.path.relpath(
+            processed.processed_image_path,
+            Config.UPLOAD_FOLDER
+        )
+        processed_url  = url_for("photos.serve_photo", path=rel_proc)
+        processed_name = os.path.basename(processed.processed_image_path)
+
+    # ---------- JSON pre šablónu -------------------------------------------
+    data = {
+        "id":               processed.id,
+        "name":             processed_name,
+        "method":           processed.process_type,
+        "status":           processed.status,
+        "created_at":       processed.created_at.strftime("%d.%m.%Y") if processed.created_at else "",
+        "answer":           processed.answer,
+        "url":              processed_url,
+        "original_photo_id": processed.original_image_id,
+        "original_image": {
+            "url":  original_url,
+            "name": original_name,
+        },
+    }
+
+    return render_template("processed_image_details.html", processed_image=data)
+
+@bp.route('/processed_images', methods=['GET'])
+@jwt_required(optional=True)
+def processed_images_list():
+    user_id = get_current_user_id()
+    # Get photos for the current user
+    photos, status, message = photo_service.get_user_photos(user_id)
+
+    processed_images = [
+        proc
+        for orig in photos
+        for proc in (orig.processed_images or [])
+    ]
+
+    table_data = []
+    for img in processed_images:
+        original = img.original_image
+        # Get patient name
+        if original and hasattr(original, 'patient') and original.patient:
+            patient_name = original.patient.get_full_name()
+        else:
+            patient_name = str(original.patient_id) if original and hasattr(original, 'patient_id') else "-"
+        # Get doctor name (creator)
+        if original and hasattr(original, 'creator') and original.creator:
+            doctor_name = original.creator.get_full_name()
+        else:
+            doctor_name = str(original.creator_id) if original and hasattr(original, 'creator_id') else "-"
+        table_data.append({
+            "id": img.id,
+            "name": os.path.basename(img.processed_image_path) if img.processed_image_path else "",
+            "method": img.process_type,
+            "status": img.status,
+            "created_at": img.created_at.strftime("%d.%m.%Y") if img.created_at else "",
+            "patient_name": patient_name,
+            "doctor_name": doctor_name,
+            "url": url_for('photos.serve_photo', path=img.processed_image_path) if img.processed_image_path else "",
+        })
+    return render_template('processed_images.html', processed_images=table_data)
+
+@bp.route('/update_diagnosis', methods=['POST'])
+@jwt_required(optional=True)
+def update_diagnosis():
+    """Update the diagnosis for a photo."""
+    try:
+        data = request.json
+        photo_id = data.get('photo_id')
+        new_diagnosis = data.get('diagnosis')
+
+        if not photo_id:
+            return jsonify({"status": "error", "message": "Photo ID is required"}), 400
+
+        # Get the photo using PhotoService
+        photo, status, message = photo_service.get_photo_by_id(photo_id)
+        
+        if status != 200:
+            return jsonify({"status": "error", "message": message}), status
+
+        # Update the diagnosis using PhotoService
+        success, status, message = photo_service.update_photo_diagnosis(photo_id, new_diagnosis)
+        
+        if not success:
+            return jsonify({"status": "error", "message": message}), status
+
+        return jsonify({"status": "success", "message": "Diagnosis updated successfully"}), 200
+
+    except Exception as e:
+        logger.exception("Error updating diagnosis: %s", str(e))
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@bp.route('/get_processed_images/<photo_id>', methods=['GET'])
+@jwt_required(optional=True)
+def get_processed_images(photo_id):
+    """Get processed images for a specific photo."""
+    image_dir = os.path.join(os.path.dirname(__file__), 'images')
+    try:
+        photo = OriginalImageData.query.get(photo_id)
+        if not photo:
+            return jsonify({"error": "Photo not found"}), 404
+
+        processed_images = []
+        for img in photo.processed_images:
+            processed_images.append({
+                "id": img.id,
+                "method": img.process_type,
+                "status": img.status,
+                "created_at": img.created_at.strftime("%d.%m.%Y") if img.created_at else '',
+                "url": url_for('photos.serve_photo', path=img.processed_image_path) if img.processed_image_path else ''
+            })
+
+        return jsonify(processed_images), 200
+
+    except Exception as e:
+        logger.exception("Error getting processed images: %s", str(e))
+        return jsonify({"error": str(e)}), 500

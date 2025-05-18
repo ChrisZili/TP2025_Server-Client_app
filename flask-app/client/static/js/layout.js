@@ -1,6 +1,5 @@
 // TODO: vycitat zakladne info o uzivatelovi user_type, full_name a nahradit permanentne posielanie a vycitavanie user
 
-
 document.addEventListener("DOMContentLoaded", () => {
   // ===========================
   // 1) Responzívny sidebar (expanded / collapsed / hidden)
@@ -107,8 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
-      { icon: "fa fa-images",  label: "Fotky",        link: "/photos" },
-      { icon: "fa fa-upload",  label: "Pridať fotku", link: "/fotky/pridat" },
+      { icon: "fa fa-images",  label: "Fotky",        link: "/fotky" },
+      { icon: "fa fa-upload",  label: "Pridať fotku", link: "/photos/add_photo" },
       { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
       { icon: "fa fa-envelope", label: "Správy",      link: "/spravy" },
       { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
@@ -118,8 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-home",    label: "Domov",         link: "/dashboard" },
       { icon: "fa fa-user-gear", label: "Technici",    link: "/technicians" },
       { icon: "fa fa-users",   label: "Pacienti",      link: "/patients" },
-      { icon: "fa fa-images",  label: "Fotky",         link: "/photos" },
-      { icon: "fa fa-list",    label: "Zoznam",        link: "/doctor/list" },
+      { icon: "fa fa-upload",  label: "Pridať fotku", link: "/photos/add_photo" },
+      { icon: "fa fa-images",  label: "Fotky",      link: "/photos/list" },
+      { icon: "fa fa-list",    label: "Spracované fotky",     link: "/photos/processed_images" },
       { icon: "fa fa-envelope", label: "Správy",       link: "/spravy" },
       { icon: "fa fa-cog",     label: "Nastavenie",    link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",      link: "/logout", isLogout: true },
@@ -129,8 +129,9 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
       { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
       { icon: "fa fa-users",   label: "Pacienti",   link: "/patients" },
-      { icon: "fa fa-images",  label: "Fotky",      link: "/photos" },
-      { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
+      { icon: "fa fa-images",  label: "Fotky",      link: "/photos/list" },
+      { icon: "fa fa-upload",  label: "Pridať fotku", link: "/photos/add_photo" },
+      { icon: "fa fa-list",    label: "Spracované fotky",     link: "/photos/processed_images" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
@@ -142,8 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-user-md", label: "Doktori",    link: "/doctors" },
       { icon: "fa fa-user-gear", label: "Technici", link: "/technicians" },
       { icon: "fa fa-users",   label: "Pacienti",   link: "/patients" },
-      { icon: "fa fa-images",  label: "Fotky",      link: "/photos" },
-      { icon: "fa fa-list",    label: "Zoznam",     link: "/admin/list" },
+      { icon: "fa fa-upload",  label: "Pridať fotku", link: "/photos/add_photo" },
+      { icon: "fa fa-images",  label: "Fotky",      link: "/photos/list" },
+      { icon: "fa fa-list",    label: "Spracované fotky",     link: "/photos/processed_images" },
+      { icon: "fa fa-microscope", label: "Metódy", link: "/methods" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },

@@ -1,0 +1,18 @@
+Category,Endpoint,HTTP Method,Description,Authentication Required,Request Format,Response Format
+Web,/,GET,Home page,No,N/A,HTML (index.html)
+Web,/login,GET,Login page,No,N/A,HTML (login.html)
+Web,/register/<user_type>,GET,Registration page with specific user type,No,"URL parameter: user_type (patient, doctor, technician)",HTML (register.html)
+Web,/dashboard/<user_type>,GET,Dashboard page for specific user type,Optional JWT,"URL parameter: user_type (patient, doctor, technician)",HTML (dashboard.html)
+Auth,/register/<user_type>,POST,Register a new user,No,"JSON: {""email"": ""user@example.com"", ""password"": ""password"", ""first_name"": ""John"", ""last_name"": ""Doe"", ...}","JSON: {""message"": ""User registered successfully""} or error message"
+Auth,/login,POST,Authenticate a user,No,"JSON: {""email"": ""user@example.com"", ""password"": ""password""}","JSON: {""access_token"": ""jwt_token"", ""message"": ""Login successful""} or error message"
+Auth,/me,GET,Get current user info,JWT Token,"Authorization header: ""Bearer <token>""","JSON: {""id"": 1, ""user_type"": ""doctor""} or error message"
+Doctor,/doctor/patients,GET,Get doctor's patients,JWT Token,"Authorization header: ""Bearer <token>""",JSON: Array of patient objects
+Doctor,/doctor/update,PUT,Update doctor information,JWT Token,JSON: Updated doctor data,JSON: Success or error message
+Doctor,/doctor/assign,POST,Assign a patient to a doctor,JWT Token,"JSON: {""patient_id"": 123}",JSON: Success or error message
+Doctor,/doctor/remove,POST,Remove a patient from a doctor,JWT Token,"JSON: {""patient_id"": 123}",JSON: Success or error message
+Doctor,/doctor/transfer,POST,Transfer a patient to another doctor,JWT Token,"JSON: {""patient_id"": 123, ""new_doctor_id"": 456}",JSON: Success or error message
+Doctor,/doctor/change_hospital,POST,Change doctor's hospital,JWT Token,"JSON: {""hospital_id"": 789}",JSON: Success or error message
+Doctor,/doctor/patient,GET,Get specific patient details,JWT Token,Query parameter: patient_id,JSON: Patient details
+Hospital,/hospital/add,POST,Add a new hospital,JWT Token,JSON: Hospital data,JSON: Success or error message
+Hospital,/hospital/update/<hospital_id>,PUT,Update hospital information,JWT Token,"URL parameter: hospital_id, JSON: Updated hospital data",JSON: Success or error message
+Hospital,/hospital/list,GET,List all hospitals,JWT Token,N/A,JSON: Array of hospital objects

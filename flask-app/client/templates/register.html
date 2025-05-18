@@ -52,5 +52,5 @@ Register - FEI STU
 {% block scripts %}
   {{ super() }}
   <!-- Ak potrebuješ JS logiku, vlož sem register.js -->
-  <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/register.js') }}" defer></script>
 {% endblock %}

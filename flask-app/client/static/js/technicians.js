@@ -59,22 +59,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Populate hospital dropdown
   function populateHospitalDropdown() {
-    const dropdown = document.getElementById("hospital-filter-dropdown"); // Use the exact ID
-    console.log("Dropdown found:", dropdown); // Debugging
+    const dropdown = document.getElementById("hospital-filter-dropdown");
+    console.log("Hospital Dropdown Found:", dropdown);
 
-    if (!dropdown || !Array.isArray(hospitalsData) || !Array.isArray(allTechniciansData)) {
-      console.warn("Dropdown not found or invalid data.");
+    if (!dropdown) {
+      console.error("Hospital dropdown not found in the DOM.");
       return;
     }
 
     // Get a set of hospital IDs present in the technicians list
     const technicianHospitalIds = new Set(
       allTechniciansData
-        .filter(technician => technician.hospital?.id) // Ensure the technician has a hospital ID
+        .filter(technician => technician.hospital && technician.hospital.id) // Ensure hospital exists and has an ID
         .map(technician => technician.hospital.id)
     );
 
-    console.log("Technician Hospital IDs:", technicianHospitalIds); // Debugging
+    console.log("Technician Hospital IDs:", technicianHospitalIds);
 
     // Filter hospitals based on the IDs in the technicians list
     const filteredHospitals = hospitalsData.filter(hospital =>
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       dropdown.appendChild(option);
     });
 
-    console.log("Dropdown populated with filtered hospitals:", dropdown); // Debugging
+    console.log("Dropdown populated with filtered hospitals:", dropdown);
   }
 
   // Fetch hospitals data

@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/hospital_details.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/hospital_details.css') }}">
+{% endblock %}
+
+{% block title %}
+    eVýsledky - Detaily nemocnice
+{% endblock %}
+{% block header %}
+    Detaily nemocnice
+{% endblock %}
+
+{% block content %}
+<div class="hospital-container">
+  <form id="hospital-form" class="hospital-form">
+    <div class="form-group">
+            <label for="name">Názov nemocnice</label>
+            <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="hospital-country">Štát</label>
+      <select id="hospital-country" name="country" required>
+        <option value="">-- Vyber štát --</option>
+      </select>
+    </div>
+
+
+    <div class="form-group">
+      <label for="city">Mesto</label>
+      <input type="text" id="city" name="city" required>
+    </div>
+
+    <div class="form-group">
+      <label for="street">Ulica a číslo</label>
+      <input type="text" id="street" name="street" required>
+    </div>
+
+    <div class="form-group">
+      <label for="postal_code">PSČ</label>
+      <input type="text" id="postal_code" name="postal_code" required>
+    </div>
+
+    <div class="form-group">
+      <label for="hospital_code">Kód nemocnice</label>
+      <input type="text" id="hospital_code" name="hospital_code" readonly>
+    </div>
+
+          <!-- Uložiť -->
+      <button type="button"
+              id="save-hospital-btn"
+              class="save-btn">
+        Uložiť zmeny
+      </button>
+  </form>
+</div>
+
+<!-- ---------- potvrďovací modal ---------- -->
+<div id="confirmation-modal" class="hidden-js">
+  <div class="modal-content">
+    <p>Si si istý, že chceš uložiť zmeny?</p>
+    <div class="modal-buttons">
+      <button id="confirm-save-btn" class="confirm">Áno, uložiť</button>
+      <button id="cancel-save-btn"  class="cancel">Zrušiť</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/hospital_details.js') }}" defer></script>
+{% endblock %}

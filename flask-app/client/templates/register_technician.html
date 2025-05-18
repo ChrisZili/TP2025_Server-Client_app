@@ -135,5 +135,5 @@ Technician Registration
 {% block scripts %}
   {{ super() }}
   <!-- Link na externý JS súbor pre validáciu -->
-  <script src="{{ url_for('static', filename='js/register_technician.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/register_technician.js') }}" defer></script>
 {% endblock %}

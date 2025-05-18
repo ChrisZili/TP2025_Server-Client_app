@@ -75,6 +75,7 @@ class HospitalService:
             hospital.city = data.get("city", hospital.city)
             hospital.street = data.get("street", hospital.street)
             hospital.postal_code = data.get("postal_code", hospital.postal_code)
+            hospital.country = data.get("country", hospital.country)
 
             db.session.commit()
             logger.info("Nemocnica s id %s bola úspešne aktualizovaná", hospital_id)
@@ -99,7 +100,8 @@ class HospitalService:
                     "name": h.name,
                     "city": h.city,
                     "street": h.street,
-                    "postal_code": h.postal_code
+                    "postal_code": h.postal_code,
+                    "country": h.country,
                 } for h in hospitals
             ]
             logger.info("Zoznam nemocníc bol načítaný, počet: %d", len(hospitals_data))
@@ -122,7 +124,8 @@ class HospitalService:
                     "city": hospital.city,
                     "street": hospital.street,
                     "postal_code": hospital.postal_code,
-                    "hospital_code": hospital.hospital_code
+                    "hospital_code": hospital.hospital_code,
+                    "country": hospital.country,
                 }
             logger.info("Informacie nemocnice bol načítaný, počet: %d", len(hospital_data))
             return hospital_data, 200

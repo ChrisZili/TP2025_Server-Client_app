@@ -36,10 +36,10 @@ def create_app(config_class=Config):
     def add_security_headers(response):
         response.headers['Content-Security-Policy'] = (
             "default-src 'self'; "
-            "style-src 'self' 'sha256-IDMiY5Fpltjj2kXLp2Q4luYLF7MdeDcZEYGIDkJdAJI='; "
+            "style-src 'self' 'unsafe-inline'; "  # Allow inline styles
             "script-src 'self'; "
             "font-src 'self'; "
-            "img-src 'self'; "
+            "img-src 'self' data:; "
             "frame-ancestors 'none';"
         )
         response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'

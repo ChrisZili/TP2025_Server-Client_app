@@ -236,7 +236,7 @@ def get_admins_page():
 def add_doctor_page():
     """Render the Add Doctor page."""
     logger.info("add_doctor_page endpoint accessed")
-    return render_template("add_doctor.html", user=USER_DATA)
+    return render_template("add_doctor.html")
 
 
 # Route: Add Doctor (POST)
@@ -358,6 +358,7 @@ def get_doctor_details(doctor_id):
         logger.error("get_doctor_details: Doctor not found with id: %s", doctor_id)
         return jsonify({'error': 'Doctor not found'}), 404
     logger.info("Doctor: %s", doctor)
+
     # Add hospital name to the doctor details
     doctor["hospital"] = next((h["name"] for h in HOSPITALS if h["id"] == doctor.get("hospital_id")), "Unknown")
 
@@ -365,8 +366,8 @@ def get_doctor_details(doctor_id):
     if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
         return jsonify(doctor), 200
 
-    # Render the doctor details page
-    return render_template("doctor_details.html", doctor=doctor, user=USER_DATA)
+    # Render the doctor details page without passing `user`
+    return render_template("doctor_details.html", doctor=doctor)
 
 
 # Route: Doctors Page

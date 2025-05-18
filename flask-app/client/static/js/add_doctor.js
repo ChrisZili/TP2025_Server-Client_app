@@ -1,4 +1,58 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded and parsed."); // Debugging
+
+  // Fetch user data dynamically
+  fetch("/user/data")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data");
+      }
+      return response.json();
+    })
+    .then((userData) => {
+      console.log("Fetched user data:", userData);
+
+      const userType = userData.user_type;
+      console.log("User type:", userType); // Debugging
+
+      const hospitalGroup = document.getElementById("doctor-hospital-group");
+      const superdoctorGroup = document.getElementById("superdoctor-group");
+
+      // Hide hospital input and superdoctor checkbox for non-super admins
+      if (userType !== "super_admin") {
+        if (hospitalGroup) hospitalGroup.style.display = "none";
+        if (superdoctorGroup) superdoctorGroup.style.display = "none";
+
+        // Fetch and set the user's hospital ID
+        fetchUserHospital()
+          .then((hospitalId) => {
+            const hospitalInput = document.getElementById("doctor-hospital");
+            if (!hospitalInput) {
+              console.error("Hospital input field not found in the DOM.");
+              return;
+            }
+
+            hospitalInput.value = hospitalId;
+            console.log(`Set hospital ID for regular admin: ${hospitalInput.value}`);
+            hospitalInput.style.display = "none"; // Hide the field
+            hospitalInput.required = false; // Remove the required attribute
+          })
+          .catch((error) => {
+            console.error("Error fetching user's hospital:", error);
+            alert("Nepodarilo sa načítať nemocnicu používateľa. Skúste to znova neskôr.");
+          });
+
+        // Automatically set superdoctor to false
+        const superdoctorCheckbox = document.getElementById("superdoctor-checkbox");
+        superdoctorCheckbox.checked = false;
+        superdoctorCheckbox.disabled = true; // Disable the checkbox for admins
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching user data:", error);
+      alert("Nepodarilo sa načítať údaje používateľa.");
+    });
+
   // Get the current date in YYYY-MM-DD format
   const currentDate = new Date().toISOString().split("T")[0];
 
@@ -7,81 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("doctor-created-at-display").value = currentDate;
 
   const form = document.getElementById("add-doctor-form");
-  const userType = form.getAttribute("data-user-type");
-
-  // Elements to hide
-  const hospitalGroup = document.getElementById("doctor-hospital-group");
-  const superdoctorGroup = document.getElementById("superdoctor-group");
-
-  if (userType !== "super_admin") {
-    // Regular admin: Fetch the user's hospital ID and populate the field
-    if (hospitalGroup) hospitalGroup.style.display = "none";
-    if (superdoctorGroup) superdoctorGroup.style.display = "none";
-
-    fetchUserHospital()
-      .then((hospitalId) => {
-        const hospitalInput = document.getElementById("doctor-hospital");
-        if (!hospitalInput) {
-          console.error("Hospital input field not found in the DOM.");
-          return;
-        }
-
-        // Debugging: Log the hospitalInput element
-        console.log("Hospital input element:", hospitalInput);
-
-        // Add the hospital ID as an option to the dropdown if it doesn't exist
-        let option = hospitalInput.querySelector(`option[value="${hospitalId}"]`);
-        if (!option) {
-          option = document.createElement("option");
-          option.value = hospitalId;
-          option.textContent = `Hospital ${hospitalId}`; // Replace with the actual hospital name if available
-          hospitalInput.appendChild(option);
-          console.log(`Added hospital ID ${hospitalId} as an option to the dropdown.`);
-        }
-
-        // Set the hospital ID
-        hospitalInput.value = hospitalId;
-        console.log(`Set hospital ID for regular admin: ${hospitalInput.value}`);
-
-        // Debugging: Log the value after setting
-        console.log("Hospital input value after setting:", hospitalInput.value);
-
-        hospitalInput.style.display = "none"; // Hide it again if needed
-        hospitalInput.required = false; // Remove the required attribute since it's hidden
-      })
-      .catch((error) => {
-        console.error("Error fetching user's hospital:", error);
-        alert("Nepodarilo sa načítať nemocnicu používateľa. Skúste to znova neskôr.");
-      });
-
-    // Automatically set superdoctor to false
-    const superdoctorCheckbox = document.getElementById("superdoctor-checkbox");
-    superdoctorCheckbox.checked = false;
-    superdoctorCheckbox.disabled = true; // Disable the checkbox for admins
-  } else {
-    // Super admin: Populate the dropdown with hospital data
-    const hospitalDropdown = document.getElementById("doctor-hospital");
-    fetch("/hospitals/list")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch hospitals");
-        }
-        return response.json();
-      })
-      .then((hospitals) => {
-        hospitals.forEach((hospital) => {
-          const option = document.createElement("option");
-          option.value = hospital.id; // Use hospital ID as the value
-          option.textContent = hospital.name; // Display hospital name
-          hospitalDropdown.appendChild(option);
-        });
-        console.log("Hospital dropdown populated for super admin.");
-      })
-      .catch((error) => {
-        console.error("Error fetching hospitals:", error);
-        alert("Nepodarilo sa načítať zoznam nemocníc. Skúste to znova neskôr.");
-      });
-  }
 
   // Back to List Button
   const backToListButton = document.getElementById("back-to-list-button");

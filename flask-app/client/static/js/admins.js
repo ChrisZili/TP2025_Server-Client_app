@@ -324,26 +324,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadAllAdmins() {
     try {
-      const response = await fetch("/admins/list", {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        credentials: "include"
-      });
-      if (!response.ok) throw new Error("Chyba pri načítaní adminov.");
-      const admins = await response.json();
-      allAdminsData = admins;
+        const response = await fetch("/admins/list", {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+            credentials: "include"
+        });
+        if (!response.ok) throw new Error("Chyba pri načítaní adminov.");
+        
+        const admins = await response.json();
+        
+        // Log the raw admin data
+        console.log("Raw Admins API Response:", admins);
+        
+        allAdminsData = admins;
 
-      // Populate dropdown filters
-      populateDropdownFilters(admins);
+        // Populate dropdown filters
+        populateDropdownFilters(admins);
 
-      // Render both views
-      renderAdmins(admins, sortSelect?.value);
-      renderAllListTable(admins);
+        // Render both views
+        renderAdmins(admins, sortSelect?.value);
+        renderAllListTable(admins);
     } catch (err) {
-      console.error(err);
-      if (allAdminsList) {
-        allAdminsList.innerHTML = `<p>Chyba pri načítaní adminov: ${err.message}</p>`;
-      }
+        console.error(err);
+        if (allAdminsList) {
+            allAdminsList.innerHTML = `<p>Chyba pri načítaní adminov: ${err.message}</p>`;
+        }
     }
   }
 

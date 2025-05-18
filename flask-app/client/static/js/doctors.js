@@ -258,23 +258,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load all doctors
   async function loadAllDoctors() {
     try {
-      const response = await fetch("/doctors/list", {
-        method: "GET",
-        headers: { Accept: "application/json" },
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Chyba pri načítaní doktorov.");
-      const doctors = await response.json();
-      allDoctorsData = doctors;
+        const response = await fetch("/doctors/list", {
+            method: "GET",
+            headers: { Accept: "application/json" },
+            credentials: "include",
+        });
+        if (!response.ok) throw new Error("Chyba pri načítaní doktorov.");
+        
+        const doctors = await response.json();
+        
+        // Log the raw doctor data
+        console.log("Raw Doctors API Response:", doctors);
+        
+        allDoctorsData = doctors;
 
-      populateHospitalDropdown(doctors);
-      renderAllListTable(doctors);
-      renderDoctors(doctors);
+        populateHospitalDropdown(doctors);
+        renderAllListTable(doctors);
+        renderDoctors(doctors);
     } catch (err) {
-      console.error(err);
-      if (allDoctorsList) {
-        allDoctorsList.innerHTML = `<p>Chyba pri načítaní doktorov: ${err.message}</p>`;
-      }
+        console.error(err);
+        if (allDoctorsList) {
+            allDoctorsList.innerHTML = `<p>Chyba pri načítaní doktorov: ${err.message}</p>`;
+        }
     }
   }
 

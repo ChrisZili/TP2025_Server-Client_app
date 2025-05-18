@@ -63,19 +63,15 @@ class PatientsService:
             admin = AdminData.query.get(user_id)
             if not admin or not admin.hospital:
                 return {'error': 'Admin hospital not found'}, 404
-
             # Now access the hospital's doctors through the admin instance
             # In the get_patients method
             patients = []
             for doctor in admin.hospital.doctors:
                 try:
-                    logger.info(doctor)
                     doctor_patients = doctor.patients or []
-                    logger.info(doctor_patients)
                     patients.extend(doctor_patients)
                 except Exception as e:
                     logger.exception(f"Error accessing patients for doctor {doctor.id}: {e}")
-                    # Continue with the next doctor
                     continue
         elif user.user_type == 'doctor':
             doctor = DoctorData.query.get(user_id)

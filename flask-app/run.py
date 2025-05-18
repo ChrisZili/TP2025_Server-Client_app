@@ -7,18 +7,20 @@ app = create_app()
 def init_admin():
     create_super_admin()
 def init_process_types():
-    from server.services.process_type_service import create_default_process_types
-    create_default_process_types()
+    from server.services.methods_service import create_default_methods
+    create_default_methods()
 # Inicializácia databázy v rámci kontextu aplikácie
-with app.app_context():
-    try:
-        print("📌 Checking and creating tables if necessary...")
-        db.create_all()
-        print("✅ Database initialized successfully.")
-        init_admin()
-    except Exception as e:
-        print(f"❌ Database initialization error: {e}")
-
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=8050)
+    with app.app_context():
+        try:
+            print("📌 Checking and creating tables if necessary...")
+            db.create_all()
+            init_admin()
+            init_process_types()
+            print("✅ Database initialized successfully.")
+        except Exception as e:
+            print(f"❌ Database initialization error: {e}")
+
+
+    app.run(debug=True, host='0.0.0.0', port=5002)

@@ -1,65 +1,53 @@
 {% extends "layout.html" %}
 
 {% block stylesheet %}
-{{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/add_hospital.css') }}">
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/add_doctor.css') }}">
 {% endblock %}
 
 {% block title %}
-Moji Lekári - Pridať Nemocnicu
+Pridať Nového Doktora
 {% endblock %}
 
 {% block header %}
-Pridať Nemocnicu
+Pridať Doktora
 {% endblock %}
 
 {% block content %}
-<div id="fotky-container" class="fotky-container">
-  <form id="add-hospital-form" class="form-container">
-    <div class="form-group">
-      <label for="hospital-name">Názov Nemocnice:</label>
-      <input type="text" id="hospital-name" name="hospital-name" placeholder="Zadajte názov nemocnice" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="hospital-country">Štát:</label>
-      <select id="hospital-country" name="hospital-country" class="form-input" required>
-        <option value="" disabled selected>Vyberte štát</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="hospital-city">Mesto:</label>
-      <input type="text" id="hospital-city" name="hospital-city" placeholder="Zadajte mesto" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="hospital-street">Ulica a Číslo:</label>
-      <input type="text" id="hospital-street" name="hospital-street" placeholder="Zadajte ulicu a číslo" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="hospital-psc">PSČ:</label>
-      <input type="text" id="hospital-psc" name="hospital-psc" placeholder="Zadajte PSČ" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="hospital-created-at">Dátum Vytvorenia:</label>
-      <input type="text" id="hospital-created-at-display" class="form-input" disabled>
-      <input type="hidden" id="hospital-created-at" name="hospital-created-at">
-    </div>
-
-    <div class="form-group button-group">
-      <button type="submit" id="add-hospital-button" class="action-button upload-photo-button">Pridať Nemocnicu</button>
-      <button type="button" id="back-to-list-button" class="action-button back-to-list-button">
-        Späť na zoznam
-      </button>
-    </div>
-  </form>
-</div>
+<form id="add-doctor-form" class="form-container">
+  <div class="form-group">
+    <label for="doctor-first-name">Meno:</label>
+    <input type="text" id="doctor-first-name" name="doctor-first-name" class="form-input" required>
+  </div>
+  <div class="form-group">
+    <label for="doctor-last-name">Priezvisko:</label>
+    <input type="text" id="doctor-last-name" name="doctor-last-name" class="form-input" required>
+  </div>
+  <div class="form-group">
+    <label for="doctor-title">Titul:</label>
+    <input type="text" id="doctor-title" name="doctor-title" class="form-input">
+  </div>
+  <div class="form-group">
+    <label for="doctor-email">E-mail:</label>
+    <input type="email" id="doctor-email" name="doctor-email" class="form-input" required>
+  </div>
+  <div class="form-group">
+    <label for="doctor-phone">Telefón:</label>
+    <input type="tel" id="doctor-phone" name="doctor-phone" class="form-input" required>
+  </div>
+  <div class="form-group" id="doctor-hospital-group">
+    <label for="doctor-hospital">Nemocnica:</label>
+    <input type="text" id="doctor-hospital" name="doctor-hospital" class="form-input">
+  </div>
+  <div class="form-group" id="superdoctor-group">
+    <label for="superdoctor-checkbox">Superdoctor:</label>
+    <input type="checkbox" id="superdoctor-checkbox" name="superdoctor-checkbox" class="form-input">
+  </div>
+  <button type="submit" class="action-button">Pridať Doktora</button>
+</form>
 {% endblock %}
 
 {% block scripts %}
-{{ super() }}
-<script src="{{ url_for('static', filename='js/add_hospital.js') }}"></script>
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/add_doctor.js') }}"></script>
 {% endblock %}

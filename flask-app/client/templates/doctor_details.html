@@ -2,11 +2,12 @@
 
 {% block stylesheet %}
   {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/doctor_details.css') }}" as="style">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/doctor_details.css') }}">
 {% endblock %}
 
 {% block title %}
-Moji Lekári - Detaily Doktora
+eVýsledky- Detaily Doktora
 {% endblock %}
 
 {% block header %}
@@ -14,60 +15,114 @@ Detaily Doktora
 {% endblock %}
 
 {% block content %}
-<div id="doctor-details-container" class="details-container">
-  <form id="doctor-details-form" class="form-container" data-user-type="{{ user.user_type }}">
-    <div class="form-group">
-      <label for="doctor-id">Kód Doktora:</label>
-      <input type="text" id="doctor-id" name="doctor-id" value="{{ doctor.id }}" class="form-input" readonly>
-    </div>
+<div class="doctor-container  hidden-js">
+  <form id="doctor-details-form">
+    <div class="form-columns">
+      <!-- Ľavý stĺpec - Informácie o doktorovi -->
+      <div class="form-column">
+        <div class="form-group">
+          <label for="doctor-id">Id</label>
+          <input type="text" id="doctor-id" name="doctor_id" readonly>
+        </div>
+        <div class="form-group">
+          <label for="doctor-type">Typ doktora</label>
+          <select id="doctor-type" name="doctor_type" required>
+            <option value="">Vyberte typ doktora</option>
+            <option value="doctor">Doctor</option>
+            <option value="super_doctor">Super Doctor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="title">Titul</label>
+          <input type="text" id="title" name="title">
+        </div>
+        <div class="form-group">
+          <label for="suffix">Sufix</label>
+          <input type="text" id="suffix" name="suffix">
+        </div>
+        <div class="form-group">
+          <label for="first_name">Meno</label>
+          <input type="text" id="first_name" name="first_name" required>
+        </div>
+        <div class="form-group">
+          <label for="last_name">Priezvisko</label>
+          <input type="text" id="last_name" name="last_name" required>
+        </div>
+        <div class="form-group">
+          <label for="created_at">Čas vytvorenia</label>
+          <input type="text" id="created_at" name="created_at" readonly>
+        </div>
+        <div class="form-group">
+          <label for="phone_number">Telefónne číslo</label>
+          <input type="tel" id="phone_number" name="phone_number" pattern="\d+" required>
+        </div>
+        <div class="form-group">
+          <label for="gender">Pohlavie</label>
+          <select id="gender" name="gender" required>
+            <option value="">Vyberte pohlavie</option>
+            <option value="Muž">Muž</option>
+            <option value="Žena">Žena</option>
+            <option value="Iné">Iné</option>
+          </select>
+        </div>
 
-    <div class="form-group">
-      <label for="doctor-first-name">Meno:</label>
-      <input type="text" id="doctor-first-name" name="doctor-first-name" value="{{ doctor.first_name }}" class="form-input" required>
-    </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Nové Heslo</label>
+          <div class="input-wrapper password-wrapper">
+            <input type="password" id="password" name="password" autocomplete="new-password" required>
+            <button type="button" class="toggle-pw" id="toggle-password" aria-label="Zobraziť alebo skryť heslo">
+              <i class="fas fa-eye-slash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label for="doctor-last-name">Priezvisko:</label>
-      <input type="text" id="doctor-last-name" name="doctor-last-name" value="{{ doctor.last_name }}" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="doctor-title">Titul:</label>
-      <input type="text" id="doctor-title" name="doctor-title" value="{{ doctor.title }}" class="form-input">
-    </div>
-
-    <div class="form-group">
-      <label for="doctor-email">E-mail:</label>
-      <input type="email" id="doctor-email" name="doctor-email" value="{{ doctor.email }}" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="doctor-phone">Telefón:</label>
-      <input type="tel" id="doctor-phone" name="doctor-phone" value="{{ doctor.phone_number }}" class="form-input" required>
-    </div>
-
-    <div class="form-group">
-      <label for="doctor-hospital">Nemocnica:</label>
-      <input type="text" id="doctor-hospital" name="doctor-hospital" value="{{ doctor.hospital }}" class="form-input" readonly>
-    </div>
-
-    <!-- Superdoctor Checkbox -->
-    <div class="form-group">
-      <label for="superdoctor-checkbox">Superdoctor:</label>
-      <input type="checkbox" id="superdoctor-checkbox" name="superdoctor-checkbox" class="form-input">
-    </div>
-
-    <div class="form-group button-group">
-      <button type="submit" id="save-doctor-button" class="action-button save-button">Uložiť Zmeny</button>
-      <button type="button" id="cancel-button" class="action-button cancel-button">
-        Späť na Zoznam
-      </button>
+      <!-- Pravý stĺpec - Informácie o nemocnici -->
+      <div class="form-column">
+        <div class="form-group">
+          <label for="hospital_name">Nemocnica</label>
+          <input type="text" id="hospital_name" name="hospital_name" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_street">Ulica</label>
+          <input type="text" id="hospital_street" name="hospital_street" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_city">Mesto</label>
+          <input type="text" id="hospital_city" name="hospital_city" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_postal">PSČ</label>
+          <input type="text" id="hospital_postal" name="hospital_postal" readonly>
+        </div>
+        <div class="form-group">
+          <label for="hospital_code">Kód nemocnice</label>
+          <input type="text" id="hospital_code" name="hospital_code">
+        </div>
+      </div>
     </div>
   </form>
+  <!-- Tlačidlo na uloženie zmien -->
+  <button id="save-doctor-btn" class="save-btn">Uložiť zmeny</button>
+</div>
+
+<!-- Potvrdzovacie okno -->
+<div id="confirmation-modal">
+  <div class="modal-content">
+    <p>Si si istý, že chceš uložiť zmeny?</p>
+    <div class="modal-buttons">
+      <button class="confirm" id="confirm-save-btn">Áno, uložiť</button>
+      <button class="cancel" id="cancel-save-btn">Zrušiť</button>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='js/doctor_details.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/doctor_details.js') }}" defer></script>
 {% endblock %}

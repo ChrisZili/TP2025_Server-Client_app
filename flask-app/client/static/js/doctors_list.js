@@ -3,12 +3,27 @@ let doctorData = []; // To store doctor data fetched from the server
 let currentSortColumn = null; // Track the currently sorted column
 let currentSortDirection = "asc"; // Track the current sort direction (asc or desc)
 
+// Fetch user data dynamically
+async function fetchUserData() {
+  try {
+    const response = await fetch("/user/data");
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    alert("Failed to load user data. Please try again later.");
+    return null;
+  }
+}
+
 // Fetch doctor data from the /doctors/list endpoint
 async function fetchDoctorData() {
   try {
-    const response = await fetch('/doctors/list', {
+    const response = await fetch("/doctors/list", {
       headers: {
-        Accept: 'application/json',
+        Accept: "application/json",
       },
     });
 
@@ -18,10 +33,9 @@ async function fetchDoctorData() {
 
     doctorData = await response.json();
     renderTable(doctorData); // Render the table by default
-    populateHospitalFilter(); // Populate the Nemocnica filter dynamically
   } catch (error) {
-    console.error('Error fetching doctor data:', error);
-    alert('Failed to load doctor data. Please try again later.');
+    console.error("Error fetching doctor data:", error);
+    alert("Failed to load doctor data. Please try again later.");
   }
 }
 
@@ -220,10 +234,24 @@ function resetFilters() {
 }
 
 // Initialize the page
-function initializePage() {
-  fetchDoctorData().then(() => {
-    populateHospitalFilter(); // Populate the Nemocnica filter
-  });
+async function initializePage() {
+  const userData = await fetchUserData();
+  if (!userData) return;
+
+  const userType = userData.user_type;
+  console.log("User type:", userType); // Debugging
+
+  // Show the hospital filter only if the user is a super admin
+  const hospitalFilterContainer = document.getElementById("hospital-filter-container");
+  if (userType === "super_admin") {
+    hospitalFilterContainer.style.display = "block"; // Show the filter
+    fetchDoctorData().then(() => {
+      populateHospitalFilter(); // Populate the Nemocnica filter
+    });
+  } else {
+    hospitalFilterContainer.style.display = "none"; // Hide the filter
+    fetchDoctorData(); // Fetch doctor data without populating the filter
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -39,7 +39,6 @@ def update_hospital(hospital_id):
     """Úprava nemocnice (len pre super_admina)."""
     logger.info("update_hospital endpoint vyžiadaný pre hospital_id: %s", hospital_id)
     user_id = get_jwt_identity()
-
     if not (request.is_json and request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
         logger.error("update_hospital: Neplatný vstup alebo Accept header")
         return jsonify({'error': 'Invalid input or only JSON responses supported'}), 406
