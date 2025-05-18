@@ -19,7 +19,11 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
+*.svg
+.svg
+*.log
+fontawesome-free-6.7.2-web/
+icons/
 # Virtual Environment
 venv/
 ENV/
