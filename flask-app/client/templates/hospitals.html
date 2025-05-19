@@ -83,11 +83,11 @@ Správa Nemocníc
       <table class="hospital-list-table">
         <thead>
           <tr>
-            <th data-column="name">Meno <i class="fas fa-sort"></i></th>
-            <th data-column="created_at">Vytvorenie <i class="fas fa-sort"></i></th>
-            <th data-column="city">Mesto <i class="fas fa-sort"></i></th>
-            <th data-column="street">Ulica <i class="fas fa-sort"></i></th>
-            <th data-column="postal_code">PSČ <i class="fas fa-sort"></i></th>
+            <th data-column="name">Meno</th>
+            <th data-column="created_at">Vytvorenie</th>
+            <th data-column="city">Mesto</th>
+            <th data-column="street">Ulica</th>
+            <th data-column="postal_code">PSČ</th>
           </tr>
         </thead>
         <tbody id="all-list-body">
@@ -138,11 +138,11 @@ Správa Nemocníc
         <table class="hospital-list-table">
           <thead>
             <tr>
-              <th data-column="name">Meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Vytvorenie <i class="fas fa-sort"></i></th>
-              <th data-column="city">Mesto <i class="fas fa-sort"></i></th>
-              <th data-column="street">Ulica <i class="fas fa-sort"></i></th>
-              <th data-column="postal_code">PSČ <i class="fas fa-sort"></i></th>
+              <th data-column="name">Meno</th>
+              <th data-column="created_at">Vytvorenie</th>
+              <th data-column="city">Mesto</th>
+              <th data-column="street">Ulica</th>
+              <th data-column="postal_code">PSČ</th>
             </tr>
           </thead>
           <tbody id="search-list-body">
@@ -166,6 +166,7 @@ Správa Nemocníc
       <div class="form-group">
         <label for="hospital-name">Názov nemocnice</label>
         <input type="text" id="hospital-name" name="name" required />
+        <div id="hospital-name-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
@@ -173,21 +174,25 @@ Správa Nemocníc
         <select id="hospital-country" name="country" required>
           <option value="">-- Vyber štát --</option>
         </select>
+        <div id="hospital-country-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="hospital-city">Mesto</label>
         <input type="text" id="hospital-city" name="city" required />
+        <div id="hospital-city-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="hospital-street">Ulica a číslo</label>
         <input type="text" id="hospital-street" name="street" required />
+        <div id="hospital-street-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="hospital-postal">PSČ</label>
         <input type="text" id="hospital-postal" name="postal_code" pattern="\d+" inputmode="numeric" required />
+        <div id="hospital-postal-error" class="error-message"></div>
       </div>
       <div id="add-hospital-message"></div>
       <button id="add-hospital-btn" class="add-btn" type="button">Pridať nemocnicu</button>

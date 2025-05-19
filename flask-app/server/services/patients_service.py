@@ -63,8 +63,6 @@ class PatientsService:
             admin = AdminData.query.get(user_id)
             if not admin or not admin.hospital:
                 return {'error': 'Admin hospital not found'}, 404
-            # Now access the hospital's doctors through the admin instance
-            # In the get_patients method
             patients = []
             for doctor in admin.hospital.doctors:
                 try:
@@ -82,7 +80,6 @@ class PatientsService:
         else:
             return {'error': 'Unauthorized'}, 403
 
-
         result = []
         for patient in patients:
             item = {
@@ -93,6 +90,8 @@ class PatientsService:
                 "gender": patient.gender,
                 "phone_number": patient.phone_number,
                 "created_at": patient.created_at.isoformat() if patient.created_at else None,
+                "doctor_id": patient.doctor_id,  # <-- add doctor_id
+                "hospital_id": None,             # <-- add hospital_id (default None)
             }
             if user.user_type != 'technician':
                 item["birth_number"] = patient.birth_number
@@ -102,6 +101,7 @@ class PatientsService:
                 if doctor:
                     item["doctor_name"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
                     item["hospital_name"] = doctor.hospital.name if doctor.hospital else None
+                    item["hospital_id"] = doctor.hospital.id if doctor.hospital else None  # <-- set hospital_id
 
             result.append(item)
 

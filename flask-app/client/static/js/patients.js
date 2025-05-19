@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let hospitalsData = [];
 
   // For "All" tab
-  let allCurrentSortColumn = "last_name";
+  let allCurrentSortColumn = "full_name";
   let allCurrentSortDirection = "asc";
 
   // DOM elements for view toggles
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const viewListBtnAll = document.getElementById("view-list");
   const allCardsContainer = document.getElementById("all-cards-container");
   const allListContainer = document.getElementById("all-list-container");
-  const sortOptionsAll = document.getElementById("sort-options-all");
+  const sortOptionsAll = document.getElementById("sort-select")?.closest(".form-group");
   const allPatientsList = document.getElementById("all-patients-list");
   const allListBody = document.getElementById("all-list-body");
   const searchInput = document.getElementById("search-input");
@@ -22,9 +22,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hospitalFilterDropdown = document.getElementById("hospital-filter-dropdown");
   const doctorFilterDropdown = document.getElementById("doctor-filter-dropdown");
 
-  // Add the same class as the sorting dropdown to hospital and doctor dropdowns
-  hospitalFilterDropdown?.classList.add("sort-select");
-  doctorFilterDropdown?.classList.add("sort-select");
+  // Hide filters by default (at the top, after DOM elements)
+  if (hospitalFilterDropdown) {
+    const hospitalDropdownWrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+    if (hospitalDropdownWrapper) hospitalDropdownWrapper.style.display = "none";
+  }
+  if (doctorFilterDropdown) {
+    const doctorDropdownWrapper = doctorFilterDropdown.closest(".dropdown") || doctorFilterDropdown.parentElement;
+    if (doctorDropdownWrapper) doctorDropdownWrapper.style.display = "none";
+  }
 
   // Tab elements
   const tabAll = document.getElementById("tab-all");
@@ -39,6 +45,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const addPatientMessage = document.getElementById("add-patient-message");
   const addPatientForm = document.getElementById("add-patient-form");
   const doctorSelect = document.getElementById("patient-doctor");
+
+  // ADD THIS LINE to robustly find the form group for the doctor select:
+  const doctorFormGroup =
+    doctorSelect?.closest(".form-group") ||
+    doctorSelect?.parentElement ||
+    document.querySelector('label[for="patient-doctor"]')?.parentElement;
 
   // Polia formulára (Add Patient):
   const firstNameInput = document.getElementById("patient-first-name");
@@ -138,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Pomocná funkcia na validáciu (voláme pri blur, input, ...):
-  function validateAddPatientForm() {
+  function validateAddPatientForm(showMainError = false) {
     let isValid = true;
 
     // Reset all error divs
@@ -153,6 +165,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     clearError(confirmPasswordErrorDiv);
     clearError(gdprErrorDiv);
 
+    // Only clear main error if not showing it
+    if (!showMainError) {
+      addPatientMessage.textContent = "";
+      addPatientMessage.classList.remove("error");
+    }
+
     const firstNameVal = firstNameInput.value.trim();
     const lastNameVal = lastNameInput.value.trim();
     const phoneVal = phoneInput.value.trim();
@@ -166,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Validation regex patterns
     const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/; // Allows letters, accents, and spaces (2-255 characters)
-    const phoneRegex = /^(?:\+421|421|0)\d{9}$/; // E.164 format for phone numbers
+const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
 
     // 1. First Name
     if (!firstNameVal) {
@@ -203,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else if (!phoneRegex.test(phoneVal)) {
       isValid = false;
       if (touchedFields.phone) {
-        showError(phoneErrorDiv, "Telefónne číslo musí byť vo formáte E.164 (napr. +421123456789).");
+        showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
       }
     }
 
@@ -213,21 +231,44 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (touchedFields.birthDate) {
         showError(birthDateErrorDiv, "Dátum narodenia je povinný.");
       }
+      if (showMainError) {
+        addPatientMessage.textContent = "Dátum narodenia je povinný.";
+        addPatientMessage.classList.add("error");
+      }
     } else {
-      const enteredDate = new Date(birthDateVal);
+      const enteredDate = new Date(birthDateVal + "T00:00:00");
       const now = new Date();
+      now.setHours(0,0,0,0);
       const oldestAllowed = new Date();
-      oldestAllowed.setFullYear(oldestAllowed.getFullYear() - 150);
+      oldestAllowed.setHours(0,0,0,0);
+      oldestAllowed.setFullYear(now.getFullYear() - 150);
 
-      if (enteredDate > now) {
+      if (isNaN(enteredDate.getTime())) {
+        isValid = false;
+        if (touchedFields.birthDate) {
+          showError(birthDateErrorDiv, "Neplatný dátum.");
+        }
+        if (showMainError) {
+          addPatientMessage.textContent = "Neplatný dátum narodenia.";
+          addPatientMessage.classList.add("error");
+        }
+      } else if (enteredDate > now) {
         isValid = false;
         if (touchedFields.birthDate) {
           showError(birthDateErrorDiv, "Dátum narodenia nemôže byť v budúcnosti.");
+        }
+        if (showMainError) {
+          addPatientMessage.textContent = "Dátum narodenia nemôže byť v budúcnosti.";
+          addPatientMessage.classList.add("error");
         }
       } else if (enteredDate < oldestAllowed) {
         isValid = false;
         if (touchedFields.birthDate) {
           showError(birthDateErrorDiv, "Dátum narodenia je príliš starý.");
+        }
+        if (showMainError) {
+          addPatientMessage.textContent = "Dátum narodenia je príliš starý.";
+          addPatientMessage.classList.add("error");
         }
       }
     }
@@ -418,19 +459,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem("patientViewMode", mode);
 
     if (mode === "list") {
-        viewCardsBtnAll?.classList.remove("active");
-        viewListBtnAll?.classList.add("active");
-        allCardsContainer?.classList.add("hidden");
-        allListContainer?.classList.remove("hidden");
+      viewCardsBtnAll?.classList.remove("active");
+      viewListBtnAll?.classList.add("active");
+      allCardsContainer?.classList.add("hidden");
+      allListContainer?.classList.remove("hidden");
     } else { // "cards"
-        viewCardsBtnAll?.classList.add("active");
-        viewListBtnAll?.classList.remove("active");
-        allCardsContainer?.classList.remove("hidden");
-        allListContainer?.classList.add("hidden");
+      viewCardsBtnAll?.classList.add("active");
+      viewListBtnAll?.classList.remove("active");
+      allCardsContainer?.classList.remove("hidden");
+      allListContainer?.classList.add("hidden");
+      // Always set sort dropdown to alphabetical-asc in cards view
+      if (sortSelect) {
+        sortSelect.value = "alphabetical-asc";
+      }
     }
 
     toggleSortingDropdown(mode); // Toggle sorting dropdown visibility
     applyFiltersAndSorting(); // Reapply filters and sorting
+  }
+
+  // Restore view mode from localStorage on page load
+  function restorePatientViewMode() {
+    const savedMode = localStorage.getItem("patientViewMode") || "cards";
+    // Set default sort select to alphabetical-asc
+    if (sortSelect) {
+      sortSelect.value = "alphabetical-asc";
+    }
+    setViewMode(savedMode);
   }
 
   // Tab switching function
@@ -470,9 +525,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       sorted.sort((a, b) => getFullName(a).localeCompare(getFullName(b)));
     } else if (sortValue === "alphabetical-desc") {
       sorted.sort((a, b) => getFullName(b).localeCompare(getFullName(a)));
-    } else if (sortValue === "newest") {
+    } else if (sortValue === "newest" || sortValue === "creation-desc") {
+      // Sort by creation date descending (newest first)
       sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    } else if (sortValue === "oldest") {
+    } else if (sortValue === "oldest" || sortValue === "creation-asc" || sortValue === "creation") {
+      // Sort by creation date ascending (oldest first)
       sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     } else {
       // Default sorting by the selected column
@@ -503,11 +560,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!allListBody) return;
     allListBody.innerHTML = "";
 
+    // Update sort indicators in table headers
+    const allListTable = document.getElementById("all-list-table");
+    if (allListTable) {
+      allListTable.querySelectorAll("th[data-sort]").forEach(th => {
+        const col = th.getAttribute("data-sort");
+        th.classList.remove("sort-asc", "sort-desc");
+        if (col === allCurrentSortColumn) {
+          th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+        }
+      });
+    }
+
     if (!Array.isArray(patients) || patients.length === 0) {
       return; // Empty
     }
 
-    let data = [...patients]; // Use the filtered patients instead of allPatientsData
+    let data = [...patients];
     data.sort((a, b) => {
       let valA, valB;
 
@@ -523,6 +592,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else if (allCurrentSortColumn === "hospital") {
         valA = a.hospital_name || "";
         valB = b.hospital_name || "";
+      } else if (allCurrentSortColumn === "created_at") {
+        valA = a.created_at || "";
+        valB = b.created_at || "";
+        // Compare as dates
+        return allCurrentSortDirection === "asc"
+          ? new Date(valA) - new Date(valB)
+          : new Date(valB) - new Date(valA);
       } else {
         valA = (a[allCurrentSortColumn] || "").toString();
         valB = (b[allCurrentSortColumn] || "").toString();
@@ -553,43 +629,66 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Centralized function to apply filters, sorting, and render the results
   function applyFiltersAndSorting() {
+  const searchQuery = searchInput?.value.trim().toLowerCase();
+  const selectedHospitalId = hospitalFilterDropdown?.value ? parseInt(hospitalFilterDropdown.value, 10) : null;
+  const selectedDoctorId = doctorFilterDropdown?.value ? parseInt(doctorFilterDropdown.value, 10) : null;
+  const mode = localStorage.getItem("patientViewMode") || "cards";
 
-    const searchQuery = searchInput?.value.trim().toLowerCase();
-    const selectedHospitalId = parseInt(hospitalFilterDropdown?.value, 10) || null;
-    const selectedDoctorId = doctorFilterDropdown?.value ? parseInt(doctorFilterDropdown.value, 10) : null;
-    const sortValue = sortSelect?.value || "creation";
+  // Filter patients based on search query, hospital, and doctor
+  let filteredPatients = allPatientsData.filter(patient => {
+    const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
+    const matchesSearch = !searchQuery || fullName.includes(searchQuery) ||
+      patient.phone_number?.includes(searchQuery) ||
+      patient.email?.toLowerCase().includes(searchQuery) ||
+      patient.doctor_name?.toLowerCase().includes(searchQuery) ||
+      patient.hospital_name?.toLowerCase().includes(searchQuery);
+    const matchesHospital = !selectedHospitalId || patient.hospital_id === selectedHospitalId;
+    const matchesDoctor = !selectedDoctorId || patient.doctor_id === selectedDoctorId;
 
+    return matchesSearch && matchesHospital && matchesDoctor;
+  });
 
-    // Filter patients based on search query, hospital, and doctor
-    let filteredPatients = allPatientsData.filter(patient => {
-        const fullName = `${patient.first_name} ${patient.last_name}`.toLowerCase();
-        const matchesSearch = !searchQuery || fullName.includes(searchQuery) ||
-            patient.phone_number?.includes(searchQuery) ||
-            patient.email?.toLowerCase().includes(searchQuery) ||
-            patient.doctor_name?.toLowerCase().includes(searchQuery) ||
-            patient.hospital_name?.toLowerCase().includes(searchQuery);
-        const matchesHospital = !selectedHospitalId || patient.hospital_id === selectedHospitalId;
-        const matchesDoctor = !selectedDoctorId || patient.doctor_id === selectedDoctorId;
-
-        return matchesSearch && matchesHospital && matchesDoctor;
+  if (mode === "list") {
+    // In list view, sort by table header logic
+    let data = [...filteredPatients];
+    data.sort((a, b) => {
+      let valA, valB;
+      if (allCurrentSortColumn === "full_name") {
+        valA = getFullName(a);
+        valB = getFullName(b);
+      } else if (allCurrentSortColumn === "phone_number") {
+        valA = a.phone_number || "";
+        valB = b.phone_number || "";
+      } else if (allCurrentSortColumn === "doctor") {
+        valA = a.doctor_name || "";
+        valB = b.doctor_name || "";
+      } else if (allCurrentSortColumn === "hospital") {
+        valA = a.hospital_name || "";
+        valB = b.hospital_name || "";
+      } else if (allCurrentSortColumn === "created_at") {
+        valA = a.created_at || "";
+        valB = b.created_at || "";
+        return allCurrentSortDirection === "asc"
+          ? new Date(valA) - new Date(valB)
+          : new Date(valB) - new Date(valA);
+      } else {
+        valA = (a[allCurrentSortColumn] || "").toString();
+        valB = (b[allCurrentSortColumn] || "").toString();
+      }
+      return allCurrentSortDirection === "asc"
+        ? valA.localeCompare(valB, "sk")
+        : valB.localeCompare(valA, "sk");
     });
-
-
-    // Sort the filtered patients
+    renderAllListTable(data);
+  } else {
+    // In cards view, use dropdown sorting
+    const sortValue = sortSelect?.value || "creation";
     filteredPatients = sortPatients(filteredPatients, sortValue);
-
-
-    // Render the filtered and sorted results
-    const mode = localStorage.getItem("patientViewMode") || "cards";
-
-    if (mode === "list") {
-        renderAllListTable(filteredPatients);
-    } else {
-        renderPatients(filteredPatients); // Pass filtered patients to renderPatients
-    }
+    renderPatients(filteredPatients);
   }
+}
 
-  // Card view rendering (ALL)
+// Card view rendering (ALL)
   function renderPatients(patients) {
 
     if (!allPatientsList) {
@@ -660,105 +759,98 @@ document.addEventListener("DOMContentLoaded", async () => {
   function populateHospitalDropdown(patients) {
     if (!hospitalFilterDropdown) return;
 
-    const uniqueHospitals = [...new Set(patients.map(p => p.hospital_id).filter(Boolean))];
-    const filteredHospitals = hospitalsData.filter(hospital => uniqueHospitals.includes(hospital.id));
+    // Collect unique hospitals from patients
+    const uniqueHospitals = [];
+    const seenHospitalIds = new Set();
+    patients.forEach(p => {
+      // Use the hospital_id and hospital_name from the patient object
+      if (p.hospital_id && !seenHospitalIds.has(p.hospital_id)) {
+        uniqueHospitals.push({ id: p.hospital_id, name: p.hospital_name });
+        seenHospitalIds.add(p.hospital_id);
+      }
+    });
 
-    hospitalFilterDropdown.innerHTML = '<option value="">Všetky nemocnice</option>'; // Default option
-    filteredHospitals.forEach(hospital => {
+    hospitalFilterDropdown.innerHTML = '<option value="">Všetky nemocnice</option>';
+    uniqueHospitals.forEach(hospital => {
       const option = document.createElement("option");
-      option.value = hospital.id;
+      option.value = hospital.id; // Use the ID as value
       option.textContent = hospital.name;
       hospitalFilterDropdown.appendChild(option);
     });
   }
 
-  // Add event listeners for dropdowns and ensure they trigger filtering
-  hospitalFilterDropdown?.addEventListener("change", () => {
-    applyFiltersAndSorting(); // Trigger filtering when hospital dropdown changes
-  });
-
-  doctorFilterDropdown?.addEventListener("change", () => {
-    applyFiltersAndSorting(); // Trigger filtering when doctor dropdown changes
-  });
-
-  // Add event listener for sorting dropdown
-  sortSelect?.addEventListener("change", () => {
-    applyFiltersAndSorting(); // Trigger sorting when sorting dropdown changes
-  });
-
-  // Add event listener for search input
-  searchInput?.addEventListener("input", debounce(() => {
-    applyFiltersAndSorting(); // Trigger filtering when search input changes
-  }, 300));
-
-  // Table header sorting (ALL)
-  const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
-  allHeaderCells?.forEach(th => {
-    th.addEventListener("click", () => {
-        const col = th.getAttribute("data-column");
-        if (!col) return;
-
-        if (allCurrentSortColumn === col) {
-            allCurrentSortDirection = (allCurrentSortDirection === "asc") ? "desc" : "asc";
-        } else {
-            allCurrentSortColumn = col;
-            allCurrentSortDirection = "asc";
-        }
-
-        allHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
-        th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
-
-        // Update the sort value and reapply filters and sorting
-        sortSelect.value = col; // Update the sorting dropdown to match the column
-        applyFiltersAndSorting();
-    });
-  });
-
-  // Populate doctor dropdown
   function populateDoctorDropdown(patients) {
     if (!doctorFilterDropdown) return;
 
-    const uniqueDoctors = [...new Set(patients.map(p => p.doctor_id).filter(Boolean))];
-    const filteredDoctors = allDoctorsData.filter(doctor => uniqueDoctors.includes(doctor.id));
+    // Collect unique doctors from patients
+    const uniqueDoctors = [];
+    const seenDoctorIds = new Set();
+    patients.forEach(p => {
+      // Use the doctor_id and doctor_name from the patient object
+      if (p.doctor_id && !seenDoctorIds.has(p.doctor_id)) {
+        uniqueDoctors.push({ id: p.doctor_id, name: p.doctor_name });
+        seenDoctorIds.add(p.doctor_id);
+      }
+    });
 
-    doctorFilterDropdown.innerHTML = '<option value="">Všetci doktori</option>'; // Default option
-    filteredDoctors.forEach(doctor => {
-        const option = document.createElement("option");
-        option.value = doctor.id;
-        option.textContent = `${doctor.title || ""} ${doctor.first_name} ${doctor.last_name}`;
-        doctorFilterDropdown.appendChild(option);
+    doctorFilterDropdown.innerHTML = '<option value="">Všetci doktori</option>';
+    uniqueDoctors.forEach(doctor => {
+      const option = document.createElement("option");
+      option.value = doctor.id; // Use the ID as value
+      option.textContent = doctor.name;
+      doctorFilterDropdown.appendChild(option);
     });
   }
 
-  // Fetch hospitals data
-  async function loadHospitals() {
-    try {
-      const response = await fetch("/hospitals/list", {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        credentials: "include"
-      });
-      if (!response.ok) throw new Error("Chyba pri načítaní nemocníc.");
-      hospitalsData = await response.json();
-      populateHospitalDropdown(allPatientsData);
-    } catch (err) {
-      console.error("Nepodarilo sa načítať nemocnice:", err);
-    }
+  // Function to populate the doctor select in the Add Patient form
+  function populateDoctorSelectForAddPatient() {
+    if (!doctorSelect) return;
+    // Clear previous options
+    doctorSelect.innerHTML = '<option value="" selected>Vyberte doktora (voliteľné)</option>';
+    // Add all doctors
+    allDoctorsData.forEach(doctor => {
+      const option = document.createElement("option");
+      option.value = doctor.id;
+      option.textContent = `${doctor.first_name} ${doctor.last_name}`;
+      doctorSelect.appendChild(option);
+    });
   }
+
+  // Function to load all doctors from the API
+  async function loadAllDoctors() {
+  // Only fetch if NOT a doctor
+  if (userType === "doctor") {
+    allDoctorsData = [];
+    return;
+  }
+  try {
+    const resp = await fetch("/doctors/list", {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+      credentials: "include"
+    });
+    allDoctorsData = await resp.json();
+    populateDoctorSelectForAddPatient();
+  } catch (err) {
+    console.error("Error loading doctors:", err);
+    allDoctorsData = [];
+  }
+}
 
   // Load data
   async function loadAllPatients() {
     try {
-        const response = await fetch("/patients/list", {
-            method: "GET",
-            headers: { "Accept": "application/json" },
-            credentials: "include"
-        });
-        const patients = await response.json();
-        if (!response.ok) throw new Error("Chyba pri načítaní pacientov.");
+      const response = await fetch("/patients/list", {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        credentials: "include"
+      });
+      const patients = await response.json();
+      console.log("Fetched /patients/list response:", patients); // <-- Add this line
+      if (!response.ok) throw new Error("Chyba pri načítaní pacientov.");
 
-        // Map doctor_id and hospital_id directly from the API response
-        allPatientsData = patients.map(patient => {
+      // Map doctor_id and hospital_id directly from the API response
+      allPatientsData = patients.map(patient => {
             const matchedDoctor = allDoctorsData.find(doctor => doctor.id === patient.doctor_id);
             const matchedHospital = hospitalsData.find(hospital => patient.hospital_id === hospital.id);
 
@@ -788,39 +880,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  async function loadDoctors() {
-    try {
-      const response = await fetch("/doctors/list", {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        credentials: "include"
-      });
-      if (!response.ok) throw new Error("Chyba pri načítaní doktorov.");
+  // Remove these functions:
+  // function hideFiltersForUser(userType, isSuperDoctor) { ... }
+  // function showFiltersForUser(userType, isSuperDoctor) { ... }
 
-      allDoctorsData = await response.json();
-      if (doctorSelect) {
-        doctorSelect.innerHTML = '<option value="" selected>Vyberte doktora (voliteľné)</option>';
-        allDoctorsData.forEach(doctor => {
-          const option = document.createElement("option");
-          option.value = doctor.id;
-          option.textContent = `${doctor.title || ""} ${doctor.first_name} ${doctor.last_name} (${doctor.hospital?.name || "Bez nemocnice"})`;
-          doctorSelect.appendChild(option);
-        });
-      }
-      if (assignDoctorSelect) {
-      assignDoctorSelect.innerHTML = '<option value="" selected>Vyberte doktora</option>';
-      allDoctorsData.forEach(doctor => {
-        const option = document.createElement("option");
-        option.value = doctor.id;
-        option.textContent = `${doctor.title || ""} ${doctor.first_name} ${doctor.last_name} (${doctor.hospital?.name || "Bez nemocnice"})`;
-        assignDoctorSelect.appendChild(option);
-      });
-    }
-      populateDoctorDropdown(allPatientsData);
-    } catch (err) {
-      console.error("Chyba pri načítaní doktorov:", err);
-    }
-  }
+  // And update checkUserTypeAndAdjustForm to remove their usage:
   async function checkUserTypeAndAdjustForm() {
     try {
       const response = await fetch("/settings/info", {
@@ -831,38 +895,81 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!response.ok) throw new Error("Failed to fetch user type");
 
+      const rawText = await response.clone().text();
+      console.log("Raw /settings/info response:", rawText);
+
       const user = await response.json();
       userType = user.user_type;
 
-      const addDoctor = document.querySelector('#patient-doctor')?.closest('.form-group');
-      const assignDoctor = document.querySelector('#assign-doctor')?.closest('.form-group');
-
-      if (addDoctor && !["super_admin", "admin"].includes(user.user_type)) {
-        addDoctor.style.display = "none";
-      }
-      if (assignDoctor && ["super_admin", "admin"].includes(user.user_type)) {
-        loadDoctors();
-      }
-      if (assignDoctor && !["super_admin", "admin"].includes(user.user_type)) {
-        assignDoctor.style.display = "none";
+      // Determine if doctor is "super doctor" by checking if there are multiple unique doctors in patients
+      let isSuperDoctor = false;
+      if (userType === "doctor") {
+        const uniqueDoctorIds = new Set(allPatientsData.map(p => p.doctor_id).filter(Boolean));
+        isSuperDoctor = uniqueDoctorIds.size > 1;
       }
 
-      // Zviditeľni všetko označené ako hidden-js
-      setTimeout(() => {
-        document.querySelectorAll(".hidden-js").forEach(el => {
-          el.style.visibility = "visible";
-          el.style.opacity = "1";
-          el.classList.remove("hidden-js");
+      console.log("User info:", user);
+      console.log("User type:", userType, "Super doctor (by patient list):", isSuperDoctor);
+
+      // Hide both filters by default
+      if (hospitalFilterDropdown) {
+        const hospitalDropdownWrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+        if (hospitalDropdownWrapper) hospitalDropdownWrapper.style.display = "none";
+      }
+      if (doctorFilterDropdown) {
+        const doctorDropdownWrapper = doctorFilterDropdown.closest(".dropdown") || doctorFilterDropdown.parentElement;
+        if (doctorDropdownWrapper) doctorDropdownWrapper.style.display = "none";
+      }
+
+      // Show both filters for super_admin or super doctor
+      if (userType === "super_admin" || (userType === "doctor" && isSuperDoctor)) {
+        if (hospitalFilterDropdown) {
+          const hospitalDropdownWrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+          if (hospitalDropdownWrapper) hospitalDropdownWrapper.style.display = "";
+        }
+        if (doctorFilterDropdown) {
+          const doctorDropdownWrapper = doctorFilterDropdown.closest(".dropdown") || doctorFilterDropdown.parentElement;
+          if (doctorDropdownWrapper) doctorDropdownWrapper.style.display = "";
+        }
+      }
+
+      // Show only doctor filter for admin
+      else if (userType === "admin") {
+        if (doctorFilterDropdown) {
+          const doctorDropdownWrapper = doctorFilterDropdown.closest(".dropdown") || doctorFilterDropdown.parentElement;
+          if (doctorDropdownWrapper) doctorDropdownWrapper.style.display = "";
+        }
+      }
+
+      // --- ROBUST HIDE DOCTOR SELECT FOR DOCTOR USER IN ADD TAB ---
+      if (userType === "doctor") {
+        // Hide by style
+        if (doctorFormGroup) doctorFormGroup.style.display = "none";
+        // Hide by adding a class (for CSS fallback)
+        if (doctorFormGroup) doctorFormGroup.classList.add("hidden");
+        // Hide by setting all children to hidden (last resort)
+        if (doctorFormGroup) {
+          Array.from(doctorFormGroup.children).forEach(child => {
+            child.style.display = "none";
+          });
+        }
+        // Store doctor id for later use
+        if (doctorSelect) doctorSelect.dataset.doctorId = user.id;
+      } else if (doctorFormGroup) {
+        // Show for others
+        doctorFormGroup.style.display = "";
+        doctorFormGroup.classList.remove("hidden");
+        Array.from(doctorFormGroup.children).forEach(child => {
+          child.style.display = "";
         });
-      }, 10);
-
+        if (doctorSelect) doctorSelect.dataset.doctorId = "";
+      }
     } catch (error) {
       console.error("Error checking user type:", error);
     }
   }
 
-  await loadHospitals();
-  await loadDoctors();
+  await loadAllDoctors();
   await loadAllPatients();
   checkUserTypeAndAdjustForm();
 
@@ -883,14 +990,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     touchedFields.confirmPassword = true;
     touchedFields.gdpr = true;
 
-    const isFormOk = validateAddPatientForm();
+    // Pass true to show main error message only on submit
+    const isFormOk = validateAddPatientForm(true);
     if (!isFormOk) {
-      addPatientMessage.textContent = "Vyplňte všetky polia správne.";
-      addPatientMessage.classList.add("error");
+      if (!addPatientMessage.textContent) {
+        addPatientMessage.textContent = "Vyplňte všetky polia správne.";
+        addPatientMessage.classList.add("error");
+      }
+      // Log validation error
+      console.error("Form validation failed. Not sending request.");
       return;
     }
 
     // Ak všetko sedí, odosielame
+    let doctorIdValue = doctorSelect.value || null;
+    if (userType === "doctor") {
+      doctorIdValue = doctorSelect.dataset.doctorId;
+      if (!doctorIdValue || doctorIdValue === "undefined") {
+        doctorIdValue = null;
+      }
+    }
+
     const bodyPayload = {
       first_name: firstNameInput.value.trim(),
       last_name: lastNameInput.value.trim(),
@@ -898,10 +1018,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       birth_date: birthDateInput.value,
       birth_number: birthNumberInput.value.trim(),
       gender: genderSelect.value,
-      doctor_id: doctorSelect.value || null,
+      doctor_id: doctorIdValue,
       email: emailInput.value.trim(),
       password: passwordInput.value
     };
+
+    // Log what is being sent
+    console.log("Sending patient payload:", bodyPayload);
 
     try {
       const resp = await fetch("/patients/add", {
@@ -916,12 +1039,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       addPatientMessage.textContent = data.message || "Pacient úspešne pridaný.";
       addPatientMessage.classList.add("success");
       resetPatientForm();
-      // Prepneme sa do ALL tab
       showTab("all");
-      // Reload zoznamu
       loadAllPatients();
     } catch (err) {
-      console.error(err);
+      // Log error to console
+      console.error("Error while sending patient data:", err);
       addPatientMessage.textContent = err.message || "Nepodarilo sa pridať pacienta.";
       addPatientMessage.classList.add("error");
     }
@@ -971,4 +1093,57 @@ document.addEventListener("DOMContentLoaded", async () => {
       assignPatientMessage.classList.add("error");
     }
   });
+
+  // On page load, restore view mode
+  restorePatientViewMode();
+
+  // Add these listeners after dropdowns are defined:
+hospitalFilterDropdown?.addEventListener("change", applyFiltersAndSorting);
+doctorFilterDropdown?.addEventListener("change", applyFiltersAndSorting);
+searchInput?.addEventListener("input", debounce(applyFiltersAndSorting, 200));
+sortSelect?.addEventListener("change", applyFiltersAndSorting);
+
+// Remove the old event listener on #all-list-table (with blue arrows) and keep only the logic below:
+
+function updateSortIconsPatients() {
+  const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
+  allHeaderCells.forEach(th => {
+    // Remove any existing sort arrow (ours or from static HTML)
+    th.classList.remove("sort-asc", "sort-desc");
+    th.querySelectorAll('.sort-arrow, .arrow-up, .arrow-down').forEach(el => el.remove());
+
+    const col = th.getAttribute("data-sort") || th.getAttribute("data-column");
+    // Show arrow only for the sorted column
+    if (col === allCurrentSortColumn) {
+      th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+      const arrow = document.createElement("span");
+      arrow.className = "sort-arrow";
+      arrow.textContent = allCurrentSortDirection === "asc" ? " ▲" : " ▼";
+      th.appendChild(arrow);
+    }
+  });
+}
+
+const allListTableHead = document.querySelector(".patients-list-table thead");
+if (allListTableHead) {
+  allListTableHead.addEventListener("click", (e) => {
+    const th = e.target.closest("th[data-sort], th[data-column]");
+    if (!th) return;
+    const sortCol = th.getAttribute("data-sort") || th.getAttribute("data-column");
+    if (!sortCol) return;
+
+    if (allCurrentSortColumn === sortCol) {
+      allCurrentSortDirection = allCurrentSortDirection === "asc" ? "desc" : "asc";
+    } else {
+      allCurrentSortColumn = sortCol;
+      allCurrentSortDirection = "asc";
+    }
+
+    updateSortIconsPatients();
+    applyFiltersAndSorting();
+  });
+}
+
+// On initial render, set arrow indicators
+updateSortIconsPatients();
 });

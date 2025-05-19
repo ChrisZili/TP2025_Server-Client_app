@@ -187,8 +187,10 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
-  max-width: 100%;
+ max-width: 60vw; 
+  width: 100%;
   font-size: 1.05rem;
+  margin-right: auto;
 }
 
 .card h3 {
@@ -265,6 +267,24 @@ html, body {
 .patients-list-table thead th.sort-desc i {
   color: #3a7bd5;
   transform: rotate(0deg);
+}
+
+/* Sorting arrows for table headers */
+.patients-list-table th .arrow-up,
+.patients-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #3a7bd5;
+  vertical-align: middle;
+}
+
+.patients-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.patients-list-table th.sort-desc .arrow-down {
+  display: inline;
 }
 
 .patients-list-table tbody {
@@ -549,7 +569,7 @@ html, body {
 }
 
 /* == Responz��vne == */
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .patients-container {
     padding: 10px;
     height: auto;
@@ -589,6 +609,11 @@ html, body {
   #sort-select {
     min-width: 20px;
   }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
 
   .patients-list-table thead th,
   .patients-list-table tbody td {
@@ -619,92 +644,37 @@ html, body {
 }
 
 /* == Filters == */
-/* Container for dropdowns */
+/* Default: filters in a row */
 .filters {
   display: flex;
-  gap: 1rem; /* Space between dropdowns */
+  gap: 1rem;
   align-items: center;
-  margin-bottom: 1rem; /* Add spacing below the dropdowns */
+  margin-bottom: 1rem;
 }
-
-/* Dropdown styling */
 .filters .form-group {
   display: flex;
-  align-items: center; /* Align label and dropdown inline */
-  gap: 0.5rem; /* Space between label and dropdown */
-      flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  flex-direction: row;
 }
 
-.filters .form-group label {
-  font-size: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center; /* Align icon and text inline */
-  gap: 0.3rem; /* Space between icon and text */
-}
-
-.filters .form-group select {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s ease-in-out;
-}
-
-.filters .form-group select:focus {
-  border-color: #007bff;
-}
-
-/* Optional: Add consistent icon alignment */
-.filters .form-group label i {
-  font-size: 1.2rem;
-  color: #555;
-}
-
-/* Container for filters and sorting dropdown */
-.filters-row {
-  display: flex;
-  gap: 1rem; /* Space between dropdowns */
-  align-items: center; /* Align items vertically */
-  margin-bottom: 1rem; /* Add spacing below the row */
-}
-
-/* Ensure consistent styling for all dropdowns */
-.filters-row .form-group {
-  display: flex;
-  flex-direction: column; /* Stack label and dropdown */
-  align-items: flex-start;
-  gap: 0.3rem; /* Space between label and dropdown */
-}
-
-.filters-row .form-group label {
-  font-size: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center; /* Align icon and text inline */
-  gap: 0.3rem; /* Space between icon and text */
-}
-
-.filters-row .form-group select {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s ease-in-out;
-}
-
-.filters-row .form-group select:focus {
-  border-color: #007bff;
-}
-
-/* Optional: Add consistent icon alignment */
-.filters-row .form-group label i {
-  font-size: 1.2rem;
-  color: #555;
+/* Responsive: Stack filters vertically on small screens */
+@media (max-width: 600px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .filters .form-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+    gap: 0.2rem;
+  }
+  .filters .form-group label {
+    margin-bottom: 2px;
+  }
+  .filters .form-group select {
+    width: 100%;
+  }
 }

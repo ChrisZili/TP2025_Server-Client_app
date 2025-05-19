@@ -83,11 +83,11 @@ Správa adminov
         <table class="admins-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">Celé meno</th>
+              <th data-column="created_at">Dátum vytvorenia</th>
+              <th data-column="phone_number">Telefón</th>
+              <th data-column="email">Email</th>
+              <th data-column="hospital">Nemocnica</th>
             </tr>
           </thead>
           <tbody id="all-list-body">
@@ -137,11 +137,11 @@ Správa adminov
         <table class="admins-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">Celé meno</th>
+              <th data-column="created_at">Dátum vytvorenia</th>
+              <th data-column="phone_number">Telefón</th>
+              <th data-column="email">Email</th>
+              <th data-column="hospital">Nemocnica</th>
             </tr>
           </thead>
           <tbody id="search-list-body">
@@ -162,16 +162,19 @@ Správa adminov
       <div class="form-group">
         <label for="admin-first-name">Meno</label>
         <input type="text" id="admin-first-name" name="first_name" required />
+        <div id="admin-first-name-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="admin-last-name">Priezvisko</label>
         <input type="text" id="admin-last-name" name="last_name" required />
+        <div id="admin-last-name-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="admin-phone">Telefónne číslo</label>
         <input type="tel" id="admin-phone" name="phone_number" pattern="\d+" inputmode="numeric" required />
+        <div id="admin-phone-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
@@ -182,26 +185,30 @@ Správa adminov
           <option value="Žena">Žena</option>
           <option value="Iné">Iné</option>
         </select>
+        <div id="admin-gender-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="admin-hospital-code">Kód nemocnice</label>
         <input type="text" id="admin-hospital-code" name="hospital_code" required />
+        <div id="admin-hospital-code-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="admin-email">Email</label>
         <input type="email" id="admin-email" name="email" required />
+        <div id="admin-email-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
         <label for="admin-password">Heslo</label>
         <div class="input-wrapper password-wrapper">
             <input type="password" id="admin-password" name="password"  autocomplete="new-password" required />
-            <button type="button" class="toggle-pw" id="toggle-password" aria-label="Zobraziť alebo skryť heslo" tabindex="-1">
-                <i class="fas fa-eye-slash" aria-hidden="true"></i>
-            </button>
+            <button type="button" class="toggle-pw" id="toggle-password">
+  <i class="fas fa-eye-slash" aria-hidden="true"></i>
+</button>
         </div>
+        <div id="admin-password-error" class="error-message"></div>
       </div>
 
       <div class="form-group">
@@ -212,6 +219,7 @@ Správa adminov
                 <i class="fas fa-eye-slash" aria-hidden="true"></i>
             </button>
           </div>
+          <div id="admin-password-confirm-error" class="error-message"></div>
       </div>
 
       <div class="form-group gdpr-group">
@@ -220,6 +228,7 @@ Správa adminov
           Súhlasím so spracovaním osobných údajov podľa GDPR.
           <a href="#">(Zobraziť podmienky)</a>
         </label>
+        <div id="gdpr-error" class="error-message"></div>
       </div>
       <div id="add-admin-message" class="error-message"></div>
        <button id="add-admin-btn" class="add-btn" type="button">Pridať admin</button>

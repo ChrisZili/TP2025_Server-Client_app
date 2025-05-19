@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   // -- All variables --
   let allDoctorsData = [];
-  let currentSortColumn = "last_name"; // Default sort column
-  let currentSortDirection = "asc"; // Default sort direction
+  let currentSortColumn = "full_name"; // Default sort column for A-Z
+  let currentSortDirection = "asc";    // Default sort direction
   let userType = "";
 
   // DOM elements
@@ -25,6 +25,70 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabAdd = document.getElementById("tab-add");
   const tabAllContent = document.getElementById("tab-all-content");
   const tabAddContent = document.getElementById("tab-add-content");
+
+  // Inline error elements
+  const doctorTypeErrorDiv = document.getElementById("doctor-type-error");
+  const firstNameErrorDiv = document.getElementById("doctor-first-name-error");
+  const lastNameErrorDiv = document.getElementById("doctor-last-name-error");
+  const phoneErrorDiv = document.getElementById("doctor-phone-error");
+  const genderErrorDiv = document.getElementById("doctor-gender-error");
+  const titleErrorDiv = document.getElementById("doctor-title-error");
+  const suffixErrorDiv = document.getElementById("doctor-suffix-error");
+  const hospitalCodeErrorDiv = document.getElementById("doctor-hospital-code-error");
+  const emailErrorDiv = document.getElementById("doctor-email-error");
+  const passwordErrorDiv = document.getElementById("doctor-password-error");
+  const passwordConfirmErrorDiv = document.getElementById("doctor-password-confirm-error");
+  const gdprErrorDiv = document.getElementById("doctor-gdpr-error");
+
+  // Input elements
+  const doctorTypeInput = document.getElementById("doctor-type");
+  const firstNameInput = document.getElementById("doctor-first-name");
+  const lastNameInput = document.getElementById("doctor-last-name");
+  const phoneInput = document.getElementById("doctor-phone");
+  const genderInput = document.getElementById("doctor-gender");
+  const titleInput = document.getElementById("doctor-title");
+  const suffixInput = document.getElementById("doctor-suffix");
+  const hospitalCodeInput = document.getElementById("doctor-hospital-code");
+  const emailInput = document.getElementById("doctor-email");
+  const passwordInput = document.getElementById("doctor-password");
+  const passwordConfirmInput = document.getElementById("doctor-password-confirm");
+  const gdprCheckbox = document.getElementById("gdpr");
+
+  // Track which fields have been touched (blurred)
+  const touchedFields = {
+    doctorType: false,
+    firstName: false,
+    lastName: false,
+    phone: false,
+    gender: false,
+    title: false,
+    suffix: false,
+    hospitalCode: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+    gdpr: false
+  };
+
+  // Track if a field was ever focused
+  const everFocused = {
+    doctorType: false,
+    firstName: false,
+    lastName: false,
+    phone: false,
+    gender: false,
+    title: false,
+    suffix: false,
+    hospitalCode: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+    gdpr: false
+  };
+
+  function markFocused(fieldKey) {
+    everFocused[fieldKey] = true;
+  }
 
   // Helper function to get full name
   function getFullName(doctor) {
@@ -187,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const sortedDoctors = sortDoctors(filteredDoctors);
       renderAllListTable(sortedDoctors);
       renderDoctors(sortedDoctors);
+      updateSortIcons();
     });
   });
 
@@ -215,10 +280,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortedDoctors = sortDoctors(filteredDoctors);
     renderAllListTable(sortedDoctors);
     renderDoctors(sortedDoctors);
+    updateSortIcons();
   });
 
-  // Switch between cards and list views
+  // --- Remember view mode in localStorage ---
   function switchView(mode) {
+    localStorage.setItem("doctorViewMode", mode); // Remember view mode
+
     const sortDropdownContainer = sortSelect?.parentElement;
     const hospitalDropdownContainer = hospitalFilter?.parentElement;
 
@@ -237,6 +305,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     hospitalDropdownContainer?.classList.remove("hidden");
+
+    if (mode === "list") {
+      updateSortIcons();
+    }
+  }
+
+  // --- Restore view mode on page load ---
+  function restoreDoctorViewMode() {
+    const savedMode = localStorage.getItem("doctorViewMode") || "cards";
+    switchView(savedMode);
   }
 
   // Helper function to switch tabs
@@ -301,6 +379,22 @@ document.addEventListener("DOMContentLoaded", () => {
       addDoctorMessage.textContent = "";
       addDoctorMessage.classList.remove("error", "success");
     }
+    // Reset touched and everFocused states
+    Object.keys(touchedFields).forEach(k => touchedFields[k] = false);
+    Object.keys(everFocused).forEach(k => everFocused[k] = false);
+    // Clear all inline errors
+    clearError(doctorTypeErrorDiv);
+    clearError(firstNameErrorDiv);
+    clearError(lastNameErrorDiv);
+    clearError(phoneErrorDiv);
+    clearError(genderErrorDiv);
+    clearError(titleErrorDiv);
+    clearError(suffixErrorDiv);
+    clearError(hospitalCodeErrorDiv);
+    clearError(emailErrorDiv);
+    clearError(passwordErrorDiv);
+    clearError(passwordConfirmErrorDiv);
+    clearError(gdprErrorDiv);
   }
 
   // Add Doctor functionality
@@ -427,6 +521,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Password toggle functionality
+  function setupPasswordToggle(inputId, toggleId) {
+    const input = document.getElementById(inputId);
+    const toggle = document.getElementById(toggleId);
+
+    if (input && toggle) {
+      toggle.addEventListener('click', () => {
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        const icon = toggle.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-eye', isHidden);
+          icon.classList.toggle('fa-eye-slash', !isHidden);
+        }
+      });
+    }
+  }
+
+  // Setup for both password fields
+  setupPasswordToggle('doctor-password', 'toggle-password');
+  setupPasswordToggle('doctor-password-confirm', 'toggle-password-confirm');
+
   // Add event listeners
   searchInput?.addEventListener("keyup", debounce(performSearch, 300));
   hospitalFilter?.addEventListener("change", performSearch);
@@ -438,5 +554,217 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial setup
   loadAllDoctors();
   switchTab("all");
-  switchView("cards");
+  restoreDoctorViewMode(); // Use remembered view mode on load
+
+  // After DOMContentLoaded or in your initial setup
+  if (sortSelect) {
+    sortSelect.value = "alphabetical-asc";
+  }
+
+  function updateSortIcons() {
+    tableHeaders.forEach((th) => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      if (col === currentSortColumn) {
+        th.classList.add(currentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+      }
+    });
+  }
+
+  function showError(div, msg) {
+    div.textContent = msg;
+  }
+  function clearError(div) {
+    div.textContent = "";
+  }
+
+  function validateDoctorForm() {
+    let isValid = true;
+    clearError(doctorTypeErrorDiv);
+    clearError(firstNameErrorDiv);
+    clearError(lastNameErrorDiv);
+    clearError(phoneErrorDiv);
+    clearError(genderErrorDiv);
+    clearError(titleErrorDiv);
+    clearError(suffixErrorDiv);
+    clearError(hospitalCodeErrorDiv);
+    clearError(emailErrorDiv);
+    clearError(passwordErrorDiv);
+    clearError(passwordConfirmErrorDiv);
+    clearError(gdprErrorDiv);
+
+    const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+    const noNumbersRegex = /^[^\d]*$/;
+
+    // Doctor type
+    if (!doctorTypeInput.value) {
+      isValid = false;
+      if (touchedFields.doctorType) showError(doctorTypeErrorDiv, "Typ doktora je povinný.");
+    }
+
+    // First name
+    if (!firstNameInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno je povinné.");
+    } else if (!nameRegex.test(firstNameInput.value.trim())) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Last name
+    if (!lastNameInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko je povinné.");
+    } else if (!nameRegex.test(lastNameInput.value.trim())) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Phone
+    if (!phoneInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.phone) showError(phoneErrorDiv, "Telefón je povinný.");
+    } else if (!phoneRegex.test(phoneInput.value.trim())) {
+      isValid = false;
+      if (touchedFields.phone) showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
+    }
+
+    // Gender
+    if (!genderInput.value) {
+      isValid = false;
+      if (touchedFields.gender) showError(genderErrorDiv, "Pohlavie je povinné.");
+    }
+
+    // Title
+    if (titleInput.value && !noNumbersRegex.test(titleInput.value)) {
+      isValid = false;
+      if (touchedFields.title) showError(titleErrorDiv, "Titul nesmie obsahovať čísla.");
+    }
+
+    // Suffix
+    if (suffixInput.value && !noNumbersRegex.test(suffixInput.value)) {
+      isValid = false;
+      if (touchedFields.suffix) showError(suffixErrorDiv, "Sufix nesmie obsahovať čísla.");
+    }
+
+    // Hospital code (required for super_admin)
+    if (hospitalCodeInput && hospitalCodeInput.offsetParent !== null && !hospitalCodeInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.hospitalCode) showError(hospitalCodeErrorDiv, "Kód nemocnice je povinný.");
+    }
+
+    // Email
+    if (!emailInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.email) showError(emailErrorDiv, "Email je povinný.");
+    }
+
+    // Password
+    if (!passwordInput.value) {
+      isValid = false;
+      if (touchedFields.password) showError(passwordErrorDiv, "Heslo je povinné.");
+    }
+
+    // Confirm password
+    if (!passwordConfirmInput.value || passwordInput.value !== passwordConfirmInput.value) {
+      isValid = false;
+      if (touchedFields.passwordConfirm) showError(passwordConfirmErrorDiv, "Heslá sa nezhodujú.");
+    }
+
+    // GDPR
+    if (!gdprCheckbox.checked) {
+      isValid = false;
+      if (touchedFields.gdpr) showError(gdprErrorDiv, "Musíte súhlasiť so spracovaním osobných údajov.");
+    }
+
+    return isValid;
+  }
+
+  // Mark field as touched and validate
+  function markTouched(fieldKey) {
+    touchedFields[fieldKey] = true;
+    validateDoctorForm();
+  }
+
+  // Add blur listeners to mark fields as touched
+  doctorTypeInput.addEventListener("blur", () => markTouched("doctorType"));
+  firstNameInput.addEventListener("blur", () => markTouched("firstName"));
+  lastNameInput.addEventListener("blur", () => markTouched("lastName"));
+  phoneInput.addEventListener("blur", () => markTouched("phone"));
+  genderInput.addEventListener("blur", () => markTouched("gender"));
+  titleInput.addEventListener("blur", () => markTouched("title"));
+  suffixInput.addEventListener("blur", () => markTouched("suffix"));
+  hospitalCodeInput.addEventListener("blur", () => markTouched("hospitalCode"));
+  emailInput.addEventListener("blur", () => markTouched("email"));
+  passwordInput.addEventListener("blur", () => markTouched("password"));
+  passwordConfirmInput.addEventListener("blur", () => markTouched("passwordConfirm"));
+  gdprCheckbox.addEventListener("blur", () => markTouched("gdpr"));
+
+  // Also validate on input for instant feedback (optional)
+  [
+    doctorTypeInput, firstNameInput, lastNameInput, phoneInput, genderInput, titleInput, suffixInput,
+    hospitalCodeInput, emailInput, passwordInput, passwordConfirmInput
+  ].forEach(input => {
+    if (input) input.addEventListener("input", validateDoctorForm);
+  });
+  gdprCheckbox.addEventListener("change", validateDoctorForm);
+
+  // On submit, mark all as touched and validate
+  addDoctorBtn.addEventListener("click", async () => {
+    // ...existing code...
+    Object.keys(touchedFields).forEach(k => touchedFields[k] = true);
+    if (!validateDoctorForm()) {
+      addDoctorMessage.textContent = "Vyplňte všetky polia správne.";
+      addDoctorMessage.classList.add("error");
+      return;
+    }
+    // ...existing code...
+  });
+
+  // Find the doctor type form group robustly (move here!)
+  const doctorTypeFormGroup =
+    document.getElementById("doctor-type")?.closest(".form-group") ||
+    document.getElementById("doctor-type")?.parentElement ||
+    document.querySelector('label[for="doctor-type"]')?.parentElement;
+
+  async function checkUserTypeAndAdjustFilters() {
+    try {
+      const response = await fetch("/settings/info", {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        credentials: "include"
+      });
+      if (!response.ok) throw new Error("Failed to fetch user type");
+      const user = await response.json();
+      userType = user.user_type;
+
+      // Hide hospital filter by default
+      const hospitalFilterDropdown = document.getElementById("doctor-hospital-filter");
+      if (hospitalFilterDropdown) {
+        const wrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+        if (wrapper) wrapper.style.display = "none";
+      }
+
+      // Show hospital filter only for super_admin
+      if (userType === "super_admin" && hospitalFilterDropdown) {
+        const wrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+        if (wrapper) wrapper.style.display = "";
+      }
+
+      // Hide doctor type dropdown for admin and set value to "doctor"
+      if (userType === "admin" && doctorTypeFormGroup) {
+        doctorTypeFormGroup.style.display = "none";
+        const doctorTypeInput = document.getElementById("doctor-type");
+        if (doctorTypeInput) doctorTypeInput.value = "doctor";
+      } else if (doctorTypeFormGroup) {
+        doctorTypeFormGroup.style.display = "";
+      }
+    } catch (err) {
+      console.error("Error fetching user type:", err);
+    }
+  }
+
+  // At the end of DOMContentLoaded:
+  checkUserTypeAndAdjustFilters();
 });

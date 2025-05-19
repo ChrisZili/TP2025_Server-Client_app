@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let hospitalsData = []; // New variable to store hospital data
 
   // For "All" tab sorting
-  let allCurrentSortColumn = "last_name";
-  let allCurrentSortDirection = "asc";
+  let allCurrentSortColumn = "full_name"; // Use full_name for A-Z
+  let allCurrentSortDirection = "asc";    // Ascending
 
   // DOM elements for view toggles
   const viewCardsBtnAll = document.getElementById("view-cards");
@@ -29,6 +29,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const searchInput = document.getElementById("search-input"); // Search bar in All Tab
   const hospitalDropdown = document.getElementById("hospital-dropdown"); // New dropdown for hospitals
   const hospitalFilterDropdown = document.getElementById("hospital-filter-dropdown");
+
+  // Inline error elements
+  const firstNameErrorDiv = document.getElementById("technician-first-name-error");
+  const lastNameErrorDiv = document.getElementById("technician-last-name-error");
+  const hospitalCodeErrorDiv = document.getElementById("technician-hospital-code-error");
+  const emailErrorDiv = document.getElementById("technician-email-error");
+  const passwordErrorDiv = document.getElementById("technician-password-error");
+  const passwordConfirmErrorDiv = document.getElementById("technician-password-confirm-error");
+  const gdprErrorDiv = document.getElementById("gdpr-error");
+
+  // Input elements
+  const firstNameInput = document.getElementById("technician-first-name");
+  const lastNameInput = document.getElementById("technician-last-name");
+  const hospitalCodeInput = document.getElementById("technician-hospital-code");
+  const emailInput = document.getElementById("technician-email");
+  const passwordInput = document.getElementById("technician-password");
+  const passwordConfirmInput = document.getElementById("technician-password-confirm");
+  const gdprCheckbox = document.getElementById("gdpr");
+
+  // Track which fields have been touched (blurred)
+  const touchedFields = {
+    firstName: false,
+    lastName: false,
+    hospitalCode: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+    gdpr: false
+  };
 
   function formatDate(dateString) {
     if (!dateString) return "-";
@@ -117,8 +146,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // -- View mode toggle function --
-  function setViewMode(mode) {
+  function setViewMode(mode = "cards") {
     localStorage.setItem("technicianViewMode", mode);
+
+    // Always set sort select to alphabetical-asc when switching views
+    if (sortSelect) {
+      sortSelect.value = "alphabetical-asc";
+    }
+    allCurrentSortColumn = "full_name";
+    allCurrentSortDirection = "asc";
 
     if (mode === "list") {
       viewCardsBtnAll?.classList.remove("active");
@@ -134,7 +170,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       sortOptionsAll?.classList.remove("hidden");
     }
 
-    // Re-render views with current filters and sorting
+    // Show sort icon on the correct column in list view
+    updateSortIcons();
+
     applyFiltersAndSorting();
   }
 
@@ -242,6 +280,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  function updateSortIcons() {
+    const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
+    allHeaderCells.forEach(th => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      if (col === allCurrentSortColumn) {
+        th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+      }
+    });
+  }
+
   // Event listeners
   tabAll?.addEventListener("click", () => showTab("all"));
   tabAdd?.addEventListener("click", () => {
@@ -276,14 +325,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         allCurrentSortDirection = "asc";
       }
 
-      allHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
-      th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
-
+      updateSortIcons();
       applyFiltersAndSorting();
     });
   });
 
-  // Set initial view mode from localStorage
+  // Set initial sort select value to alphabetical-asc
+  if (sortSelect) {
+    sortSelect.value = "alphabetical-asc";
+  }
+
+  // Set initial view mode from localStorage or default to cards
   const savedMode = localStorage.getItem("technicianViewMode") || "cards";
   setViewMode(savedMode);
 
@@ -295,12 +347,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         credentials: "include"
       });
       const user = await response.json();
-      userType = user.user_type
+      userType = user.user_type;
       const hospitalCodeGroup = document.querySelector('#technician-hospital-code')?.closest('.form-group');
 
+      // Hide hospital filter by default
+      if (hospitalFilterDropdown) {
+        const hospitalDropdownWrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+        if (hospitalDropdownWrapper) hospitalDropdownWrapper.style.display = "none";
+      }
+
+      // Show hospital filter only for super_admin
+      if (user.user_type === "super_admin") {
+        if (hospitalFilterDropdown) {
+          const hospitalDropdownWrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+          if (hospitalDropdownWrapper) hospitalDropdownWrapper.style.display = "";
+        }
+      }
+
+      // Hide hospital code input for non-super_admin
       if (hospitalCodeGroup && user.user_type !== "super_admin") {
         hospitalCodeGroup.style.display = "none";
       }
+
       setTimeout(() => {
         document.querySelectorAll(".hidden-js").forEach(el => {
           el.style.visibility = "visible";
@@ -406,6 +474,109 @@ document.addEventListener("DOMContentLoaded", async () => {
     allList.appendChild(container);
   }
 
+  // Inline error display functions
+  function showError(div, msg) {
+    div.textContent = msg;
+  }
+  function clearError(div) {
+    div.textContent = "";
+  }
+
+  function validateTechnicianForm(showMainError = false) {
+    let isValid = true;
+    clearError(firstNameErrorDiv);
+    clearError(lastNameErrorDiv);
+    clearError(hospitalCodeErrorDiv);
+    clearError(emailErrorDiv);
+    clearError(passwordErrorDiv);
+    clearError(passwordConfirmErrorDiv);
+    clearError(gdprErrorDiv);
+
+    const firstNameVal = firstNameInput.value.trim();
+    const lastNameVal = lastNameInput.value.trim();
+    const hospitalCodeVal = hospitalCodeInput?.value.trim();
+    const emailVal = emailInput.value.trim();
+    const passwordVal = passwordInput.value;
+    const passwordConfirmVal = passwordConfirmInput.value;
+
+    const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+
+    // First name
+    if (!firstNameVal) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno je povinné.");
+    } else if (!nameRegex.test(firstNameVal)) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Last name
+    if (!lastNameVal) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko je povinné.");
+    } else if (!nameRegex.test(lastNameVal)) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Hospital code (only for super_admin)
+    if (hospitalCodeInput && hospitalCodeInput.offsetParent !== null) {
+      if (!hospitalCodeVal) {
+        isValid = false;
+        if (touchedFields.hospitalCode) showError(hospitalCodeErrorDiv, "Kód nemocnice je povinný.");
+      }
+    }
+
+    // Email
+    if (!emailVal) {
+      isValid = false;
+      if (touchedFields.email) showError(emailErrorDiv, "Email je povinný.");
+    }
+
+    // Password
+    if (!passwordVal) {
+      isValid = false;
+      if (touchedFields.password) showError(passwordErrorDiv, "Heslo je povinné.");
+    }
+
+    // Confirm password
+    if (!passwordConfirmVal || passwordVal !== passwordConfirmVal) {
+      isValid = false;
+      if (touchedFields.passwordConfirm) showError(passwordConfirmErrorDiv, "Heslá sa nezhodujú.");
+    }
+
+    // GDPR checkbox
+    if (!gdprCheckbox.checked) {
+      isValid = false;
+      if (touchedFields.gdpr) showError(gdprErrorDiv, "Musíte súhlasiť so spracovaním osobných údajov.");
+    }
+
+    return isValid;
+  }
+
+  // Mark field as touched and validate
+  function markTouched(fieldKey) {
+    touchedFields[fieldKey] = true;
+    validateTechnicianForm();
+  }
+
+  // Add blur listeners to mark fields as touched
+  firstNameInput.addEventListener("blur", () => markTouched("firstName"));
+  lastNameInput.addEventListener("blur", () => markTouched("lastName"));
+  if (hospitalCodeInput) hospitalCodeInput.addEventListener("blur", () => markTouched("hospitalCode"));
+  emailInput.addEventListener("blur", () => markTouched("email"));
+  passwordInput.addEventListener("blur", () => markTouched("password"));
+  passwordConfirmInput.addEventListener("blur", () => markTouched("passwordConfirm"));
+  gdprCheckbox.addEventListener("blur", () => markTouched("gdpr"));
+
+  // Also validate on input for instant feedback (optional)
+  [firstNameInput, lastNameInput, hospitalCodeInput, emailInput, passwordInput, passwordConfirmInput].forEach(input => {
+    if (input) input.addEventListener("input", validateTechnicianForm);
+  });
+
+  // Also validate on change for instant feedback
+  gdprCheckbox.addEventListener("change", validateTechnicianForm);
+
   // Initial setup
   showTab("all");
   await loadAllTechnicians(); // Load technicians first
@@ -420,6 +591,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       msg.textContent = "";
       msg.classList.remove("error", "success");
 
+      // Mark all as touched for submit
+      Object.keys(touchedFields).forEach(k => touchedFields[k] = true);
+
+      // Validate and show main error if needed
+      const isFormOk = validateTechnicianForm(true);
+      if (!isFormOk) {
+        msg.textContent = "Vyplňte všetky polia správne.";
+        msg.classList.add("error");
+        return;
+      }
+
       const firstName = document.getElementById("technician-first-name").value.trim();
       const lastName = document.getElementById("technician-last-name").value.trim();
       const email = document.getElementById("technician-email").value.trim();
@@ -427,40 +609,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const confirmPassword = document.getElementById("technician-password-confirm").value;
       const hospitalCode = document.getElementById("technician-hospital-code")?.value.trim();
       const gdprChecked = document.getElementById("gdpr")?.checked;
-
-      // Validation regex patterns
-      const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/; // Allows letters, accents, and spaces (2-255 characters)
-
-      // Validation checks
-      if (!nameRegex.test(firstName)) {
-        msg.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
-        msg.classList.add("error");
-        return;
-      }
-
-      if (!nameRegex.test(lastName)) {
-        msg.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
-        msg.classList.add("error");
-        return;
-      }
-
-      if (!email || !password || !confirmPassword || (!hospitalCode && userType === "super_admin")) {
-        msg.textContent = "Vyplňte všetky povinné údaje.";
-        msg.classList.add("error");
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        msg.textContent = "Heslá sa nezhodujú.";
-        msg.classList.add("error");
-        return;
-      }
-
-      if (!gdprChecked) {
-        msg.textContent = "Musíte súhlasiť so spracovaním údajov (GDPR).";
-        msg.classList.add("error");
-        return;
-      }
 
       try {
         const resp = await fetch("/technicians/add", {

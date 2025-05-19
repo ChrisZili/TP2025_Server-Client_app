@@ -54,7 +54,8 @@ Správa pacientov
           <i class="fas fa-sort"></i> Zoradiť podľa:
         </label>
         <select id="sort-select" class="sort-select">
-          <option value="creation">Dátum vytvorenia</option>
+          <option value="creation" selected>Od najstarších po najnovších</option>
+          <option value="newest">Od najnovších po najstarších</option>
           <option value="alphabetical-asc">Abecedne (A-Z)</option>
           <option value="alphabetical-desc">Abecedne (Z-A)</option>
         </select>
@@ -92,12 +93,36 @@ Správa pacientov
         <table class="patients-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="doctor">Doktor <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">
+                Celé meno
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="created_at">
+                Dátum vytvorenia
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="phone_number">
+                Telefón
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="email">
+                Email
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="doctor">
+                Doktor
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="hospital">
+                Nemocnica
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
             </tr>
           </thead>
           <tbody id="all-list-body">

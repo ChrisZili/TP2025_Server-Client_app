@@ -63,6 +63,7 @@ html, body {
 }
 
 .hidden-js {
+  display: none !important;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
@@ -159,6 +160,28 @@ html, body {
 
 #sort-select {
   min-width: 180px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  #sort-select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .sort-options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+  }
+  .sort-options label {
+    margin-bottom: 2px;
+  }
+  .sort-options select {
+    width: 100%;
+  }
 }
 
 /* == Karty == */
@@ -181,8 +204,10 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
-  max-width: 100%;
+  max-width: 60vw; 
+  width: 100%;
   font-size: 1.05rem;
+  margin-right: auto;
 }
 
 .card h3 {
@@ -259,6 +284,22 @@ html, body {
 .doctors-list-table thead th.sort-desc i {
   color: #1a7891;
   transform: rotate(0deg);
+}
+
+th .arrow-up,
+th .arrow-down {
+  font-size: 0.8em;
+  color: #bbb;
+  margin-left: 2px;
+  transition: color 0.2s;
+}
+
+th.sort-asc .arrow-up {
+  color: #333;
+}
+
+th.sort-desc .arrow-down {
+  color: #333;
 }
 
 .doctors-list-table tbody {
@@ -475,17 +516,24 @@ html, body {
 /* Align dropdowns horizontally */
 .dropdowns-container {
   display: flex;
-  gap: 20px; /* Space between dropdowns */
+  gap: 20px;
   align-items: center;
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start; /* Align items to the left */
 }
 
 /* Align labels next to dropdowns */
 .dropdown {
   display: flex;
-  align-items: center; /* Align label and dropdown vertically */
-  gap: 10px; /* Space between label and dropdown */
-  margin-bottom: 1rem;
+  align-items: center;
+  gap: 10px;
+  /* Remove flex-grow to prevent stretching */
+  min-width: 0;
+  max-width: 90vw;
+  margin-bottom: 0;
 }
 
 .dropdown label {
@@ -493,6 +541,9 @@ html, body {
   font-weight: bold;
   color: #444;
   white-space: nowrap; /* Prevent label text from wrapping */
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .dropdown select {
@@ -501,8 +552,43 @@ html, body {
   border: 1px solid #ccc;
   border-radius: 5px;
   background: #fff;
+  color: #333;
   width: 100%; /* Ensure dropdowns are responsive */
   max-width: 250px; /* Optional: Limit the width */
+  min-width: 0;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown select:focus {
+  border-color: #007bff;
+}
+
+/* Responsive dropdowns in .dropdowns-container */
+@media (max-width: 700px) {
+  .dropdowns-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .dropdown {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .dropdown label {
+    margin-bottom: 2px;
+  }
+  .dropdown select {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* == Responzívne == */
@@ -579,4 +665,11 @@ select {
 
 select:focus {
   border-color: #007bff;
+}
+
+.field-error {
+  color: #d32f2f;
+  font-size: 0.95em;
+  margin-top: 2px;
+  min-height: 18px;
 }

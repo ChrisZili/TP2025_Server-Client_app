@@ -157,6 +157,9 @@ html, body {
   display: flex;
   align-items: center; /* Align label and dropdown inline */
   gap: 0.5rem; /* Space between label and dropdown */
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 90vw;
 }
 
 .dropdown label {
@@ -176,6 +179,13 @@ html, body {
   color: #333;
   outline: none;
   transition: border-color 0.2s ease-in-out;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dropdown select:focus {
@@ -186,6 +196,29 @@ html, body {
 .dropdown label i {
   font-size: 1.2rem;
   color: #555;
+}
+
+/* Responsive dropdowns in .dropdowns-container */
+@media (max-width: 600px) {
+  .dropdowns-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .dropdown {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 80vw;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .dropdown label {
+    margin-bottom: 2px;
+  }
+  .dropdown select {
+    width: auto;
+    max-width: 80vw;
+  }
 }
 
 /* == Karty == */
@@ -209,8 +242,10 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
-  max-width: 100%;
+  max-width: 60vw; 
+  width: 100%;
   font-size: 1.05rem;
+  margin-right: auto;
 }
 
 .card h3 {
@@ -287,6 +322,28 @@ html, body {
 .admins-list-table thead th.sort-desc i {
   color: #1a7891;
   transform: rotate(0deg);
+}
+
+/* Sort arrow styling for table headers */
+.sort-arrow {
+  font-size: 1rem;
+  margin-left: 6px;
+  color: #1a7891;
+  font-weight: bold;
+  vertical-align: middle;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.admins-list-table thead th.sort-asc .sort-arrow,
+.admins-list-table thead th.sort-desc .sort-arrow {
+  color: #1a7891;
+}
+
+/* Optional: highlight header background on sort */
+.admins-list-table thead th.sort-asc,
+.admins-list-table thead th.sort-desc {
+  background-color: #eaf6fa;
 }
 
 .admins-list-table tbody {
@@ -415,12 +472,36 @@ html, body {
 }
 
 /* == Hlásenia == */
+/* Inline error message styling (same as other sites) */
+.error-message {
+  color: #d9534f;
+  font-weight: 500;
+  margin-top: 6px;
+  font-size: 0.97rem;
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  line-height: 1.4;
+}
+
+.error-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+  margin-top: 8px;
+}
+
+/* Main form error/success message */
 #add-admin-message {
   margin-bottom: 15px;
   padding: 10px;
   border-radius: 5px;
   font-weight: bold;
   text-align: center;
+  font-size: 1.05rem;
 }
 
 #add-admin-message.error {
@@ -439,14 +520,6 @@ html, body {
   color: #d9534f;
   font-weight: bold;
   margin-top: 10px;
-}
-
-.error-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #f5c6cb;
 }
 
 /* == Tlačidlo == */
@@ -520,7 +593,7 @@ html, body {
 }
 
 /* == Responzívne == */
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .admins-container {
     padding: 10px;
     height: auto;
@@ -580,5 +653,47 @@ html, body {
     width: 100%;
     font-size: 0.95rem;
     padding: 10px 16px;
+  }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Filter options styling */
+.filter-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-options label {
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+
+/* Make filter select always fit viewport, never overflow due to long text */
+.filter-options select {
+  width: 100%;
+  max-width: 10vw; /* or any reasonable max width */
+  min-width: 0;
+  box-sizing: border-box;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Prevent select from expanding due to long text */
+}
+
+/* On small screens, make it fit the viewport */
+@media (max-width: 600px) {
+  .filter-options select {
+    width: 100vw;
+    max-width: 100vw;
   }
 }

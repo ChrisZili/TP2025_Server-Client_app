@@ -87,11 +87,31 @@ Správa doktorov
         <table class="doctors-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">
+  Celé meno
+  <span class="arrow-up">&#9650;</span>
+  <span class="arrow-down">&#9660;</span>
+</th>
+<th data-column="created_at">
+  Dátum vytvorenia
+  <span class="arrow-up">&#9650;</span>
+  <span class="arrow-down">&#9660;</span>
+</th>
+<th data-column="phone_number">
+  Telefón
+  <span class="arrow-up">&#9650;</span>
+  <span class="arrow-down">&#9660;</span>
+</th>
+<th data-column="email">
+  Email
+  <span class="arrow-up">&#9650;</span>
+  <span class="arrow-down">&#9660;</span>
+</th>
+<th data-column="hospital">
+  Nemocnica
+  <span class="arrow-up">&#9650;</span>
+  <span class="arrow-down">&#9660;</span>
+</th>
             </tr>
           </thead>
           <tbody id="all-list-body">
@@ -120,23 +140,27 @@ Správa doktorov
           <option value="super_doctor">Super Doctor</option>
         </select>
       </div>
+      <div class="field-error" id="doctor-type-error"></div>
 
       <!-- Meno -->
       <div class="form-group">
         <label for="doctor-first-name">Meno</label>
         <input type="text" id="doctor-first-name" name="first_name" required />
+        <div class="field-error" id="doctor-first-name-error"></div>
       </div>
 
       <!-- Priezvisko -->
       <div class="form-group">
         <label for="doctor-last-name">Priezvisko</label>
         <input type="text" id="doctor-last-name" name="last_name" required />
+        <div class="field-error" id="doctor-last-name-error"></div>
       </div>
 
       <!-- Telefónne číslo -->
       <div class="form-group">
         <label for="doctor-phone">Telefónne číslo</label>
         <input type="tel" id="doctor-phone" name="phone_number" pattern="\d+" inputmode="numeric" required />
+        <div class="field-error" id="doctor-phone-error"></div>
       </div>
 
       <!-- Pohlavie -->
@@ -148,30 +172,35 @@ Správa doktorov
           <option value="Žena">Žena</option>
           <option value="Iné">Iné</option>
         </select>
+        <div class="field-error" id="doctor-gender-error"></div>
       </div>
 
       <!-- Titul -->
       <div class="form-group">
         <label for="doctor-title">Titul</label>
         <input type="text" id="doctor-title" name="title" />
+        <div class="field-error" id="doctor-title-error"></div>
       </div>
 
       <!-- Sufix -->
       <div class="form-group">
         <label for="doctor-suffix">Sufix</label>
         <input type="text" id="doctor-suffix" name="suffix" />
+        <div class="field-error" id="doctor-suffix-error"></div>
       </div>
 
       <!-- Kód nemocnice -->
       <div class="form-group">
         <label for="doctor-hospital-code">Kód nemocnice</label>
         <input type="text" id="doctor-hospital-code" name="hospital_code" required />
+        <div class="field-error" id="doctor-hospital-code-error"></div>
       </div>
 
       <!-- Email -->
       <div class="form-group">
         <label for="doctor-email">Email</label>
         <input type="email" id="doctor-email" name="email" required />
+        <div class="field-error" id="doctor-email-error"></div>
       </div>
 
       <!-- Heslo -->
@@ -183,6 +212,7 @@ Správa doktorov
                 <i class="fas fa-eye-slash" aria-hidden="true"></i>
             </button>
         </div>
+        <div class="field-error" id="doctor-password-error"></div>
       </div>
 
       <div class="form-group">
@@ -193,6 +223,7 @@ Správa doktorov
                 <i class="fas fa-eye-slash" aria-hidden="true"></i>
             </button>
         </div>
+        <div class="field-error" id="doctor-password-confirm-error"></div>
       </div>
 
       <!-- GDPR súhlas -->
@@ -202,6 +233,7 @@ Správa doktorov
           Súhlasím so spracovaním osobných údajov podľa GDPR.
           <a href="#">(Zobraziť podmienky)</a>
         </label>
+        <div class="field-error" id="doctor-gdpr-error"></div>
       </div>
       <div id="add-doctor-message"></div>
       <!-- Tlačidlo na pridanie doktora -->

@@ -37,10 +37,43 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2) Definícia funkcií (teraz už môžu používať vyššie deklarované premené)
   // =========================================
 
+  // --- Helper: Reset form fields and errors ---
+  function resetAddHospitalForm() {
+    const fields = [
+      "hospital-name",
+      "hospital-country",
+      "hospital-city",
+      "hospital-street",
+      "hospital-postal"
+    ];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = "";
+        el.classList.remove("touched");
+      }
+    });
+    showError(nameErrorDiv, "");
+    showError(countryErrorDiv, "");
+    showError(cityErrorDiv, "");
+    showError(streetErrorDiv, "");
+    showError(postalErrorDiv, "");
+    if (addMessage) {
+      addMessage.textContent = "";
+      addMessage.classList.remove("error", "success");
+    }
+  }
+
   // --- Prepínanie tabov (All / Add) ---
+  let lastTab = "all";
   function showTab(tab) {
     [tabAll, tabAdd].forEach(el => el?.classList.remove("active"));
     [tabAllContent, tabAddContent].forEach(el => el?.classList.add("hidden"));
+
+    // If leaving the add tab, reset the form
+    if (lastTab === "add" && tab !== "add") {
+      resetAddHospitalForm();
+    }
 
     if (tab === "all") {
       tabAll?.classList.add("active");
@@ -49,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tabAdd?.classList.add("active");
       tabAddContent?.classList.remove("hidden");
     }
+    lastTab = tab;
   }
 
   // --- Prepínanie režimu zobrazenia (Karty / Zoznam) ---
@@ -73,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Reapply search and filters
     performSearch();
+    updateSortIconsAll();
   }
 
   // ---  Všetky nemocnice (ALL)
@@ -247,6 +282,39 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
+  // --- Restore view mode on page load ---
+  function restoreHospitalViewMode() {
+    const savedMode = localStorage.getItem("hospitalViewMode") || "cards";
+    setViewMode(savedMode);
+
+    // Set sort select to A-Z on load
+    if (allSortSelect) {
+      allSortSelect.value = "alphabetical-asc";
+    }
+    updateSortIconsAll();
+  }
+
+  // --- Add sort arrow icons to table headers ---
+  function updateSortIconsAll() {
+    const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
+    allHeaderCells.forEach(th => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      // Remove old arrow if present
+      const oldArrow = th.querySelector('.sort-arrow');
+      if (oldArrow) th.removeChild(oldArrow);
+
+      // Show arrow only for the sorted column
+      if (col === allCurrentSortColumn) {
+        th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        arrow.textContent = allCurrentSortDirection === "asc" ? " ▲" : " ▼";
+        th.appendChild(arrow);
+      }
+    });
+  }
+
   // =========================================
   // 3) Pripojenie eventov po definícii funkcií
   // =========================================
@@ -259,8 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
   showTab("all");
 
   // --- Režim zobrazenia (LocalStorage) ---
-  const savedMode = localStorage.getItem("hospitalViewMode") || "cards";
-  setViewMode(savedMode);
+  restoreHospitalViewMode();
 
   // --- Kliknutia: All (cards / list) ---
   viewCardsBtnAll?.addEventListener("click", () => setViewMode("cards"));
@@ -281,17 +348,33 @@ document.addEventListener("DOMContentLoaded", () => {
         allCurrentSortDirection = "asc";
       }
 
-      // Update header styles
       allHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
       th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
 
-      // Reapply search and filters, then sort
+      updateSortIconsAll();
       performSearch();
     });
   });
 
   // --- Zmena selectu pre All (karty) ---
-  allSortSelect?.addEventListener("change", performSearch);
+  allSortSelect?.addEventListener("change", () => {
+    // Set sorting variables based on select
+    if (allSortSelect.value === "alphabetical-asc") {
+      allCurrentSortColumn = "name";
+      allCurrentSortDirection = "asc";
+    } else if (allSortSelect.value === "alphabetical-desc") {
+      allCurrentSortColumn = "name";
+      allCurrentSortDirection = "desc";
+    } else if (allSortSelect.value === "newest") {
+      allCurrentSortColumn = "created_at";
+      allCurrentSortDirection = "desc";
+    } else if (allSortSelect.value === "creation") {
+      allCurrentSortColumn = "created_at";
+      allCurrentSortDirection = "asc";
+    }
+    updateSortIconsAll();
+    performSearch();
+  });
 
   // --- Vyhľadávanie: input ---
   searchInput?.addEventListener("keyup", debounce(performSearch, 300));
@@ -304,11 +387,132 @@ document.addEventListener("DOMContentLoaded", () => {
   const addMessage = document.getElementById("add-hospital-message");
   const countrySelect = document.getElementById("hospital-country");
 
+  // --- Inline error elements for each input ---
+  const nameErrorDiv = document.getElementById("hospital-name-error");
+  const countryErrorDiv = document.getElementById("hospital-country-error");
+  const cityErrorDiv = document.getElementById("hospital-city-error");
+  const streetErrorDiv = document.getElementById("hospital-street-error");
+  const postalErrorDiv = document.getElementById("hospital-postal-error");
+
+  // --- Inline error display functions ---
+  function showError(div, msg) {
+    if (div) div.textContent = msg;
+  }
+  function clearError(div) {
+    if (div) div.textContent = "";
+  }
+
+  // --- Validation function for add hospital form ---
+  function validateHospitalForm() {
+    let isValid = true;
+    clearError(nameErrorDiv);
+    clearError(countryErrorDiv);
+    clearError(cityErrorDiv);
+    clearError(streetErrorDiv);
+    clearError(postalErrorDiv);
+
+    const name = (document.getElementById("hospital-name")?.value || "").trim();
+    const country = (document.getElementById("hospital-country")?.value || "").trim();
+    const city = (document.getElementById("hospital-city")?.value || "").trim();
+    const street = (document.getElementById("hospital-street")?.value || "").trim();
+    const postal = (document.getElementById("hospital-postal")?.value || "").trim();
+
+    if (name.length < 3 || name.length > 255) {
+      showError(nameErrorDiv, "Názov musí mať 3 až 255 znakov.");
+      isValid = false;
+    }
+    if (!country) {
+      showError(countryErrorDiv, "Štát je povinný.");
+      isValid = false;
+    }
+    if (!/^[^\d]+$/.test(city) || city.length < 3 || city.length > 255) {
+      showError(cityErrorDiv, "Mesto nesmie obsahovať čísla a musí mať 3 až 255 znakov.");
+      isValid = false;
+    }
+    if (!/[a-zA-Z]{3,}/.test(street) || !/\d/.test(street) || street.length < 4 || street.length > 255) {
+      showError(streetErrorDiv, "Ulica musí obsahovať aspoň 3 písmená, aspoň jedno číslo a mať 4 až 255 znakov.");
+      isValid = false;
+    }
+    if (!/^\d{4,8}$/.test(postal)) {
+      showError(postalErrorDiv, "PSČ musí obsahovať iba čísla a mať dĺžku 4 až 8 znakov.");
+      isValid = false;
+    }
+    return isValid;
+  }
+
+  // --- Single field validation on blur ---
+  function validateSingleField(id) {
+    const value = (document.getElementById(id)?.value || "").trim();
+    switch (id) {
+      case "hospital-name":
+        if (value.length < 3 || value.length > 255) {
+          showError(nameErrorDiv, "Názov musí mať 3 až 255 znakov.");
+        } else {
+          showError(nameErrorDiv, "");
+        }
+        break;
+      case "hospital-country":
+        if (!value) {
+          showError(countryErrorDiv, "Štát je povinný.");
+        } else {
+          showError(countryErrorDiv, "");
+        }
+        break;
+      case "hospital-city":
+        if (!/^[^\d]+$/.test(value) || value.length < 3 || value.length > 255) {
+          showError(cityErrorDiv, "Mesto nesmie obsahovať čísla a musí mať 3 až 255 znakov.");
+        } else {
+          showError(cityErrorDiv, "");
+        }
+        break;
+      case "hospital-street":
+        if (!/[a-zA-Z]{3,}/.test(value) || !/\d/.test(value) || value.length < 4 || value.length > 255) {
+          showError(streetErrorDiv, "Ulica musí obsahovať aspoň 3 písmená, aspoň jedno číslo a mať 4 až 255 znakov.");
+        } else {
+          showError(streetErrorDiv, "");
+        }
+        break;
+      case "hospital-postal":
+        if (!/^\d{4,8}$/.test(value)) {
+          showError(postalErrorDiv, "PSČ musí obsahovať iba čísla a mať dĺžku 4 až 8 znakov.");
+        } else {
+          showError(postalErrorDiv, "");
+        }
+        break;
+    }
+  }
+
+  ["hospital-name", "hospital-country", "hospital-city", "hospital-street", "hospital-postal"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("blur", () => {
+        el.classList.add("touched");
+        validateSingleField(id);
+      });
+    }
+  });
+
+  // --- Add hospital button click ---
   if (addBtn) {
     addBtn.addEventListener("click", async () => {
+      // Mark all fields as touched
+      ["hospital-name", "hospital-country", "hospital-city", "hospital-street", "hospital-postal"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("touched");
+      });
+
       if (addMessage) {
         addMessage.textContent = "";
         addMessage.classList.remove("error", "success");
+      }
+
+      // Inline validation
+      if (!validateHospitalForm()) {
+        if (addMessage) {
+          addMessage.textContent = "Vyplňte všetky polia správne.";
+          addMessage.classList.add("error");
+        }
+        return;
       }
 
       const name = (document.getElementById("hospital-name")?.value || "").trim();
@@ -316,47 +520,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const city = (document.getElementById("hospital-city")?.value || "").trim();
       const street = (document.getElementById("hospital-street")?.value || "").trim();
       const postal = (document.getElementById("hospital-postal")?.value || "").trim();
-
-      // Validation checks
-      if (name.length < 3 || name.length > 255) {
-        if (addMessage) {
-          addMessage.textContent = "Názov musí mať 3 až 255 znakov.";
-          addMessage.classList.add("error");
-        }
-        return;
-      }
-
-      if (!/^[^\d]+$/.test(city) || city.length < 3 || city.length > 255) {
-        if (addMessage) {
-          addMessage.textContent = "Mesto nesmie obsahovať čísla a musí mať 3 až 255 znakov.";
-          addMessage.classList.add("error");
-        }
-        return;
-      }
-
-      if (!/[a-zA-Z]{3,}/.test(street) || !/\d/.test(street) || street.length < 4 || street.length > 255) {
-        if (addMessage) {
-          addMessage.textContent = "Ulica musí obsahovať aspoň 3 písmená, aspoň jedno číslo a mať 4 až 255 znakov.";
-          addMessage.classList.add("error");
-        }
-        return;
-      }
-
-      if (!/^\d{4,8}$/.test(postal)) {
-        if (addMessage) {
-          addMessage.textContent = "PSČ musí obsahovať iba čísla a mať dĺžku 4 až 8 znakov.";
-          addMessage.classList.add("error");
-        }
-        return;
-      }
-
-      if (!name || !country || !city || !street || !postal) {
-        if (addMessage) {
-          addMessage.textContent = "Vyplňte všetky polia.";
-          addMessage.classList.add("error");
-        }
-        return;
-      }
 
       try {
         const resp = await fetch("/hospitals/add", {
