@@ -1,22 +1,174 @@
 {% extends "layout.html" %}
 
 {% block title %}
-eVýsledky - Správy
+Správa pacientov - STU FEI
 {% endblock %}
 
 {% block stylesheet %}
-{{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/spravy.css') }}">
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/spravy.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/spravy.css') }}">
 {% endblock %}
 
 {% block header %}
-Správy
+Správy (modified patients.html)
 {% endblock %}
 
 {% block content %}
-<div class="spravy-content">
-  <h2>Správy</h2>
-  <p>Táto sekcia zatiaľ nemá žiaden obsah. Pracujeme na nej!</p>
+<div class="patients-container">
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs">
+      <div class="tab active" id="tab-all">Všetci pacienti</div>
+      <div class="tab" id="tab-add">Nová správa</div>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- Tab ALL (Všetci pacienti) -->
+  <!-- ========================== -->
+  <div class="tab-content" id="tab-all-content">
+    <!-- Riadok: nadpis + tlačidlá vpravo -->
+    <div class="all-header">
+      <h2>Zoznam pacientov</h2>
+      <div class="header-buttons">
+        <button id="view-cards" class="view-toggle active" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search bar moved here -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Meno, priezvisko, telefón alebo doktor" />
+    </div>
+
+    <div class="filters">
+      <!-- Sorting Dropdown -->
+      <div class="form-group">
+        <label for="sort-select">
+          <i class="fas fa-sort"></i> Zoradiť podľa:
+        </label>
+        <select id="sort-select" class="sort-select">
+          <option value="creation" selected>Od najstarších po najnovších</option>
+          <option value="newest">Od najnovších po najstarších</option>
+          <option value="alphabetical-asc">Abecedne (A-Z)</option>
+          <option value="alphabetical-desc">Abecedne (Z-A)</option>
+        </select>
+      </div>
+
+      <!-- Hospital Filter -->
+      <div class="form-group">
+        <label for="hospital-filter-dropdown">
+          <i class="fas fa-hospital"></i> Nemocnica:
+        </label>
+        <select id="hospital-filter-dropdown" class="sort-select">
+          <option value="">Všetky nemocnice</option>
+        </select>
+      </div>
+
+      <!-- Doctor Filter -->
+      <div class="form-group">
+        <label for="doctor-filter-dropdown">
+          <i class="fas fa-user-md"></i> Doktor:
+        </label>
+        <select id="doctor-filter-dropdown" class="sort-select">
+          <option value="">Všetci doktori</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Karty -->
+    <div id="all-cards-container">
+      <div class="cards" id="all-patients-list"></div>
+    </div>
+
+    <!-- Tabuľka (list) -->
+    <div id="all-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+        <table class="patients-list-table">
+          <thead>
+            <tr>
+              <th data-column="full_name">
+                Celé meno
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="created_at">
+                Dátum vytvorenia
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="phone_number">
+                Telefón
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="email">
+                Email
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="doctor">
+                Doktor
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="hospital">
+                Nemocnica
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="all-list-body">
+            <!-- Generované v JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== -->
+  <!-- Tab ADD (formulár) -->
+  <!-- =================== -->
+  <div class="tab-content hidden hidden-js" id="tab-add-content">
+    <h2 class="form-title">
+      <i class="fas fa-user-plus"></i> Nová správa
+    </h2>
+
+    <form id="send-message-form">
+      <!-- Príjemca -->
+      <div class="form-group">
+        <label for="message-recipient">Príjemca</label>
+        <input type="text" id="message-recipient" name="recipient" placeholder="Zadajte meno alebo ID príjemcu" required />
+        <div class="field-error" id="message-recipient-error"></div>
+      </div>
+
+      <!-- Text správy -->
+      <div class="form-group">
+        <label for="message-text">Správa</label>
+        <textarea id="message-text" name="message" rows="10" style="resize: vertical; overflow-y: auto; width: 100%; font-size: 1rem; padding: 0.5rem;" required></textarea>
+        <div class="field-error" id="message-text-error"></div>
+      </div>
+
+      <!-- Priložený obrázok -->
+      <div class="form-group">
+        <label for="message-image">Priložiť obrázok</label>
+        <input type="file" id="message-image" name="image" accept="image/*" />
+        <div class="field-info" id="message-image-name"></div>
+      </div>
+
+      <div id="send-message-feedback"></div>
+
+      <!-- Tlačidlo na odoslanie správy -->
+      <button id="send-message-btn" class="add-btn" type="button" disabled>Odoslať správu</button>
+    </form>
+  </div>
+  
 </div>
 {% endblock %}
 
