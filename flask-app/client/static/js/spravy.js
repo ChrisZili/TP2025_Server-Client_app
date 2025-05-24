@@ -63,6 +63,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   //const gdprCheckbox = document.getElementById("gdpr");
   //const addBtn = document.getElementById("add-patient-btn");
   const sendBtn = document.getElementById("send-message-btn");
+  const recipientInput = document.getElementById("message-recipient");
+  const messageInput = document.getElementById("message-text");
+  const imageInput = document.getElementById("message-image");
+  const feedbackDiv = document.getElementById("send-message-feedback");
 
   // Error divy
   //const firstNameErrorDiv = document.getElementById("patient-first-name-error");
@@ -729,6 +733,68 @@ if (allListTableHead) {
     applyFiltersAndSorting();
   });
 }
+
+
+
+// Helper to show feedback
+  function showFeedback(msg, isError = true) {
+    feedbackDiv.textContent = msg;
+    feedbackDiv.className = isError ? "error" : "success";
+  }
+
+  // Enable button when inputs are not empty
+  [recipientInput, messageInput].forEach((el) =>
+    el.addEventListener("input", () => {
+      sendBtn.disabled = !(recipientInput.value.trim() && messageInput.value.trim());
+    })
+  );
+
+  sendBtn.addEventListener("click", async () => {
+    showFeedback(""); // Clear previous
+
+    // Simple validation
+    const recipient = recipientInput.value.trim();
+    const message = messageInput.value.trim();
+
+    if (!recipient || !message) {
+      showFeedback("Príjemca a správa sú povinné polia.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("recipient", recipient);
+    formData.append("message", message);
+
+    if (imageInput.files.length > 0) {
+      formData.append("image", imageInput.files[0]);
+    }
+
+    try {
+      const response = await fetch("/messages/send", {
+        method: "POST",
+        body: formData,
+        credentials: "include"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Chyba pri odosielaní správy.");
+
+      showFeedback(data.message || "Správa bola úspešne odoslaná.", false);
+
+      // Reset form
+      document.getElementById("send-message-form").reset();
+      sendBtn.disabled = true;
+    } catch (err) {
+      console.error("Sending message failed:", err);
+      showFeedback(err.message || "Správu sa nepodarilo odoslať.");
+    }
+  });
+
+
+
+
+
 
 // On initial render, set arrow indicators
 updateSortIconsPatients();

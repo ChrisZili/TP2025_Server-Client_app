@@ -2,6 +2,10 @@ from server.database import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from server.models.messages_data import MessageData
+
 class MessageImage(db.Model):
     __tablename__ = "message_images"
 
