@@ -736,7 +736,7 @@ if (allListTableHead) {
 
 
 
-// Helper to show feedback
+  // Helper to show feedback
   function showFeedback(msg, isError = true) {
     feedbackDiv.textContent = msg;
     feedbackDiv.className = isError ? "error" : "success";

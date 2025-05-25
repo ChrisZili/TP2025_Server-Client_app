@@ -1,10 +1,9 @@
 from server.database import db
 from server.models.user import User
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from server.models.messages_images_data import MessageImage
 from sqlalchemy import ForeignKey
 from datetime import datetime
-from server.models.messages_images_data import MessageImage
 
 
 class MessageData(db.Model):
