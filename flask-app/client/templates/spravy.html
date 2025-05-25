@@ -18,18 +18,18 @@ Správy (modified patients.html)
 <div class="patients-container">
   <div class="tabs-wrapper">
     <div class="tabs" id="tabs">
-      <div class="tab active" id="tab-all">Všetci pacienti</div>
+      <div class="tab active" id="tab-all">Zobraziť správy</div>
       <div class="tab" id="tab-add">Nová správa</div>
     </div>
   </div>
 
   <!-- ========================== -->
-  <!-- Tab ALL (Všetci pacienti) -->
+  <!-- Tab ALL (Zobraziť správy) -->
   <!-- ========================== -->
-  <div class="tab-content" id="tab-all-content">
-    <!-- Riadok: nadpis + tlačidlá vpravo -->
+  <div class="tab-content" id="tab-messages-content">
+    <!-- Header with title and view toggle buttons -->
     <div class="all-header">
-      <h2>Zoznam pacientov</h2>
+      <h2>Zoznam správ</h2>
       <div class="header-buttons">
         <button id="view-cards" class="view-toggle active" title="Karty">
           <i class="fas fa-th-large"></i>
@@ -40,98 +40,60 @@ Správy (modified patients.html)
       </div>
     </div>
 
-    <!-- Search bar moved here -->
+    <!-- Search bar for filtering messages by sender/recipient/content -->
     <div class="search-bar">
       <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search-input" placeholder="Meno, priezvisko, telefón alebo doktor" />
+      <input type="text" id="search-input" placeholder="Hľadať správu podľa odosielateľa, príjemcu alebo obsahu" />
     </div>
 
+    <!-- Filters - you can add later -->
     <div class="filters">
-      <!-- Sorting Dropdown -->
-      <div class="form-group">
-        <label for="sort-select">
-          <i class="fas fa-sort"></i> Zoradiť podľa:
-        </label>
-        <select id="sort-select" class="sort-select">
-          <option value="creation" selected>Od najstarších po najnovších</option>
-          <option value="newest">Od najnovších po najstarších</option>
-          <option value="alphabetical-asc">Abecedne (A-Z)</option>
-          <option value="alphabetical-desc">Abecedne (Z-A)</option>
-        </select>
-      </div>
-
-      <!-- Hospital Filter -->
-      <div class="form-group">
-        <label for="hospital-filter-dropdown">
-          <i class="fas fa-hospital"></i> Nemocnica:
-        </label>
-        <select id="hospital-filter-dropdown" class="sort-select">
-          <option value="">Všetky nemocnice</option>
-        </select>
-      </div>
-
-      <!-- Doctor Filter -->
-      <div class="form-group">
-        <label for="doctor-filter-dropdown">
-          <i class="fas fa-user-md"></i> Doktor:
-        </label>
-        <select id="doctor-filter-dropdown" class="sort-select">
-          <option value="">Všetci doktori</option>
-        </select>
-      </div>
+      <!-- Placeholder for future filters like date, sender, recipient -->
     </div>
 
-    <!-- Karty -->
-    <div id="all-cards-container">
-      <div class="cards" id="all-patients-list"></div>
+    <!-- Cards container -->
+    <div id="messages-cards-container">
+      <div class="cards" id="messages-list-cards"></div>
     </div>
 
-    <!-- Tabuľka (list) -->
-    <div id="all-list-container" class="hidden">
+    <!-- Table (list) container -->
+    <div id="messages-list-container" class="hidden">
       <div class="table-scroll-wrapper">
-        <table class="patients-list-table">
+        <table class="messages-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">
-                Celé meno
+              <th data-column="sender">
+                Odosielateľ
                 <span class="arrow-up">&#9650;</span>
                 <span class="arrow-down">&#9660;</span>
               </th>
-              <th data-column="created_at">
-                Dátum vytvorenia
+              <th data-column="recipient">
+                Príjemca
                 <span class="arrow-up">&#9650;</span>
                 <span class="arrow-down">&#9660;</span>
               </th>
-              <th data-column="phone_number">
-                Telefón
+              <th data-column="content">
+                Správa
                 <span class="arrow-up">&#9650;</span>
                 <span class="arrow-down">&#9660;</span>
               </th>
-              <th data-column="email">
-                Email
-                <span class="arrow-up">&#9650;</span>
-                <span class="arrow-down">&#9660;</span>
-              </th>
-              <th data-column="doctor">
-                Doktor
-                <span class="arrow-up">&#9650;</span>
-                <span class="arrow-down">&#9660;</span>
-              </th>
-              <th data-column="hospital">
-                Nemocnica
+              <th data-column="sent_at">
+                Dátum odoslania
                 <span class="arrow-up">&#9650;</span>
                 <span class="arrow-down">&#9660;</span>
               </th>
             </tr>
           </thead>
-          <tbody id="all-list-body">
-            <!-- Generované v JS -->
+          <tbody id="messages-list-body">
+            <!-- Populated dynamically -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
+
+  
   <!-- =================== -->
   <!-- Tab ADD (formulár) -->
   <!-- =================== -->

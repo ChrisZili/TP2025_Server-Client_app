@@ -44,6 +44,35 @@ def send_message():
     except Exception as e:
         logger.exception("send_message: Error")
         return jsonify({"error": "Internal server error"}), 500
+    
+
+@bp.route('/list', methods=['GET'])
+@jwt_required()
+def list_messages():
+    """Get list of messages for the current user."""
+    logger.info("list_messages endpoint hit")
+    user_id = get_jwt_identity()
+
+    if not (request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("list_messages: Frontend does not accept JSON")
+        return jsonify({'error': 'Only JSON responses supported'}), 406
+
+    try:
+        from server.models.messages_data import MessageData
+
+        messages = MessageData.query.filter(
+            (MessageData.sender_id == user_id) | (MessageData.recipient_id == user_id)
+        ).order_by(MessageData.timestamp.desc()).all()
+
+        response_data = [m.to_dict() for m in messages]
+
+        logger.info("list_messages: Loaded %d messages", len(response_data))
+        return jsonify(response_data), 200
+
+    except Exception as e:
+        logger.exception("list_messages: Exception occurred: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
 
 
 
