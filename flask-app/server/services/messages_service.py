@@ -25,7 +25,8 @@ class MessageService:
             if recipient_input.isdigit():
                 recipient_user = User.query.get(int(recipient_input))
             else:
-                recipient_user = User.query.filter_by(username=recipient_input).first()
+                #recipient_user = User.query.filter_by(username=recipient_input).first()
+                recipient_user = User.query.filter_by(email=recipient_input).first()
 
             if not recipient_user:
                 logger.warning("Recipient not found: %s", recipient_input)

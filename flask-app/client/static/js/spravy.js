@@ -736,6 +736,10 @@ if (allListTableHead) {
 
 
 
+
+  //##################################################################################
+  //creating messages
+
   // Helper to show feedback
   function showFeedback(msg, isError = true) {
     feedbackDiv.textContent = msg;
@@ -770,7 +774,7 @@ if (allListTableHead) {
     }
 
     try {
-      const response = await fetch("/messages/send", {
+      const response = await fetch("/spravy/send", {
         method: "POST",
         body: formData,
         credentials: "include"
