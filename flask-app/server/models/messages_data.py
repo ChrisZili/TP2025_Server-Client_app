@@ -33,6 +33,7 @@ class MessageData(db.Model):
         "recipient_id": self.recipient_id,
         "recipient_email": User.query.get(self.recipient_id).email if self.recipient_id else None,
         "content": self.content,
-        "timestamp": self.timestamp.isoformat()
+        "timestamp": self.timestamp.isoformat(),
+        "is_read": self.is_read
     }
 

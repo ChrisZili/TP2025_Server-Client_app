@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let allMessagesData = [];
   const viewCardsBtnAll = document.getElementById("view-cards");
   const viewListBtnAll = document.getElementById("view-list");
+  document.getElementById("search-input")?.addEventListener("input", debounce(applyMessageSearch, 200));
+
 
   // Load all messages
   async function loadAllMessages() {
@@ -62,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (cards) cards.innerHTML = "";
     if (table) table.innerHTML = "";
+    document.getElementById("search-input").value = "";
   });
 
   // Form elements - "Send message"
@@ -93,6 +96,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     div.textContent = "";
     div.classList.remove("active");
   }
+
+  function applyMessageSearch() {
+    const search = document.getElementById("search-input")?.value.trim().toLowerCase() || "";
+
+    const filtered = allMessagesData.filter(m =>
+      m.sender_email?.toLowerCase().includes(search)
+    );
+
+    const viewMode = localStorage.getItem("messageViewMode") || "cards";
+
+    if (viewMode === "cards") {
+      renderMessagesCards(filtered);
+    } else {
+      renderMessagesTable(filtered);
+    }
+  }
+
 
   // Tab switching function
   function showTab(tab) {
@@ -158,26 +178,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-
   function renderMessagesCards(messages) {
     const container = document.getElementById("messages-list-cards");
-    container.innerHTML = "";
+    if (!container) return;
 
-    if (!messages.length) {
-      container.innerHTML = "<p>Žiadne správy nenájdené.</p>";
-      return;
-    }
+    container.innerHTML = "";
 
     messages.forEach(msg => {
       const card = document.createElement("div");
-      card.classList.add("card");
+      card.className = "card message-card";
+
+      // Each card is a link to spravy_details/(card_ID)
+      card.addEventListener("click", async () => {
+        if (event.target.closest(".toggle-read-btn")) return;
+        try {
+          if (!msg.is_read) {
+            await fetch(`/spravy/${msg.id}/mark_read`, {
+              method: "PUT",
+              credentials: "include"
+            });
+          }
+
+          window.location.href = `/spravy/${msg.id}`;
+        } catch (err) {
+          console.error("Failed to mark message as read:", err);
+          window.location.href = `/spravy/${msg.id}`; // fallback
+        }
+      });
 
       card.innerHTML = `
-        <h3>Správa #${msg.id}</h3>
+        <strong>${!msg.is_read ? "🔴 " : ""}Správa #${msg.id}</strong><br>
         <p><strong>Od:</strong> ${msg.sender_email}</p>
         <p><strong>Pre:</strong> ${msg.recipient_email}</p>
         <p><strong>Obsah:</strong> ${msg.content}</p>
         <p class="timestamp"><i class="far fa-clock"></i> ${msg.timestamp}</p>
+        <button class="toggle-read-btn" data-id="${msg.id}" title="${msg.is_read ? 'Unmark as read' : 'Mark as read'}">
+          ${msg.is_read ? "📫" : "📭"}
+        </button>
       `;
 
       container.appendChild(card);
@@ -208,6 +245,69 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+/*
+  document.querySelectorAll(".toggle-read-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent card click
+      const msgId = btn.dataset.id;
+
+      try {
+        const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { Accept: "application/json" }
+        });
+
+        const result = await resp.json();
+        if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
+
+        // Update local message data
+        const message = allMessagesData.find(m => m.id == msgId);
+        if (message) {
+          message.is_read = result.is_read;
+          renderMessagesCards(allMessagesData);
+        }
+
+      } catch (err) {
+        console.error("Toggle error:", err);
+        alert("Nepodarilo sa zmeniť stav správy.");
+      }
+    });
+  });
+*/
+
+  document.getElementById("messages-list-cards").addEventListener("click", async (e) => {
+  const btn = e.target.closest(".toggle-read-btn");
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation(); // Prevent triggering card click
+
+  const msgId = btn.dataset.id;
+
+  try {
+    const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { Accept: "application/json" }
+    });
+
+    const result = await resp.json();
+    if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
+
+    // Update local message data
+    const message = allMessagesData.find(m => m.id == msgId);
+    if (message) {
+      message.is_read = result.is_read;
+      renderMessagesCards(allMessagesData);
+    }
+
+  } catch (err) {
+    console.error("Toggle error:", err);
+    alert("Nepodarilo sa zmeniť stav správy.");
+  }
+});
 
 
 

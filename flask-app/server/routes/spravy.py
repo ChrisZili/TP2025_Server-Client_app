@@ -72,7 +72,86 @@ def list_messages():
     except Exception as e:
         logger.exception("list_messages: Exception occurred: %s", e)
         return jsonify({'error': 'Internal server error'}), 500
+    
 
+@bp.route('/<int:message_id>', methods=['GET'])
+@jwt_required()
+def get_message(message_id):
+    """Získanie detailu konkrétnej správy."""
+    logger.info("get_message endpoint vyžiadaný pre message_id: %s", message_id)
+    user_id = get_jwt_identity()
+
+    try:
+        message = db.session.get(MessageData, message_id)
+        if not message:
+            return jsonify({"error": "Správa neexistuje"}), 404
+
+        # Optional: check if user is authorized to view it
+        #if user_id not in [message.sender_id, message.recipient_id]:
+        #    return jsonify({"error": "Nemáte prístup k tejto správe"}), 403
+
+        response_data = message.to_dict()
+        logger.info("get_message: Úspešne načítaná správa %s", message_id)
+
+    except Exception as e:
+        logger.exception("get_message: chyba")
+        return jsonify({"error": "Chyba servera"}), 500
+
+    if request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']:
+        return jsonify(response_data), 200
+    else:
+        return render_template("spravy_details.html", message=response_data), 200
+
+
+@bp.route('/<int:message_id>/mark_read', methods=['PUT'])
+@jwt_required()
+def mark_message_as_read(message_id):
+    user_id = get_jwt_identity()
+    logger.info("User %s is marking message %s as read", user_id, message_id)
+
+    message = db.session.get(MessageData, message_id)
+    if not message:
+        return jsonify({"error": "Správa neexistuje"}), 404
+
+    #only the recipient can mark message as is_read
+    #if user_id != message.recipient_id:
+    #    return jsonify({"error": "Nemáte oprávnenie označiť túto správu ako prečítanú."}), 403
+
+    try:
+        if not message.is_read:
+            message.is_read = True
+            db.session.commit()
+            logger.info("Message %s marked as read", message_id)
+        return jsonify({"message": "Správa označená ako prečítaná"}), 200
+    except Exception as e:
+        logger.exception("Chyba pri označovaní správy ako prečítanej")
+        return jsonify({"error": "Serverová chyba"}), 500
+    
+
+@bp.route("/<int:message_id>/toggle_read", methods=["PUT"])
+@jwt_required()
+def toggle_read(message_id):
+    user_id = get_jwt_identity()
+    logger.info(f"User {user_id} is toggling read status for message {message_id}")
+
+    try:
+        message = db.session.get(MessageData, message_id)
+        if not message:
+            return jsonify({"error": "Správa neexistuje"}), 404
+
+        # Only recipient can toggle read state
+        #if user_id != message.recipient_id:
+        #    return jsonify({"error": "Nemáte oprávnenie meniť stav tejto správy."}), 403
+
+        message.is_read = not message.is_read
+        db.session.commit()
+
+        logger.info(f"Message {message_id} toggled to is_read={message.is_read}")
+        return jsonify({"success": True, "is_read": message.is_read}), 200
+
+    except Exception as e:
+        logger.exception("Chyba pri togglovaní správy")
+        return jsonify({"error": "Chyba pri aktualizácii správy"}), 500
 
 
 

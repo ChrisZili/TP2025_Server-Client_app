@@ -678,3 +678,17 @@ html, body {
     width: 100%;
   }
 }
+
+.toggle-read-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.toggle-read-btn:hover {
+  transform: scale(1.2);
+}
