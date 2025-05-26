@@ -55,6 +55,12 @@
   color: #333;
 }
 
+.message-text,
+.info-row span {
+  word-break: break-word;      /* breaks long strings if needed */
+  overflow-wrap: anywhere;     /* modern alternative that works even better */
+}
+
 /* Animation reveal */
 .hidden-js {
   visibility: hidden;

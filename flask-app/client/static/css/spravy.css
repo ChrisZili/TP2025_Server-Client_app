@@ -193,6 +193,25 @@ html, body {
   margin-right: auto;
 }
 
+.card.unread {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ADCF66, #8EBF45);
+  color: #000;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  max-width: 60vw; 
+  width: 100%;
+  font-size: 1.05rem;
+  margin-right: auto;
+}
+
 .card h3 {
   font-weight: bold;
   margin-bottom: 8px;
@@ -202,6 +221,13 @@ html, body {
 .card p {
   margin: 4px 0;
   font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;        /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .card:hover {
@@ -224,7 +250,7 @@ html, body {
   border-radius: 4px;
 }
 
-.patients-list-table {
+.messages-list-table {
   width: 100%;
   min-width: 1000px;
   border-collapse: collapse;
@@ -233,11 +259,11 @@ html, body {
   table-layout: fixed;
 }
 
-.patients-list-table thead tr {
+.messages-list-table thead tr {
   background-color: #f7f7f7;
 }
 
-.patients-list-table thead th {
+.messages-list-table thead th {
   text-align: left;
   padding: 14px 16px;
   font-weight: bold;
@@ -253,25 +279,25 @@ html, body {
   text-overflow: ellipsis;
 }
 
-.patients-list-table thead th i {
+.messages-list-table thead th i {
   margin-left: 6px;
   color: #999;
   font-size: 0.85rem;
 }
 
-.patients-list-table thead th.sort-asc i {
+.messages-list-table thead th.sort-asc i {
   color: #3a7bd5;
   transform: rotate(180deg);
 }
 
-.patients-list-table thead th.sort-desc i {
+.messages-list-table thead th.sort-desc i {
   color: #3a7bd5;
   transform: rotate(0deg);
 }
 
 /* Sorting arrows for table headers */
-.patients-list-table th .arrow-up,
-.patients-list-table th .arrow-down {
+.messages-list-table th .arrow-up,
+.messages-list-table th .arrow-down {
   display: none;
   font-size: 1rem;
   margin-left: 4px;
@@ -279,38 +305,38 @@ html, body {
   vertical-align: middle;
 }
 
-.patients-list-table th.sort-asc .arrow-up {
+.messages-list-table th.sort-asc .arrow-up {
   display: inline;
 }
 
-.patients-list-table th.sort-desc .arrow-down {
+.messages-list-table th.sort-desc .arrow-down {
   display: inline;
 }
 
-.patients-list-table tbody {
+.messages-list-table tbody {
   display: block;
   height: 100%;
   overflow-y: auto;
   width: 100%;
 }
 
-.patients-list-table thead,
-.patients-list-table tbody tr {
+.messages-list-table thead,
+.messages-list-table tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed;
 }
 
-.patients-list-table tbody tr {
+.messages-list-table tbody tr {
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
 }
 
-.patients-list-table tbody tr:hover {
+.messages-list-table tbody tr:hover {
   background-color: #fafafa;
 }
 
-.patients-list-table tbody td {
+.messages-list-table tbody td {
   padding: 14px 16px;
   font-size: 1.05rem;
   color: #444;
@@ -318,6 +344,15 @@ html, body {
   word-wrap: break-word;
   white-space: normal;
   overflow-wrap: break-word;
+}
+
+.messages-list-table td.message-column {
+  max-width: 400px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  word-wrap: break-word;
+  font-family: monospace;
 }
 
 /* == Vyhľadávanie == */

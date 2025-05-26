@@ -188,8 +188,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const card = document.createElement("div");
       card.className = "card message-card";
 
+      if (!msg.is_read) {
+        card.classList.add("unread");
+      }
+
       // Each card is a link to spravy_details/(card_ID)
-      card.addEventListener("click", async () => {
+      card.addEventListener("click", async (event) => {
         if (event.target.closest(".toggle-read-btn")) return;
         try {
           if (!msg.is_read) {
@@ -207,12 +211,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       card.innerHTML = `
-        <strong>${!msg.is_read ? "🔴 " : ""}Správa #${msg.id}</strong><br>
+        <strong>Správa #${msg.id}</strong><br>
         <p><strong>Od:</strong> ${msg.sender_email}</p>
         <p><strong>Pre:</strong> ${msg.recipient_email}</p>
         <p><strong>Obsah:</strong> ${msg.content}</p>
         <p class="timestamp"><i class="far fa-clock"></i> ${msg.timestamp}</p>
-        <button class="toggle-read-btn" data-id="${msg.id}" title="${msg.is_read ? 'Unmark as read' : 'Mark as read'}">
+        <button class="toggle-read-btn" data-id="${msg.id}" title="${msg.is_read ? 'Označiť ako neprečítané' : 'Označiť ako prečítané'}">
           ${msg.is_read ? "📫" : "📭"}
         </button>
       `;
@@ -222,67 +226,99 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
+
+    document.getElementById("messages-list-cards").addEventListener("click", async (e) => {
+    const btn = e.target.closest(".toggle-read-btn");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation(); // Prevent triggering card click
+
+    const msgId = btn.dataset.id;
+
+    try {
+      const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { Accept: "application/json" }
+      });
+
+      const result = await resp.json();
+      if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
+
+      // Update local message data
+      const message = allMessagesData.find(m => m.id == msgId);
+      if (message) {
+        message.is_read = result.is_read;
+        renderMessagesCards(allMessagesData);
+      }
+
+    } catch (err) {
+      console.error("Toggle error:", err);
+      alert("Nepodarilo sa zmeniť stav správy.");
+    }
+  });
+
+
   function renderMessagesTable(messages) {
     const tbody = document.getElementById("messages-list-body");
     tbody.innerHTML = "";
 
     if (!messages.length) {
-      tbody.innerHTML = "<tr><td colspan='4'>Žiadne správy.</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='5'>Žiadne správy.</td></tr>";
       return;
     }
 
     messages.forEach(msg => {
       const tr = document.createElement("tr");
 
+      // Set row background based on read status
+      tr.style.backgroundColor = msg.is_read ? "#ffffff" : "#F3E6B7";
+
       tr.innerHTML = `
         <td>${msg.sender_email}</td>
         <td>${msg.recipient_email}</td>
-        <td>${msg.content}</td>
+        <td class="message-column">${msg.content}</td>
         <td>${msg.timestamp}</td>
+        <td>
+          <button 
+            class="toggle-read-btn" 
+            data-id="${msg.id}" 
+            title="${msg.is_read ? 'Označiť ako neprečítané' : 'Označiť ako prečítané'}">
+            ${msg.is_read ? "📫" : "📭"}
+          </button>
+        </td>
       `;
+
+      // Row click (except when clicking on button)
+      tr.addEventListener("click", async (event) => {
+        if (event.target.closest(".toggle-read-btn")) return;
+
+        try {
+          if (!msg.is_read) {
+            await fetch(`/spravy/${msg.id}/mark_read`, {
+              method: "PUT",
+              credentials: "include"
+            });
+          }
+          window.location.href = `/spravy/${msg.id}`;
+        } catch (err) {
+          console.error("Failed to mark message as read:", err);
+          window.location.href = `/spravy/${msg.id}`; // fallback
+        }
+      });
 
       tbody.appendChild(tr);
     });
   }
+  
 
-/*
-  document.querySelectorAll(".toggle-read-btn").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      e.stopPropagation(); // Prevent card click
-      const msgId = btn.dataset.id;
-
-      try {
-        const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
-          method: "PUT",
-          credentials: "include",
-          headers: { Accept: "application/json" }
-        });
-
-        const result = await resp.json();
-        if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
-
-        // Update local message data
-        const message = allMessagesData.find(m => m.id == msgId);
-        if (message) {
-          message.is_read = result.is_read;
-          renderMessagesCards(allMessagesData);
-        }
-
-      } catch (err) {
-        console.error("Toggle error:", err);
-        alert("Nepodarilo sa zmeniť stav správy.");
-      }
-    });
-  });
-*/
-
-  document.getElementById("messages-list-cards").addEventListener("click", async (e) => {
+  document.getElementById("messages-list-body").addEventListener("click", async (e) => {
   const btn = e.target.closest(".toggle-read-btn");
   if (!btn) return;
 
   e.preventDefault();
-  e.stopPropagation(); // Prevent triggering card click
+  e.stopPropagation(); // Prevent row click
 
   const msgId = btn.dataset.id;
 
@@ -300,7 +336,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const message = allMessagesData.find(m => m.id == msgId);
     if (message) {
       message.is_read = result.is_read;
-      renderMessagesCards(allMessagesData);
+      renderMessagesTable(allMessagesData); // <== re-render table
     }
 
   } catch (err) {
@@ -308,6 +344,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("Nepodarilo sa zmeniť stav správy.");
   }
 });
+
 
 
 
