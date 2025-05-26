@@ -1,7 +1,6 @@
 from server.database import db
 from server.models.user import User
 
-
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import date
 
@@ -62,4 +61,3 @@ class PatientData(User):
             "diagnosis_left_eye": self.diagnosis_left_eye
         })
         return info
-

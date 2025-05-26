@@ -184,7 +184,6 @@ class DoctorsService:
             db.session.rollback()
             return {'error': str(e)}, 500
 
-######################################################################################
     def add_doctor(self, user_id: int, data):
         logger.info("Spustená metóda add_doctor")
         user = User.query.get(int(user_id))
@@ -216,10 +215,8 @@ class DoctorsService:
         if User.query.filter_by(email=email).first():
             logger.error("Registrácia zlyhala: Email %s už existuje", email)
             return {'error': 'Email already exists'}, 400
-        if DoctorData.query.filter_by(phone_number=phone_number).first():
-            logger.error("Registrácia zlyhala: Telefónne číslo %s už existuje", email)
-            return {'error': 'Phone number already exists'}, 400
-        if not all([first_name, last_name, phone_number, gender, doctor_role, hospital_code, email, password]):
+
+        if not all([first_name, last_name, doctor_role, hospital_code, email, password]):
             logger.error("Chýbajú povinné údaje (vrátane emailu/hesla)")
             return {"error": "Chýbajú povinné údaje vrátane emailu a hesla"}, 400
 

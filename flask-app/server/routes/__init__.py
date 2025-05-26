@@ -9,6 +9,7 @@ from server.routes.user import bp as user_bp
 from server.routes.register import bp as register_bp
 from server.routes.photos import bp as photos_bp
 from server.routes.methods import bp as methods_bp
+from server.routes.messages import bp as messages_bp
 
 def register_blueprints(app):
     app.register_blueprint(account_bp)
@@ -22,5 +23,6 @@ def register_blueprints(app):
     app.register_blueprint(user_bp)
     app.register_blueprint(photos_bp)
     app.register_blueprint(methods_bp)
+    app.register_blueprint(messages_bp)
 
 

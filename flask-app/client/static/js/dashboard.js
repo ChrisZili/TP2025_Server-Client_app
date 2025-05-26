@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
       { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
       { icon: "fa fa-list",    label: "Spracované fotky", link: "/photos/processed_images" , countTemplate: "${data.processed_image_count} Všetkých záznamov" },
-      { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],

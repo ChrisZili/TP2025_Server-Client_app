@@ -1,4 +1,6 @@
 import logging
+from datetime import date
+
 from server.database import db
 from server.models.admin_data import AdminData
 from server.models.user import User
@@ -83,6 +85,7 @@ class PatientsService:
             return {'error': 'Unauthorized'}, 403
 
 
+
         result = []
         for patient in patients:
             item = {
@@ -100,7 +103,9 @@ class PatientsService:
             if patient.doctor_id:
                 doctor = DoctorData.query.get(patient.doctor_id)
                 if doctor:
+                    item["doctor_id"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
                     item["doctor_name"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
+                    item["hospital_id"] = doctor.hospital.id if doctor.hospital else None
                     item["hospital_name"] = doctor.hospital.name if doctor.hospital else None
 
             result.append(item)
@@ -117,18 +122,32 @@ class PatientsService:
             last_name = data.get('last_name')
             email = data.get('email')
             phone_number = data.get('phone_number')
-            birth_date = data.get('birth_date')
             birth_number = data.get('birth_number')
-            gender = data.get('gender')
-            doctor_id = data.get('doctor_id')
             password = data.get('password')
+            doctor_id = None
+            if user.user_type == 'doctor':
+                doctor_id = user_id
+            elif user.user_type == "admin":
+                admin = AdminData.query.get(user_id)
+                if not admin or not admin.hospital:
+                    return {'error': 'Admin hospital not found'}, 404
+                # Now access the hospital's doctors through the admin instance
+                # In the get_patients method
+                doctor_id = data.get('doctor_id')
+                if doctor_id and doctor_id not in [doctor.id for doctor in admin.hospital.doctors]:
+                    return {'error': 'Unauthorized to access this doctor'}, 403
+            elif user.user_type == 'super_admin':
+                doctor_id = data.get('doctor_id')
+                if doctor_id:
+                    doctor = DoctorData.query.get(doctor_id)
+                    if not doctor:
+                        return {'error': 'Doctor not found'}, 404
 
-            if not all([first_name, last_name, phone_number, birth_date, birth_number, gender, password]):
+
+            if not all([first_name, last_name, birth_number, password]):
                 return {'error': 'Missing required fields'}, 400
 
-            if PatientData.query.filter_by(birth_number=birth_number).first():
-                return {'error': 'Patient with this birth number already exists'}, 400
-
+            birth_date, gender = self.calculate_birth_date_and_gender(birth_number)
             new_patient = PatientData(
                 first_name=first_name,
                 last_name=last_name,
@@ -293,6 +312,31 @@ class PatientsService:
             db.session.rollback()
             logger.exception("Chyba pri priraďovaní pacienta: %s", e)
             return {'error': 'Interná chyba servera.'}, 500
+
+    def calculate_birth_date_and_gender(self, birth_number: str):
+        """
+        Získa dátum narodenia a pohlavie zo 6-ciferného rodného čísla (RRMMDD).
+        """
+        if len(birth_number) != 6 or not birth_number.isdigit():
+            raise ValueError("Rodné číslo musí mať presne 6 číslic (RRMMDD).")
+
+        rr = int(birth_number[:2])
+        mm = int(birth_number[2:4])
+        dd = int(birth_number[4:6])
+
+        # Určenie pohlavia a reálneho mesiaca
+        if mm > 50:
+            gender = "Žena"
+            mm -= 50
+        else:
+            gender = "Muž"
+
+        current_year = date.today().year % 100
+        century = 1900 if rr > current_year else 2000
+        year = century + rr
+
+        birthdate = date(year, mm, dd)
+        return birthdate, gender
 
     def check_user_id(self, user_id: int):
         """Overenie, či používateľ má oprávnenie super_admin."""

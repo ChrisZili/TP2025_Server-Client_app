@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { icon: "fa fa-images",  label: "Fotky",      link: "/photos/list" },
       { icon: "fa fa-list",    label: "Spracované fotky",     link: "/photos/processed_images" },
       { icon: "fa fa-microscope", label: "Metódy", link: "/methods" },
-      { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
+      { icon: "fa fa-envelope",label: "Správy",     link: "/messages" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
