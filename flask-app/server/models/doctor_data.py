@@ -9,7 +9,7 @@ class DoctorData(User):
     id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     first_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    phone_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=True)
+    phone_number: Mapped[str] = mapped_column(db.String(20), nullable=True)
     gender: Mapped[str] = mapped_column(db.String(10), nullable=True)
 
     # Titul
