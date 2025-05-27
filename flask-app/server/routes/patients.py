@@ -112,7 +112,7 @@ def list_patients():
         return jsonify({'error': 'Only JSON responses supported'}), 406
 
     try:
-        response_data, status = patient_service.get_patients(user_id)
+        response_data, status = patient_service.get_unassigned_patients(user_id)
         logger.info("list_patients: Zoznam pacientov načítaný so statusom %s", status)
     except Exception as e:
         logger.exception("list_patients: Výnimka pri získavaní pacientov: %s", e)
