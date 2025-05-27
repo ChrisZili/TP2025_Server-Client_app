@@ -148,6 +148,20 @@ html, body {
   border-color: #007bff;
 }
 
+.filter-btn {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn.active {
+  background-color: #ccc;
+}
+
 /* Example CSS for dropdown styling */
 .sort-select {
   width: 100%;
@@ -475,6 +489,16 @@ html, body {
 }
 
 /* == Hlásenia == */
+#error-message {
+  font-size: 14px;
+  background-color: rgba(255, 0, 0, 0.1); /* light red with transparency */
+  color: #b00020; /* darker red for contrast */
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
 #add-patient-message {
   margin-bottom: 15px;
   padding: 10px;

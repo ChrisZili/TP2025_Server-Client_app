@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from server.config import Config
@@ -73,4 +73,17 @@ def create_app(config_class=Config):
 
     except Exception as e:
         print(f"❌ Error loading error page: {e}")
+
+    #route for accessing images sent as part of a message
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        uploads_dir = os.path.join(os.path.dirname(app.root_path), 'uploads')
+        full_path = os.path.join(uploads_dir, filename)
+        print(f"Serving file: {filename}")
+        print(f"Full file path: {full_path}")
+        if not os.path.isfile(full_path):
+            print("[ERROR] File not found!")
+            return "File not found", 404
+        return send_from_directory(uploads_dir, filename)
+
     return app

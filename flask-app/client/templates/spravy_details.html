@@ -35,6 +35,19 @@ Detail Správy
     <h3>Text správy:</h3>
     <p id="message-content" class="message-text">Načítavam obsah správy...</p>
   </div>
+
+  <div class="message-images" id="message-images">
+    <!-- Images will be inserted here via JS if any -->
+  </div>
+
+  <!-- Lightbox container -->
+  <div id="lightbox" class="lightbox hidden">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-img" src="" alt="Enlarged Image" />
+    <div class="lightbox-nav lightbox-prev">&#10094;</div>
+    <div class="lightbox-nav lightbox-next">&#10095;</div>
+  </div>
+  
 </div>
 {% endblock %}
 

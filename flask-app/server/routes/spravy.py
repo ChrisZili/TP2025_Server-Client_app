@@ -6,9 +6,12 @@ from server.models.patient_data import PatientData
 from flask import Blueprint, request, jsonify, render_template
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.database import db
+from flask import send_from_directory, current_app
+import os
 import logging
 
 bp = Blueprint('spravy', __name__, url_prefix='/spravy')
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "bmp", "heic", "heif"}
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)  # make sure DEBUG logs are shown
@@ -24,7 +27,15 @@ def send_message():
 
     recipient_input = request.form.get("recipient")
     message = request.form.get("message")
-    image = request.files.get("image")  # For future use
+    images = request.files.getlist("images")
+    filtered_images = [img for img in images if img.filename and allowed_file(img.filename)]
+
+    logger.info(f"Received {len(images)} images, filtered to {len(filtered_images)} allowed images")
+    for i, f in enumerate(filtered_images):
+        logger.info(f"Image {i}: filename={f.filename}")
+
+    if len(filtered_images) > 10:
+        return jsonify({"error": "Maximálne 10 obrázkov."}), 400
 
     logger.debug("Send message form data: sender=%s, recipient=%s, message length=%d", user_id, recipient_input, len(message or ""))
 
@@ -75,9 +86,9 @@ def send_message():
     try:
         result, status_code = MessageService.send_message({
             'sender_id': sender.id,
-            'recipient_name_or_id': recipient.email,  # Always send email for resolution
+            'recipient_id': recipient.id,  # Always send email for resolution
             'content': message,
-            # 'image': image  # For future
+            'images': filtered_images,
         })
 
         return jsonify(result), status_code
@@ -90,9 +101,8 @@ def send_message():
 @bp.route('/list', methods=['GET'])
 @jwt_required()
 def list_messages():
-    """Get list of messages for the current user."""
     logger.info("list_messages endpoint hit")
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
 
     if not (request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
         logger.error("list_messages: Frontend does not accept JSON")
@@ -108,12 +118,25 @@ def list_messages():
         response_data = [m.to_dict() for m in messages]
 
         logger.info("list_messages: Loaded %d messages", len(response_data))
-        return jsonify(response_data), 200
+        return jsonify({
+            "user_id": user_id,
+            "messages": response_data
+        }), 200
 
     except Exception as e:
         logger.exception("list_messages: Exception occurred: %s", e)
         return jsonify({'error': 'Internal server error'}), 500
     
+
+'''@bp.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(os.path.join(current_app.root_path, 'uploads'), filename)'''
+
+
+'''@bp.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory('uploads', filename)'''
+
 
 @bp.route('/<int:message_id>', methods=['GET'])
 @jwt_required()
@@ -172,7 +195,7 @@ def mark_message_as_read(message_id):
 @bp.route("/<int:message_id>/toggle_read", methods=["PUT"])
 @jwt_required()
 def toggle_read(message_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     logger.info(f"User {user_id} is toggling read status for message {message_id}")
 
     try:
@@ -182,6 +205,7 @@ def toggle_read(message_id):
 
         # Only recipient can toggle read state
         if user_id != message.recipient_id:
+            logger.info(f"User {user_id} is unauthorized to toggle is_read for recipient {message.recipient_id}")
             return jsonify({"error": "Nemáte oprávnenie meniť stav tejto správy."}), 403
 
         message.is_read = not message.is_read
@@ -223,3 +247,6 @@ def get_spravy_page():
     else:
         logger.info(f"User with id {user_id_int} accessed spravy page")
         return render_template("spravy.html"), 200
+    
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

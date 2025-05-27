@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // -- All variables --
   let userType = "";
   let allMessagesData = [];
+  let currentFilterMode = "received";
+  let currentUserId = 0;
   const viewCardsBtnAll = document.getElementById("view-cards");
   const viewListBtnAll = document.getElementById("view-list");
   document.getElementById("search-input")?.addEventListener("input", debounce(applyMessageSearch, 200));
@@ -16,25 +18,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         credentials: "include"
       });
 
-      const messages = await response.json();
-      console.log("Fetched /spravy/list response:", messages); // Debug log
+      const data = await response.json();
+      console.log("Fetched /spravy/list response:", data);
 
       if (!response.ok) throw new Error("Chyba pri načítaní správ.");
 
-      // Map or enrich messages if needed (for example: resolving sender/recipient names)
-      allMessagesData = messages.map(msg => {
-        return {
-          ...msg,
-          timestamp: new Date(msg.timestamp).toLocaleString() // Format timestamp nicely
-        };
-      });
+      currentUserId = data.user_id;
 
-      // Placeholder for rendering function
-      //renderMessages(allMessagesData);
+      allMessagesData = data.messages.map(msg => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp).toLocaleString()
+      }));
+
       applyMessageSearch();
     } catch (err) {
       console.error(err);
-      //const container = document.getElementById("all-messages-container");
       const container = document.getElementById("messages-cards-container");
       if (container) {
         container.innerHTML = `<p>Chyba pri načítaní správ: ${err.message}</p>`;
@@ -97,23 +95,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     div.classList.remove("active");
   }
 
-  function applyMessageSearch() {
-    const search = document.getElementById("search-input")?.value.trim().toLowerCase() || "";
-
-    const filtered = allMessagesData.filter(m =>
-      m.sender_email?.toLowerCase().includes(search)
-    );
-
-    const viewMode = localStorage.getItem("messageViewMode") || "cards";
-
-    if (viewMode === "cards") {
-      renderMessagesCards(filtered);
-    } else {
-      renderMessagesTable(filtered);
-    }
-  }
-
-
   // Tab switching function
   function showTab(tab) {
     const tabMessages = document.getElementById("tab-messages-content");
@@ -164,11 +145,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function applyMessageSearch() {
     const search = document.getElementById("search-input")?.value.trim().toLowerCase() || "";
-    const filtered = allMessagesData.filter(m =>
-      m.content.toLowerCase().includes(search) ||
-      m.sender_email?.toLowerCase().includes(search) ||
-      m.recipient_email?.toLowerCase().includes(search)
-    );
+
+    const filtered = allMessagesData.filter(m => {
+      const matchesSearch =
+        m.content.toLowerCase().includes(search) ||
+        m.sender_email?.toLowerCase().includes(search) ||
+        m.recipient_email?.toLowerCase().includes(search);
+
+      const isSent = m.sender_id === currentUserId;
+      const isReceived = m.recipient_id === currentUserId;
+
+      if (currentFilterMode === "sent" && !isSent) return false;
+      if (currentFilterMode === "received" && !isReceived) return false;
+
+      return matchesSearch;
+    });
 
     const viewMode = localStorage.getItem("messageViewMode") || "cards";
     if (viewMode === "cards") {
@@ -177,6 +168,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderMessagesTable(filtered);
     }
   }
+
+
+function updateActiveFilterButton(mode) {
+  currentFilterMode = mode;
+
+  // Update active state on filter buttons
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.filter === mode);
+  });
+
+  // Let applyMessageSearch handle filtering logic
+  applyMessageSearch();
+}
+
+// Attach listeners ONCE to each filter button
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const selectedMode = btn.dataset.filter;
+    updateActiveFilterButton(selectedMode);
+  });
+});
+
+// Run this once on page load to apply initial state
+document.addEventListener("DOMContentLoaded", () => {
+  updateActiveFilterButton(currentFilterMode);
+});
+
 
   function renderMessagesCards(messages) {
     const container = document.getElementById("messages-list-cards");
@@ -195,6 +213,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Each card is a link to spravy_details/(card_ID)
       card.addEventListener("click", async (event) => {
         if (event.target.closest(".toggle-read-btn")) return;
+
+        // Check if message has images
+        if (msg.images && msg.images.length > 0) {
+          console.log(`Message ${msg.id} has ${msg.images.length} images`);
+          // You can do additional logic here, like showing a preview, etc.
+        } else {
+          console.log(`Message ${msg.id} has no images`);
+        }
+
         try {
           if (!msg.is_read) {
             await fetch(`/spravy/${msg.id}/mark_read`, {
@@ -228,36 +255,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     document.getElementById("messages-list-cards").addEventListener("click", async (e) => {
-    const btn = e.target.closest(".toggle-read-btn");
-    if (!btn) return;
+      const btn = e.target.closest(".toggle-read-btn");
+      if (!btn) return;
 
-    e.preventDefault();
-    e.stopPropagation(); // Prevent triggering card click
+      e.preventDefault();
+      e.stopPropagation(); // Prevent triggering card click
 
-    const msgId = btn.dataset.id;
+      const msgId = btn.dataset.id;
 
-    try {
-      const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
-        method: "PUT",
-        credentials: "include",
-        headers: { Accept: "application/json" }
-      });
+      try {
+        const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { Accept: "application/json" }
+        });
 
-      const result = await resp.json();
-      if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
+        const result = await resp.json();
+        if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
 
-      // Update local message data
-      const message = allMessagesData.find(m => m.id == msgId);
-      if (message) {
-        message.is_read = result.is_read;
-        renderMessagesCards(allMessagesData);
+        // Update local message data
+        const message = allMessagesData.find(m => m.id == msgId);
+        if (message) {
+          message.is_read = result.is_read;
+          renderMessagesCards(allMessagesData);
+          applyMessageSearch();
+        }
+
+      } catch (err) {
+        console.error("Toggle error:", err);
+        alert("Nepodarilo sa zmeniť stav správy.");
       }
-
-    } catch (err) {
-      console.error("Toggle error:", err);
-      alert("Nepodarilo sa zmeniť stav správy.");
-    }
-  });
+    });
 
 
   function renderMessagesTable(messages) {
@@ -337,6 +365,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (message) {
       message.is_read = result.is_read;
       renderMessagesTable(allMessagesData); // <== re-render table
+      applyMessageSearch();
     }
 
   } catch (err) {
@@ -364,11 +393,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       sendBtn.disabled = !(recipientInput.value.trim() && messageInput.value.trim());
     })
   );
-
+  
   sendBtn.addEventListener("click", async () => {
-    showFeedback(""); // Clear previous
+    showFeedback("");
 
-    // Simple validation
     const recipient = recipientInput.value.trim();
     const message = messageInput.value.trim();
 
@@ -381,8 +409,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     formData.append("recipient", recipient);
     formData.append("message", message);
 
-    if (imageInput.files.length > 0) {
-      formData.append("image", imageInput.files[0]);
+    const files = imageInput.files;
+    if (files.length > 10) {
+      showFeedback("Môžete priložiť maximálne 10 obrázkov.");
+      return;
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
     }
 
     try {
@@ -397,8 +431,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!response.ok) throw new Error(data.error || "Chyba pri odosielaní správy.");
 
       showFeedback(data.message || "Správa bola úspešne odoslaná.", false);
-
-      // Reset form
       document.getElementById("send-message-form").reset();
       sendBtn.disabled = true;
     } catch (err) {

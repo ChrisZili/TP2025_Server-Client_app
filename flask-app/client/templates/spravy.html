@@ -11,7 +11,7 @@ Správa pacientov - STU FEI
 {% endblock %}
 
 {% block header %}
-Správy (modified patients.html)
+Správy
 {% endblock %}
 
 {% block content %}
@@ -45,6 +45,13 @@ Správy (modified patients.html)
       <i class="fas fa-search search-icon"></i>
       <input type="text" id="search-input" placeholder="Hľadať správu podľa odosielateľa, príjemcu alebo obsahu" />
     </div>
+
+    {% if not detail_view %}
+      <div class="filters" id="message-filters">
+        <button id="filter-received" class="filter-btn active" data-filter="received">Prijaté</button>
+        <button id="filter-sent" class="filter-btn" data-filter="sent">Odoslané</button>
+      </div>
+    {% endif %}
 
     <!-- Filters - you can add later -->
     <div class="filters">
@@ -106,7 +113,7 @@ Správy (modified patients.html)
       <!-- Príjemca -->
       <div class="form-group">
         <label for="message-recipient">Príjemca</label>
-        <input type="text" id="message-recipient" name="recipient" placeholder="Zadajte meno alebo ID príjemcu" required />
+        <input type="text" id="message-recipient" name="recipient" placeholder="Zadajte Email príjemcu" required />
         <div class="field-error" id="message-recipient-error"></div>
       </div>
 
@@ -119,12 +126,12 @@ Správy (modified patients.html)
 
       <!-- Priložený obrázok -->
       <div class="form-group">
-        <label for="message-image">Priložiť obrázok</label>
-        <input type="file" id="message-image" name="image" accept="image/*" />
+        <label for="message-image">Priložiť obrázky (max 10)</label>
+        <input type="file" id="message-image" name="images" accept="image/*" multiple />
         <div class="field-info" id="message-image-name"></div>
       </div>
 
-      <div id="send-message-feedback"></div>
+      <div id="send-message-feedback" class="hidden"></div>
 
       <!-- Tlačidlo na odoslanie správy -->
       <button id="send-message-btn" class="add-btn" type="button" disabled>Odoslať správu</button>

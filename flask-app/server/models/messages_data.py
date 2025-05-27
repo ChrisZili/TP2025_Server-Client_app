@@ -27,13 +27,14 @@ class MessageData(db.Model):
 
     def to_dict(self):
         return {
-        "id": self.id,
-        "sender_id": self.sender_id,
-        "sender_email": User.query.get(self.sender_id).email if self.sender_id else None,
-        "recipient_id": self.recipient_id,
-        "recipient_email": User.query.get(self.recipient_id).email if self.recipient_id else None,
-        "content": self.content,
-        "timestamp": self.timestamp.isoformat(),
-        "is_read": self.is_read
-    }
+            "id": self.id,
+            "sender_id": self.sender_id,
+            "sender_email": User.query.get(self.sender_id).email if self.sender_id else None,
+            "recipient_id": self.recipient_id,
+            "recipient_email": User.query.get(self.recipient_id).email if self.recipient_id else None,
+            "content": self.content,
+            "timestamp": self.timestamp.isoformat(),
+            "is_read": self.is_read,
+            "images": [img.image_path for img in self.images]  # Add this line
+        }
 
