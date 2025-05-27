@@ -102,7 +102,7 @@ def list_patients():
 
 @bp.route('/unassigned_list', methods=['GET'])
 @jwt_required()
-def list_patients():
+def unassigned_list_patients():
     """Získanie zoznamu pacientov."""
     logger.info("list_patients endpoint vyžiadaný")
     user_id = get_jwt_identity()
