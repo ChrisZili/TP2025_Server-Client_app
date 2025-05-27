@@ -67,6 +67,7 @@
   cursor: not-allowed;
 }
 
+/* Consistent save/back button styling */
 .save-btn {
   background: #1a7891;
   color: #fff;
@@ -75,12 +76,22 @@
   border-radius: 20px;
   cursor: pointer;
   transition: background 0.3s ease;
-  display: block;
-  margin: 0 auto;
+  display: inline-block;   /* Changed from block to inline-block */
+  margin: 0;               /* Remove auto margin for row layout */
+  font-size: 1.05rem;
 }
 
 .save-btn:hover {
   background: #155e70;
+}
+
+/* Button row for horizontal alignment if used */
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 /* Modal potvrdenie */

@@ -678,3 +678,16 @@ html, body {
     width: 100%;
   }
 }
+
+#assign-patient-dropdown {
+  background-color: #e9ecef !important; /* grey background for the select */
+  color: #6c757d !important;
+  border: 1px solid #ced4da !important;
+  cursor: not-allowed;
+}
+
+/* Remove background styling from options to keep them white (default) */
+#assign-patient-dropdown option {
+  background-color: #fff !important;
+  color: #333 !important;
+}

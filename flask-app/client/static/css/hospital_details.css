@@ -38,11 +38,19 @@
 
 .save-btn{
   background:#1a7891;color:#fff;
-  padding:12px 26px;border:none;border-radius:20px;
-  cursor:pointer;transition:background .3s;
-  display:block;margin:30px auto 0;font-size:1.05rem;
+  padding:12px 20px;border:none;border-radius:20px;
+  cursor:pointer;transition:background .3s ease;
+  display:inline-block;margin:0;font-size:1.05rem;
 }
 .save-btn:hover{background:#155e70;}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
 
 #confirmation-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;}
 #confirmation-modal .modal-content{background:#fff;padding:30px 20px;border-radius:10px;text-align:center;width:90%;max-width:400px;}

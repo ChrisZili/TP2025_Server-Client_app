@@ -100,6 +100,25 @@ def list_patients():
 
     return jsonify(response_data), status
 
+@bp.route('/unassigned_list', methods=['GET'])
+@jwt_required()
+def unassigned_list_patients():
+    """Získanie zoznamu pacientov."""
+    logger.info("list_patients endpoint vyžiadaný")
+    user_id = get_jwt_identity()
+
+    if not (request.accept_mimetypes['application/json'] >= request.accept_mimetypes['text/html']):
+        logger.error("list_patients: Frontend nevyžaduje JSON odpoveď")
+        return jsonify({'error': 'Only JSON responses supported'}), 406
+
+    try:
+        response_data, status = patient_service.get_unassigned_patients(user_id)
+        logger.info("list_patients: Zoznam pacientov načítaný so statusom %s", status)
+    except Exception as e:
+        logger.exception("list_patients: Výnimka pri získavaní pacientov: %s", e)
+        return jsonify({'error': 'Internal server error'}), 500
+
+    return jsonify(response_data), status
 
 @bp.route('/<int:patient_id>', methods=['GET'])
 @jwt_required()

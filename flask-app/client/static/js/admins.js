@@ -622,7 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const passwordConfirmVal = passwordConfirmInput.value;
 
     const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
-const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+    const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
 
     // First name
     if (!firstNameVal) {

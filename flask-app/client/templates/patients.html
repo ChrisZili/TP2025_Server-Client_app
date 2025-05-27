@@ -163,30 +163,11 @@ Správa pacientov
         <div class="field-error" id="patient-phone-error"></div>
       </div>
 
-      <!-- Dátum narodenia -->
-      <div class="form-group">
-        <label for="patient-birth-date">Dátum narodenia</label>
-        <input type="date" id="patient-birth-date" name="birth_date" required />
-        <div class="field-error" id="patient-birth-date-error"></div>
-      </div>
-
-      <!-- Rodné číslo -->
+      <!-- Rodné číslo (now only 6 digits) -->
       <div class="form-group">
         <label for="patient-birth-number">Rodné číslo</label>
-        <input type="text" id="patient-birth-number" name="birth_number" placeholder="######/####" required />
+        <input type="text" id="patient-birth-number" name="birth_number" placeholder="######" maxlength="6" required />
         <div class="field-error" id="patient-birth-number-error"></div>
-      </div>
-
-      <!-- Pohlavie -->
-      <div class="form-group">
-        <label for="patient-gender">Pohlavie</label>
-        <select id="patient-gender" name="gender" required>
-          <option value="" disabled selected>Vyberte pohlavie</option>
-          <option value="Muž">Muž</option>
-          <option value="Žena">Žena</option>
-          <option value="Iné">Iné</option>
-        </select>
-        <div class="field-error" id="patient-gender-error"></div>
       </div>
 
       <!-- Výber doktora -->
@@ -253,8 +234,15 @@ Správa pacientov
       <!-- Rodné číslo -->
       <div class="form-group">
         <label for="assign-birth-number">Rodné číslo</label>
-        <input type="text" id="assign-birth-number" name="birth_number" placeholder="######/####" required />
+        <input type="text" id="assign-birth-number" name="birth_number" placeholder="######" required />
         <div class="field-error" id="assign-birth-number-error"></div>
+      </div>
+      <!-- Výber pacienta podľa rodného čísla -->
+      <div class="form-group">
+        <label for="assign-patient-dropdown">Vyhľadať pacienta podľa rodného čísla</label>
+        <select id="assign-patient-dropdown" class="form-control">
+          <option value="">Začnite písať rodné číslo...</option>
+        </select>
       </div>
       <!-- Výber doktora -->
       <div class="form-group">

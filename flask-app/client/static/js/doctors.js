@@ -434,11 +434,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      if (!phoneRegex.test(phone)) {
-        addDoctorMessage.textContent = "Telefónne číslo musí byť vo formáte E.164 (napr. +421123456789).";
-        addDoctorMessage.classList.add("error");
-        return;
-      }
+      // if (!phoneRegex.test(phone)) {
+      //   addDoctorMessage.textContent = "Telefónne číslo musí byť vo formáte E.164 (napr. +421123456789).";
+      //   addDoctorMessage.classList.add("error");
+      //   return;
+      // }
 
       if (title && !noNumbersRegex.test(title)) {
         addDoctorMessage.textContent = "Titul nesmie obsahovať čísla.";
@@ -456,8 +456,8 @@ document.addEventListener("DOMContentLoaded", () => {
         !firstName ||
         !lastName ||
         !email ||
-        !phone ||
-        !gender ||
+        // !phone ||           // <-- removed from required
+        // !gender ||          // <-- removed from required
         !password ||
         !confirmPassword ||
         (!hospitalCode && userType === "super_admin")
@@ -622,19 +622,20 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     }
 
     // Phone
-    if (!phoneInput.value.trim()) {
-      isValid = false;
-      if (touchedFields.phone) showError(phoneErrorDiv, "Telefón je povinný.");
-    } else if (!phoneRegex.test(phoneInput.value.trim())) {
+    // if (!phoneInput.value.trim()) {
+    //   isValid = false;
+    //   if (touchedFields.phone) showError(phoneErrorDiv, "Telefón je povinný.");
+    // } else 
+    if (phoneInput.value.trim() && !phoneRegex.test(phoneInput.value.trim())) {
       isValid = false;
       if (touchedFields.phone) showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
     }
 
     // Gender
-    if (!genderInput.value) {
-      isValid = false;
-      if (touchedFields.gender) showError(genderErrorDiv, "Pohlavie je povinné.");
-    }
+    // if (!genderInput.value) {
+    //   isValid = false;
+    //   if (touchedFields.gender) showError(genderErrorDiv, "Pohlavie je povinné.");
+    // }
 
     // Title
     if (titleInput.value && !noNumbersRegex.test(titleInput.value)) {
@@ -728,6 +729,12 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     document.getElementById("doctor-type")?.parentElement ||
     document.querySelector('label[for="doctor-type"]')?.parentElement;
 
+  // --- Find hospital code form group robustly ---
+  const hospitalCodeFormGroup =
+    hospitalCodeInput?.closest(".form-group") ||
+    hospitalCodeInput?.parentElement ||
+    document.querySelector('label[for="doctor-hospital-code"]')?.parentElement;
+
   async function checkUserTypeAndAdjustFilters() {
     try {
       const response = await fetch("/settings/info", {
@@ -759,6 +766,16 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
         if (doctorTypeInput) doctorTypeInput.value = "doctor";
       } else if (doctorTypeFormGroup) {
         doctorTypeFormGroup.style.display = "";
+      }
+
+      // --- Hide hospital code input for admin and set value automatically ---
+      if (userType === "admin" && hospitalCodeFormGroup) {
+        hospitalCodeFormGroup.style.display = "none";
+        if (hospitalCodeInput && user.hospital_code) {
+          hospitalCodeInput.value = user.hospital_code;
+        }
+      } else if (hospitalCodeFormGroup) {
+        hospitalCodeFormGroup.style.display = "";
       }
     } catch (err) {
       console.error("Error fetching user type:", err);

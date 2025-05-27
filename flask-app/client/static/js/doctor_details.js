@@ -111,7 +111,103 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  saveBtn.addEventListener("click", () => {
+  // --- Add error message elements and validation ---
+  function ensureErrorDiv(inputId) {
+    let input = document.getElementById(inputId);
+    if (!input) return null;
+    let errorDiv = input.parentElement.querySelector('.error-message');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.style.color = '#c0392b';
+      errorDiv.style.fontSize = '0.95em';
+      errorDiv.style.marginTop = '2px';
+      input.parentElement.appendChild(errorDiv);
+    }
+    return errorDiv;
+  }
+  const firstNameError = ensureErrorDiv('first_name');
+  const lastNameError = ensureErrorDiv('last_name');
+  const emailError = ensureErrorDiv('email');
+  const phoneError = ensureErrorDiv('phone_number');
+
+  const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+  const noNumbersRegex = /^[^\d]*$/;
+
+  function validateFields(showMessages = true) {
+    let valid = true;
+    const firstNameVal = form.first_name.value.trim();
+    const lastNameVal = form.last_name.value.trim();
+    const emailVal = form.email.value.trim();
+    const phoneVal = form.phone_number.value.trim();
+
+    // First name validation
+    if (!firstNameVal) {
+      if (showMessages) firstNameError.textContent = "Meno je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(firstNameVal)) {
+      if (showMessages) firstNameError.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      firstNameError.textContent = "";
+    }
+
+    // Last name validation
+    if (!lastNameVal) {
+      if (showMessages) lastNameError.textContent = "Priezvisko je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(lastNameVal)) {
+      if (showMessages) lastNameError.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      lastNameError.textContent = "";
+    }
+
+    // Email validation
+    if (!emailVal) {
+      if (showMessages) emailError.textContent = "Email je povinný.";
+      valid = false;
+    } else if (!emailRegex.test(emailVal)) {
+      if (showMessages) emailError.textContent = "Zadajte platnú emailovú adresu.";
+      valid = false;
+    } else {
+      emailError.textContent = "";
+    }
+
+    // Phone validation (only if something is entered)
+    if (phoneVal) {
+      if (!phoneRegex.test(phoneVal)) {
+        if (showMessages) phoneError.textContent = "Zadajte platné telefónne číslo (napr. +421900123456, 0900123456, 421900123456).";
+        valid = false;
+      } else {
+        phoneError.textContent = "";
+      }
+    } else {
+      phoneError.textContent = "";
+    }
+
+    return valid;
+  }
+
+  // Show error on input if cleared or invalid
+  form.first_name.addEventListener("input", () => validateFields());
+  form.last_name.addEventListener("input", () => validateFields());
+  form.email.addEventListener("input", () => validateFields());
+  form.phone_number.addEventListener("input", () => validateFields());
+
+  // Show error when leaving (blurring) a field if not valid
+  form.first_name.addEventListener("blur", () => validateFields());
+  form.last_name.addEventListener("blur", () => validateFields());
+  form.email.addEventListener("blur", () => validateFields());
+  form.phone_number.addEventListener("blur", () => validateFields());
+
+  saveBtn.addEventListener("click", (e) => {
+    if (!validateFields(true)) {
+      e.preventDefault();
+      return;
+    }
     confirmModal.style.display = "flex";
   });
 
@@ -121,6 +217,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   confirmBtn.addEventListener("click", async () => {
     confirmModal.style.display = "none";
+    if (!validateFields(true)) {
+      return;
+    }
     const doctorId = getDoctorIdFromURL();
 
     const data = {
@@ -153,6 +252,9 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(err.message || "Nepodarilo sa uložiť zmeny.");
     }
   });
+
+  // Add this for the back button (same as admin_details.js)
+  document.getElementById("back-doctor-btn")?.addEventListener("click", () => window.history.back());
 
   loadDoctorDetails();
   checkUserTypeAndAdjustForm();

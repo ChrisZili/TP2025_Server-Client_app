@@ -56,9 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const firstNameInput = document.getElementById("patient-first-name");
   const lastNameInput = document.getElementById("patient-last-name");
   const phoneInput = document.getElementById("patient-phone");
-  const birthDateInput = document.getElementById("patient-birth-date");
   const birthNumberInput = document.getElementById("patient-birth-number");
-  const genderSelect = document.getElementById("patient-gender");
   const emailInput = document.getElementById("patient-email");
   const passwordInput = document.getElementById("patient-password");
   const confirmPasswordInput = document.getElementById("patient-password-confirm");
@@ -80,9 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const firstNameErrorDiv = document.getElementById("patient-first-name-error");
   const lastNameErrorDiv = document.getElementById("patient-last-name-error");
   const phoneErrorDiv = document.getElementById("patient-phone-error");
-  const birthDateErrorDiv = document.getElementById("patient-birth-date-error");
   const birthNumberErrorDiv = document.getElementById("patient-birth-number-error");
-  const genderErrorDiv = document.getElementById("patient-gender-error");
   const emailErrorDiv = document.getElementById("patient-email-error");
   const passwordErrorDiv = document.getElementById("patient-password-error");
   const confirmPasswordErrorDiv = document.getElementById("patient-password-confirm-error");
@@ -93,9 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     firstName: false,
     lastName: false,
     phone: false,
-    birthDate: false,
     birthNumber: false,
-    gender: false,
     email: false,
     password: false,
     confirmPassword: false,
@@ -106,9 +100,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     showTab("add");
     resetPatientForm();
   });
-  tabAssign?.addEventListener("click", () => {
+  tabAssign?.addEventListener("click", async () => {
     showTab("assign");
     resetAssignForm();
+    await loadAllDoctors(); // <-- Add this line to reload doctors and trigger the log
+    await loadUnassignedPatientsForAssign(); // <--- Only for assign tab dropdown
   });
 
   viewCardsBtnAll?.addEventListener("click", () => setViewMode("cards"));
@@ -157,9 +153,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     clearError(firstNameErrorDiv);
     clearError(lastNameErrorDiv);
     clearError(phoneErrorDiv);
-    clearError(birthDateErrorDiv);
     clearError(birthNumberErrorDiv);
-    clearError(genderErrorDiv);
     clearError(emailErrorDiv);
     clearError(passwordErrorDiv);
     clearError(confirmPasswordErrorDiv);
@@ -174,9 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const firstNameVal = firstNameInput.value.trim();
     const lastNameVal = lastNameInput.value.trim();
     const phoneVal = phoneInput.value.trim();
-    const birthDateVal = birthDateInput.value; // date
     const birthNumberVal = birthNumberInput.value.trim();
-    const genderVal = genderSelect.value;
     const emailVal = emailInput.value.trim();
     const passwordVal = passwordInput.value;
     const confirmPasswordVal = confirmPasswordInput.value;
@@ -212,89 +204,72 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       }
     }
 
-    // 3. Phone
-    if (!phoneVal) {
-      isValid = false;
-      if (touchedFields.phone) {
-        showError(phoneErrorDiv, "Telefón je povinný.");
-      }
-    } else if (!phoneRegex.test(phoneVal)) {
-      isValid = false;
-      if (touchedFields.phone) {
-        showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
-      }
-    }
-
-    // 4. Birth Date – must not be in the future and not older than 150 years
-    if (!birthDateVal) {
-      isValid = false;
-      if (touchedFields.birthDate) {
-        showError(birthDateErrorDiv, "Dátum narodenia je povinný.");
-      }
-      if (showMainError) {
-        addPatientMessage.textContent = "Dátum narodenia je povinný.";
-        addPatientMessage.classList.add("error");
-      }
-    } else {
-      const enteredDate = new Date(birthDateVal + "T00:00:00");
-      const now = new Date();
-      now.setHours(0,0,0,0);
-      const oldestAllowed = new Date();
-      oldestAllowed.setHours(0,0,0,0);
-      oldestAllowed.setFullYear(now.getFullYear() - 150);
-
-      if (isNaN(enteredDate.getTime())) {
+    // 3. Phone (now optional, but validate if filled)
+    if (phoneVal) {
+      if (!phoneRegex.test(phoneVal)) {
         isValid = false;
-        if (touchedFields.birthDate) {
-          showError(birthDateErrorDiv, "Neplatný dátum.");
-        }
-        if (showMainError) {
-          addPatientMessage.textContent = "Neplatný dátum narodenia.";
-          addPatientMessage.classList.add("error");
-        }
-      } else if (enteredDate > now) {
-        isValid = false;
-        if (touchedFields.birthDate) {
-          showError(birthDateErrorDiv, "Dátum narodenia nemôže byť v budúcnosti.");
-        }
-        if (showMainError) {
-          addPatientMessage.textContent = "Dátum narodenia nemôže byť v budúcnosti.";
-          addPatientMessage.classList.add("error");
-        }
-      } else if (enteredDate < oldestAllowed) {
-        isValid = false;
-        if (touchedFields.birthDate) {
-          showError(birthDateErrorDiv, "Dátum narodenia je príliš starý.");
-        }
-        if (showMainError) {
-          addPatientMessage.textContent = "Dátum narodenia je príliš starý.";
-          addPatientMessage.classList.add("error");
+        if (touchedFields.phone) {
+          showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
         }
       }
     }
+    // Remove the "required" check for phone:
+    // if (!phoneVal) {
+    //   isValid = false;
+    //   if (touchedFields.phone) {
+    //     showError(phoneErrorDiv, "Telefón je povinný.");
+    //   }
+    // }
 
-    // 5. Birth Number (######/####)
+    // 4. Birth Number (######)
     if (!birthNumberVal) {
       isValid = false;
       if (touchedFields.birthNumber) {
         showError(birthNumberErrorDiv, "Rodné číslo je povinné.");
       }
-    } else if (!/^\d{6}\/\d{4}$/.test(birthNumberVal)) {
+    } else if (!/^\d{6}$/.test(birthNumberVal)) {
       isValid = false;
       if (touchedFields.birthNumber) {
-        showError(birthNumberErrorDiv, "Rodné číslo musí byť vo formáte ######/####");
+        showError(birthNumberErrorDiv, "Rodné číslo musí mať 6 číslic.");
+      }
+    } else {
+      // Parse birth number and check validity
+      const year = parseInt(birthNumberVal.slice(0, 2), 10);
+      let month = parseInt(birthNumberVal.slice(2, 4), 10);
+      const day = parseInt(birthNumberVal.slice(4, 6), 10);
+
+      // Gender logic: month > 50 means female
+      let gender = "Muž";
+      if (month > 50) {
+        gender = "Žena";
+        month -= 50;
+      }
+
+      // Guess century: if year > 30, use 1900s, else 2000s
+      const fullYear = year > 30 ? 1900 + year : 2000 + year;
+
+      // Check month and day validity
+      const isMonthValid = month >= 1 && month <= 12;
+      const isDayValid = day >= 1 && day <= 31;
+      let isDateValid = false;
+      if (isMonthValid && isDayValid) {
+        // Check if the date actually exists (e.g. not 31.02.)
+        const testDate = new Date(fullYear, month - 1, day);
+        isDateValid =
+          testDate.getFullYear() === fullYear &&
+          testDate.getMonth() === month - 1 &&
+          testDate.getDate() === day;
+      }
+
+      if (!isMonthValid || !isDayValid || !isDateValid) {
+        isValid = false;
+        if (touchedFields.birthNumber) {
+          showError(birthNumberErrorDiv, "Rodné číslo obsahuje neplatný dátum narodenia.");
+        }
       }
     }
 
-    // 6. Gender
-    if (!genderVal) {
-      isValid = false;
-      if (touchedFields.gender) {
-        showError(genderErrorDiv, "Vyberte pohlavie.");
-      }
-    }
-
-    // 7. Email
+    // 5. Email
     if (!emailVal) {
       isValid = false;
       if (touchedFields.email) {
@@ -302,7 +277,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       }
     }
 
-    // 8. Password
+    // 6. Password
     if (!passwordVal) {
       isValid = false;
       if (touchedFields.password) {
@@ -310,7 +285,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       }
     }
 
-    // 9. Confirm password (must match password)
+    // 7. Confirm password (must match password)
     if (!confirmPasswordVal || passwordVal !== confirmPasswordVal) {
       isValid = false;
       if (touchedFields.confirmPassword) {
@@ -318,7 +293,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       }
     }
 
-    // 10. GDPR
+    // 8. GDPR
     if (!isGdprChecked) {
       isValid = false;
       if (touchedFields.gdpr) {
@@ -333,23 +308,17 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
   function validateAssignForm() {
     let isValid = true;
 
-    // Reset error messages
+    // No birth number validation anymore!
     clearError(assignBirthNumberErrorDiv);
 
-    const birthNumberVal = assignBirthNumberInput.value.trim();
+    const selectedPatientId = assignPatientDropdown.value;
     const doctorVal = assignDoctorSelect.value;
 
-    // Validate birth number (format ######/####)
-    if (!birthNumberVal) {
+    // Validate patient selection
+    if (!selectedPatientId) {
       isValid = false;
-      if (assignTouchedFields.birthNumber) {
-        showError(assignBirthNumberErrorDiv, "Rodné číslo je povinné.");
-      }
-    } else if (!/^\d{6}\/\d{4}$/.test(birthNumberVal)) {
-      isValid = false;
-      if (assignTouchedFields.birthNumber) {
-        showError(assignBirthNumberErrorDiv, "Rodné číslo musí byť vo formáte ######/####");
-      }
+      // Optionally show error if you want
+      // showError(assignBirthNumberErrorDiv, "Vyberte pacienta zo zoznamu.");
     }
 
     // Validate doctor selection
@@ -372,23 +341,23 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     assignTouchedFields.birthNumber = true;
     validateAssignForm();
   });
+assignDoctorSelect.addEventListener("change", () => {
+  assignTouchedFields.doctor = true;
+  validateAssignForm();
+});
+assignBirthNumberInput.addEventListener("input", () => {
+  // Only allow up to 6 digits, no slash, no more
+  let val = assignBirthNumberInput.value.replace(/\D/g, "");
+  if (val.length > 6) {
+    val = val.slice(0, 6);
+  }
+  assignBirthNumberInput.value = val;
 
-  assignDoctorSelect.addEventListener("change", () => {
-    assignTouchedFields.doctor = true;
-    validateAssignForm();
-  });
+  updateAssignPatientDropdown();
+  validateAssignForm();
+});
 
-  // Format birth number as the user types (######/####)
-  assignBirthNumberInput.addEventListener("input", () => {
-    let val = assignBirthNumberInput.value.replace(/\D/g, "");
-    if (val.length > 6) {
-      val = val.substring(0, 6) + "/" + val.substring(6, 10);
-    }
-    assignBirthNumberInput.value = val;
-    validateAssignForm();
-  });
-
-  // Mark field as touched
+// Mark field as touched
   function markTouched(fieldKey) {
     touchedFields[fieldKey] = true;
     validateAddPatientForm();
@@ -398,9 +367,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
   firstNameInput.addEventListener("blur", () => markTouched("firstName"));
   lastNameInput.addEventListener("blur", () => markTouched("lastName"));
   phoneInput.addEventListener("blur", () => markTouched("phone"));
-  birthDateInput.addEventListener("blur", () => markTouched("birthDate"));
   birthNumberInput.addEventListener("blur", () => markTouched("birthNumber"));
-  genderSelect.addEventListener("change", () => markTouched("gender"));
   emailInput.addEventListener("blur", () => markTouched("email"));
   passwordInput.addEventListener("blur", () => markTouched("password"));
   confirmPasswordInput.addEventListener("blur", () => markTouched("confirmPassword"));
@@ -410,7 +377,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
   birthNumberInput.addEventListener("input", () => {
     let val = birthNumberInput.value.replace(/\D/g, "");
     if (val.length > 6) {
-      val = val.substring(0, 6) + "/" + val.substring(6, 10);
+      val = val.substring(0, 6);
     }
     birthNumberInput.value = val;
     validateAddPatientForm();
@@ -426,7 +393,6 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
 
     // Vyresetuj aj touched fields
     Object.keys(touchedFields).forEach(k => touchedFields[k] = false);
-    // A hneď skontrolujeme
     validateAddPatientForm();
   }
 
@@ -631,7 +597,14 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
   function applyFiltersAndSorting() {
   const searchQuery = searchInput?.value.trim().toLowerCase();
   const selectedHospitalId = hospitalFilterDropdown?.value ? parseInt(hospitalFilterDropdown.value, 10) : null;
-  const selectedDoctorId = doctorFilterDropdown?.value ? parseInt(doctorFilterDropdown.value, 10) : null;
+  const selectedDoctorValue = doctorFilterDropdown?.value;
+  let selectedDoctorId = null;
+  let showUnassigned = false;
+  if (selectedDoctorValue === "__none__") {
+    showUnassigned = true;
+  } else if (selectedDoctorValue) {
+    selectedDoctorId = parseInt(selectedDoctorValue, 10);
+  }
   const mode = localStorage.getItem("patientViewMode") || "cards";
 
   // Filter patients based on search query, hospital, and doctor
@@ -643,7 +616,9 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       patient.doctor_name?.toLowerCase().includes(searchQuery) ||
       patient.hospital_name?.toLowerCase().includes(searchQuery);
     const matchesHospital = !selectedHospitalId || patient.hospital_id === selectedHospitalId;
-    const matchesDoctor = !selectedDoctorId || patient.doctor_id === selectedDoctorId;
+    const matchesDoctor = showUnassigned
+      ? !patient.doctor_id // Only patients without doctor
+      : (!selectedDoctorId || patient.doctor_id === selectedDoctorId);
 
     return matchesSearch && matchesHospital && matchesDoctor;
   });
@@ -786,17 +761,19 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     const uniqueDoctors = [];
     const seenDoctorIds = new Set();
     patients.forEach(p => {
-      // Use the doctor_id and doctor_name from the patient object
       if (p.doctor_id && !seenDoctorIds.has(p.doctor_id)) {
         uniqueDoctors.push({ id: p.doctor_id, name: p.doctor_name });
         seenDoctorIds.add(p.doctor_id);
       }
     });
 
-    doctorFilterDropdown.innerHTML = '<option value="">Všetci doktori</option>';
+    doctorFilterDropdown.innerHTML = `
+    <option value="">Všetci doktori</option>
+    <option value="__none__">Nezaradené</option>
+  `;
     uniqueDoctors.forEach(doctor => {
       const option = document.createElement("option");
-      option.value = doctor.id; // Use the ID as value
+      option.value = doctor.id;
       option.textContent = doctor.name;
       doctorFilterDropdown.appendChild(option);
     });
@@ -830,6 +807,14 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       credentials: "include"
     });
     allDoctorsData = await resp.json();
+
+    // Add this console log ONLY when assign tab is visible
+    const assignTabVisible = !tabAssignContent?.classList.contains("hidden");
+    if (assignTabVisible) {
+      console.log("Doctors loaded for assign tab:", allDoctorsData);
+      populateAssignDoctorSelect(); // <-- Add this line
+    }
+
     populateDoctorSelectForAddPatient();
   } catch (err) {
     console.error("Error loading doctors:", err);
@@ -967,8 +952,25 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     } catch (error) {
       console.error("Error checking user type:", error);
     }
+    hideAssignDoctorFieldIfDoctorUser();
   }
 
+  // Helper to robustly hide the doctor select and its label in the ASSIGN form for normal doctors
+  function hideAssignDoctorFieldIfDoctorUser() {
+    if (userType === "doctor") {
+      // Hide the doctor select
+      const assignDoctorSelect = document.getElementById("assign-doctor");
+      if (assignDoctorSelect) assignDoctorSelect.style.display = "none";
+      // Hide the label
+      const assignDoctorLabel = document.querySelector('label[for="assign-doctor"]');
+      if (assignDoctorLabel) assignDoctorLabel.style.display = "none";
+      // Hide the parent form-group for better layout
+      const assignDoctorFormGroup = assignDoctorSelect?.closest(".form-group");
+      if (assignDoctorFormGroup) assignDoctorFormGroup.style.display = "none";
+    }
+  }
+
+  // Load data
   await loadAllDoctors();
   await loadAllPatients();
   checkUserTypeAndAdjustForm();
@@ -982,9 +984,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     touchedFields.firstName = true;
     touchedFields.lastName = true;
     touchedFields.phone = true;
-    touchedFields.birthDate = true;
     touchedFields.birthNumber = true;
-    touchedFields.gender = true;
     touchedFields.email = true;
     touchedFields.password = true;
     touchedFields.confirmPassword = true;
@@ -1011,13 +1011,15 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       }
     }
 
+    // Generate gender from birth number
+    const { gender } = parseBirthNumber(birthNumberInput.value.trim());
+
     const bodyPayload = {
       first_name: firstNameInput.value.trim(),
       last_name: lastNameInput.value.trim(),
       phone_number: phoneInput.value.trim(),
-      birth_date: birthDateInput.value,
       birth_number: birthNumberInput.value.trim(),
-      gender: genderSelect.value,
+      gender: gender, // <-- Use generated gender
       doctor_id: doctorIdValue,
       email: emailInput.value.trim(),
       password: passwordInput.value
@@ -1053,8 +1055,6 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
   assignBtn.addEventListener("click", async () => {
     assignPatientMessage.textContent = "";
     assignPatientMessage.classList.remove("error", "success");
-
-    // Mark all fields as touched for validation
     assignTouchedFields.birthNumber = true;
     assignTouchedFields.doctor = true;
 
@@ -1065,11 +1065,22 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       return;
     }
 
-    // Send request
+    // Get selected patient ID from dropdown
+    const selectedPatientId = assignPatientDropdown.value;
+
+    // For normal doctor, send empty doctor_id
+    let doctorIdValue = assignDoctorSelect.value;
+    if (userType === "doctor") {
+      doctorIdValue = "";
+    }
+
     const bodyPayload = {
-      birth_number: assignBirthNumberInput.value.trim(),
-      doctor_id: assignDoctorSelect.value
+      id: selectedPatientId,
+      doctor_id: doctorIdValue
     };
+
+    // Log the payload being sent
+    console.log("Assign patient payload:", bodyPayload);
 
     try {
       const resp = await fetch("/patients/assign", {
@@ -1084,7 +1095,6 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       assignPatientMessage.textContent = data.message || "Pacient úspešne priradený.";
       assignPatientMessage.classList.add("success");
       resetAssignForm();
-      // Switch to ALL tab and reload
       showTab("all");
       loadAllPatients();
     } catch (err) {
@@ -1092,6 +1102,11 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
       assignPatientMessage.textContent = err.message || "Nepodarilo sa priradiť pacienta.";
       assignPatientMessage.classList.add("error");
     }
+  });
+
+  // Prevent form submit on Enter in the assign patient form
+  assignPatientForm.addEventListener("submit", (e) => {
+    e.preventDefault();
   });
 
   // On page load, restore view mode
@@ -1146,4 +1161,248 @@ if (allListTableHead) {
 
 // On initial render, set arrow indicators
 updateSortIconsPatients();
+
+// Populate doctor select in assign form
+function populateAssignDoctorSelect() {
+  if (!assignDoctorSelect) return;
+  assignDoctorSelect.innerHTML = '<option value="" selected>Vyberte doktora</option>';
+  allDoctorsData.forEach(doctor => {
+    // Use hospital name from nested hospital object
+    const hospitalName = doctor.hospital && doctor.hospital.name ? doctor.hospital.name : "-";
+    const option = document.createElement("option");
+    option.value = doctor.id;
+    option.textContent = `${doctor.first_name} ${doctor.last_name} (${hospitalName})`;
+    assignDoctorSelect.appendChild(option);
+  });
+}
+
+// --- Add this near your assign form variables ---
+const assignPatientDropdown = document.getElementById("assign-patient-dropdown");
+
+// --- Update validateAssignForm to NOT check birth number input ---
+function validateAssignForm() {
+  let isValid = true;
+
+  // No birth number validation anymore!
+  clearError(assignBirthNumberErrorDiv);
+
+  const selectedPatientId = assignPatientDropdown.value;
+  const doctorVal = assignDoctorSelect.value;
+
+  // Validate patient selection
+  if (!selectedPatientId) {
+    isValid = false;
+    // Optionally show error if you want
+    // showError(assignBirthNumberErrorDiv, "Vyberte pacienta zo zoznamu.");
+  }
+
+  // Validate doctor selection
+  if (!doctorVal && ["super_admin", "admin"].includes(userType)) {
+    isValid = false;
+    if (assignTouchedFields.doctor) {
+      assignPatientMessage.textContent = "";
+      assignPatientMessage.textContent = "Vyberte doktora.";
+      assignPatientMessage.classList.add("error");
+    }
+  }
+
+  assignBtn.disabled = !isValid;
+  return isValid;
+}
+
+// --- Add this function to update the dropdown as you type ---
+function updateAssignPatientDropdown() {
+  if (!assignPatientDropdown) return;
+  const input = assignBirthNumberInput.value.trim();
+
+  assignPatientDropdown.innerHTML = ""; // Always clear first
+
+  let matches;
+  if (input.length === 0) {
+    // Show all patients and the "Začnite..." option
+    assignPatientDropdown.innerHTML = '<option value="">Začnite písať rodné číslo...</option>';
+    matches = allPatientsData;
+  } else {
+    // Only show filtered patients, NO "Začnite..." option
+    matches = allPatientsData.filter(p =>
+      p.birth_number && p.birth_number.startsWith(input)
+    );
+  }
+
+  matches.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = `${p.first_name} ${p.last_name} (${p.birth_number})`;
+    assignPatientDropdown.appendChild(option);
+  });
+
+  if (matches.length > 0) {
+    assignPatientDropdown.size = matches.length + (input.length === 0 ? 1 : 0);
+    assignPatientDropdown.style.display = "block";
+  } else {
+    assignPatientDropdown.size = 1;
+    assignPatientDropdown.style.display = "block";
+  }
+}
+
+// Show all options when input is focused and empty
+assignBirthNumberInput.addEventListener("focus", () => {
+  updateAssignPatientDropdown();
+  if (assignBirthNumberInput.value.trim() === "") {
+    assignPatientDropdown.size = allPatientsData.length + 1;
+    assignPatientDropdown.style.display = "block";
+  }
+});
+
+// Allow arrow navigation from input to dropdown
+let lastInputValue = "";
+let ignoreDropdownChange = false;
+
+assignBirthNumberInput.addEventListener("keydown", (e) => {
+  if ((e.key === "ArrowDown" || e.key === "Tab") && assignPatientDropdown.options.length > 1) {
+    lastInputValue = assignBirthNumberInput.value; // Save before dropdown
+    assignPatientDropdown.focus();
+    setTimeout(() => {
+      assignPatientDropdown.selectedIndex = 1;
+    }, 0);
+    e.preventDefault();
+  }
+});
+
+assignPatientDropdown.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    assignBirthNumberInput.value = lastInputValue;
+    ignoreDropdownChange = true;
+  }
+  if (e.key === "ArrowUp" && assignPatientDropdown.selectedIndex === 1) {
+    assignBirthNumberInput.focus();
+    e.preventDefault();
+  }
+  // Only Enter should fill the input:
+  if (e.key === "Enter" && assignPatientDropdown.selectedIndex > 0) {
+    const selectedId = assignPatientDropdown.value;
+    const selectedPatient = allPatientsData.find(p => String(p.id) === String(selectedId));
+    if (selectedPatient) {
+      assignBirthNumberInput.value = selectedPatient.birth_number;
+      updateAssignPatientDropdown();
+      validateAssignForm();
+      assignPatientDropdown.blur();
+      assignBirthNumberInput.focus();
+    }
+    e.preventDefault();
+  }
+});
+
+// Only mouse click or change event fills the input, but ignore if triggered by Arrow keys
+assignPatientDropdown.addEventListener("change", (e) => {
+  if (ignoreDropdownChange) {
+    ignoreDropdownChange = false;
+    return;
+  }
+  const selectedId = assignPatientDropdown.value;
+  if (!selectedId) {
+    // First option selected: clear the search input
+    assignBirthNumberInput.value = "";
+    updateAssignPatientDropdown();
+    validateAssignForm();
+    return;
+  }
+  const selectedPatient = allPatientsData.find(p => String(p.id) === String(selectedId));
+  if (selectedPatient) {
+    assignBirthNumberInput.value = selectedPatient.birth_number;
+    updateAssignPatientDropdown();
+    validateAssignForm();
+    // Optionally blur dropdown and focus input for better UX:
+    assignPatientDropdown.blur();
+    assignBirthNumberInput.focus();
+  }
+});
+
+// Helper to generate date of birth and gender from 6-digit birth number
+function parseBirthNumber(birthNumber) {
+  if (!/^\d{6}$/.test(birthNumber)) return { dateOfBirth: "", gender: "" };
+  const year = parseInt(birthNumber.slice(0, 2), 10);
+  let month = parseInt(birthNumber.slice(2, 4), 10);
+  const day = parseInt(birthNumber.slice(4, 6), 10);
+
+  let gender = "Muž";
+  if (month > 50) {
+    gender = "Žena";
+    month -= 50;
+  }
+
+  // Guess century: if year > 30, use 1900s, else 2000s
+  const fullYear = year > 30 ? 1900 + year : 2000 + year;
+
+  // Validate month and day
+  const isMonthValid = month >= 1 && month <= 12;
+  const isDayValid = day >= 1 && day <= 31;
+  let isDateValid = false;
+  if (isMonthValid && isDayValid) {
+    const testDate = new Date(fullYear, month - 1, day);
+    isDateValid =
+      testDate.getFullYear() === fullYear &&
+      testDate.getMonth() === month - 1 &&
+      testDate.getDate() === day;
+  }
+  if (!isMonthValid || !isDayValid || !isDateValid) {
+    return { dateOfBirth: "", gender: "" };
+  }
+
+  // Format date as DD.MM.YYYY
+  const dateOfBirth = `${String(day).padStart(2, "0")}.${String(month).padStart(2, "0")}.${fullYear}`;
+  return { dateOfBirth, gender };
+}
+
+// Example usage: update on birth number input
+birthNumberInput.addEventListener("input", () => {
+  let val = birthNumberInput.value.replace(/\D/g, "");
+  if (val.length > 6) val = val.substring(0, 6);
+  birthNumberInput.value = val;
+  validateAddPatientForm();
+
+  // Generate and display date of birth and gender if needed
+  const { dateOfBirth, gender } = parseBirthNumber(val);
+  // You can display these values in the UI if you want, e.g.:
+  // document.getElementById("patient-dob-preview").textContent = dateOfBirth;
+  // document.getElementById("patient-gender-preview").textContent = gender;
+});
+
+// --- Add this function to fetch unassigned patients for assign tab only ---
+async function loadUnassignedPatientsForAssign() {
+  try {
+    const response = await fetch("/patients/unassigned_list", {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+      credentials: "include"
+    });
+    const rawText = await response.clone().text();
+    console.log("Raw /patients/unassigned_list response:", rawText);
+    const patients = JSON.parse(rawText);
+    if (!response.ok) throw new Error("Chyba pri načítaní nezaradených pacientov.");
+
+    // Fill the dropdown for assign tab with these patients
+    allPatientsData = patients.map(patient => {
+      const matchedDoctor = allDoctorsData.find(doctor => doctor.id === patient.doctor_id);
+      const matchedHospital = hospitalsData.find(hospital => patient.hospital_id === hospital.id);
+
+      return {
+        ...patient,
+        doctor_name: matchedDoctor
+          ? `${matchedDoctor.first_name} ${matchedDoctor.last_name}`
+          : patient.doctor_name,
+        hospital_name: matchedHospital
+          ? matchedHospital.name
+          : patient.hospital_name
+      };
+    });
+
+    updateAssignPatientDropdown();
+  } catch (err) {
+    console.error(err);
+    if (assignPatientDropdown) {
+      assignPatientDropdown.innerHTML = `<option value="">Chyba pri načítaní pacientov</option>`;
+    }
+  }
+}
 });
