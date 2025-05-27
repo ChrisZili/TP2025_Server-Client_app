@@ -124,10 +124,6 @@ class PatientsService:
                 "id": p.id,
                 "first_name": p.first_name,
                 "last_name": p.last_name,
-                "email": p.email,
-                "gender": p.gender,
-                "phone_number": p.phone_number,
-                "created_at": p.created_at.isoformat() if p.created_at else None,
                 "birth_number": p.birth_number,
             }
             for p in unassigned_patients
