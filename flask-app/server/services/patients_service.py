@@ -26,10 +26,6 @@ class PatientsService:
                 logger.error("Chýbajú povinné údeje pri registrácii pacienta")
                 return {'error': 'Missing required fields'}, 400
 
-            if PatientData.query.filter_by(birth_number=birth_number).first():
-                logger.error("Pacient s rodným číslom %s už existuje", birth_number)
-                return {'error': 'Patient with this birth number already exists'}, 400
-
             new_patient = PatientData(
                 first_name=first_name,
                 last_name=last_name,
