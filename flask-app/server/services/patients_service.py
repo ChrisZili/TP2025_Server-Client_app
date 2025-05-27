@@ -112,6 +112,29 @@ class PatientsService:
 
         return result, 200
 
+    def get_unassigned_patients(self, user_id: int):
+        user = User.query.get(user_id)
+        if not user or not user.user_type in ['super_admin', 'admin', 'doctor']:
+            return {'error': 'Unauthorized'}, 403
+        patients = PatientData.query.all()
+        unassigned_patients = [p for p in patients if p.doctor_id is None]
+
+        result = [
+            {
+                "id": p.id,
+                "first_name": p.first_name,
+                "last_name": p.last_name,
+                "email": p.email,
+                "gender": p.gender,
+                "phone_number": p.phone_number,
+                "created_at": p.created_at.isoformat() if p.created_at else None,
+                "birth_number": p.birth_number,
+            }
+            for p in unassigned_patients
+        ]
+
+        return result, 200
+
     def add_patient(self, user_id: int, data):
         user = User.query.get(user_id)
         if not user or user.user_type not in ['super_admin', 'admin', 'doctor', 'technician']:
@@ -268,11 +291,11 @@ class PatientsService:
             if user.user_type not in ['super_admin', 'admin', 'doctor']:
                 return {'error': 'Neautorizovaný prístup.'}, 403
 
-            birth_number = data.get('birth_number')
-            if not birth_number:
-                return {'error': 'Chýba rodné číslo pacienta.'}, 400
+            patient_id = data.get('id')
+            if not patient_id:
+                return {'error': 'Chýba priradenia id.'}, 400
 
-            patient = PatientData.query.filter_by(birth_number=birth_number).first()
+            patient = PatientData.query.get(patient_id)
             if not patient:
                 return {'error': 'Pacient nebol nájdený.'}, 404
 
