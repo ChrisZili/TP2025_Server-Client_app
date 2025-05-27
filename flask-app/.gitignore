@@ -27,6 +27,7 @@ icons/
 # Virtual Environment
 venv/
 ENV/
+uploads/
 
 # Environment Variables
 .env
