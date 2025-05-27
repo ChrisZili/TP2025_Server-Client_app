@@ -11,9 +11,9 @@ class PatientData(User):
     # Osobné údaje pacienta
     first_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    phone_number: Mapped[str] = mapped_column(db.String(20), nullable=False)
+    phone_number: Mapped[str] = mapped_column(db.String(20), unique=False, nullable=False)
     birth_date: Mapped[date] = mapped_column(db.Date, nullable=False)
-    birth_number: Mapped[str] = mapped_column(db.String(20), nullable=False)
+    birth_number: Mapped[str] = mapped_column(db.String(20), unique=False, nullable=False)
     gender: Mapped[str] = mapped_column(db.String(10), nullable=False)
     doctor_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("doctors.id"), nullable=True)
 

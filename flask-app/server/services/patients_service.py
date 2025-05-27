@@ -22,16 +22,13 @@ class PatientsService:
             email = data.get('email')
             password = data.get('password')
 
-            if not all([first_name, last_name, phone_number, birth_date, birth_number, gender, email, password]):
+            if not all([first_name, last_name, birth_number, email, password]):
                 logger.error("Chýbajú povinné údeje pri registrácii pacienta")
                 return {'error': 'Missing required fields'}, 400
 
             if PatientData.query.filter_by(birth_number=birth_number).first():
                 logger.error("Pacient s rodným číslom %s už existuje", birth_number)
                 return {'error': 'Patient with this birth number already exists'}, 400
-            if PatientData.query.filter_by(phone_number=phone_number).first():
-                logger.error("Pacient s telefónnym číslom %s už existuje", phone_number)
-                return {'error': 'Patient with this phone number already exists'}, 400
 
             new_patient = PatientData(
                 first_name=first_name,
