@@ -345,9 +345,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const doctors = await response.json();
         
-        // Log the raw doctor data
-        console.log("Raw Doctors API Response:", doctors);
-        
         allDoctorsData = doctors;
 
         populateHospitalDropdown(doctors);

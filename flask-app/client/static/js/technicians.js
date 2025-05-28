@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Populate hospital dropdown
   function populateHospitalDropdown() {
     const dropdown = document.getElementById("hospital-filter-dropdown");
-    console.log("Hospital Dropdown Found:", dropdown);
 
     if (!dropdown) {
       console.error("Hospital dropdown not found in the DOM.");
@@ -102,8 +101,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         .filter(technician => technician.hospital && technician.hospital.id) // Ensure hospital exists and has an ID
         .map(technician => technician.hospital.id)
     );
-
-    console.log("Technician Hospital IDs:", technicianHospitalIds);
 
     // Filter hospitals based on the IDs in the technicians list
     const filteredHospitals = hospitalsData.filter(hospital =>
@@ -118,13 +115,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       dropdown.appendChild(option);
     });
 
-    console.log("Dropdown populated with filtered hospitals:", dropdown);
   }
 
   // Fetch hospitals data
   async function loadHospitals() {
     try {
-      console.log("Fetching hospitals..."); // Debugging
       const response = await fetch("/hospitals/list", {
         method: "GET",
         headers: { "Accept": "application/json" },
@@ -133,7 +128,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       
       hospitalsData = await response.json();
-      console.log("Hospitals Data:", hospitalsData); // Debugging
 
       if (!Array.isArray(hospitalsData) || hospitalsData.length === 0) {
         console.warn("No hospitals found or invalid data format.");

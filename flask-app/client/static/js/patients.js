@@ -795,7 +795,6 @@ assignBirthNumberInput.addEventListener("input", () => {
 
   // Function to load all doctors from the API
   async function loadAllDoctors() {
-  // Only fetch if NOT a doctor
   if (userType === "doctor") {
     allDoctorsData = [];
     return;
@@ -806,15 +805,17 @@ assignBirthNumberInput.addEventListener("input", () => {
       headers: { "Accept": "application/json" },
       credentials: "include"
     });
-    allDoctorsData = await resp.json();
-
-    // Add this console log ONLY when assign tab is visible
-    const assignTabVisible = !tabAssignContent?.classList.contains("hidden");
-    if (assignTabVisible) {
-      console.log("Doctors loaded for assign tab:", allDoctorsData);
-      populateAssignDoctorSelect(); // <-- Add this line
+    const data = await resp.json();
+    // Defensive: Only assign if array, else empty array
+    allDoctorsData = Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) {
+      // console.error("loadAllDoctors: Expected array, got:", data);
     }
 
+    const assignTabVisible = !tabAssignContent?.classList.contains("hidden");
+    if (assignTabVisible) {
+      populateAssignDoctorSelect();
+    }
     populateDoctorSelectForAddPatient();
   } catch (err) {
     console.error("Error loading doctors:", err);
@@ -831,7 +832,6 @@ assignBirthNumberInput.addEventListener("input", () => {
         credentials: "include"
       });
       const patients = await response.json();
-      console.log("Fetched /patients/list response:", patients); // <-- Add this line
       if (!response.ok) throw new Error("Chyba pri načítaní pacientov.");
 
       // Map doctor_id and hospital_id directly from the API response
@@ -865,9 +865,6 @@ assignBirthNumberInput.addEventListener("input", () => {
     }
   }
 
-  // Remove these functions:
-  // function hideFiltersForUser(userType, isSuperDoctor) { ... }
-  // function showFiltersForUser(userType, isSuperDoctor) { ... }
 
   // And update checkUserTypeAndAdjustForm to remove their usage:
   async function checkUserTypeAndAdjustForm() {
@@ -881,7 +878,6 @@ assignBirthNumberInput.addEventListener("input", () => {
       if (!response.ok) throw new Error("Failed to fetch user type");
 
       const rawText = await response.clone().text();
-      console.log("Raw /settings/info response:", rawText);
 
       const user = await response.json();
       userType = user.user_type;
@@ -892,9 +888,6 @@ assignBirthNumberInput.addEventListener("input", () => {
         const uniqueDoctorIds = new Set(allPatientsData.map(p => p.doctor_id).filter(Boolean));
         isSuperDoctor = uniqueDoctorIds.size > 1;
       }
-
-      console.log("User info:", user);
-      console.log("User type:", userType, "Super doctor (by patient list):", isSuperDoctor);
 
       // Hide both filters by default
       if (hospitalFilterDropdown) {
@@ -927,7 +920,7 @@ assignBirthNumberInput.addEventListener("input", () => {
       }
 
       // --- ROBUST HIDE DOCTOR SELECT FOR DOCTOR USER IN ADD TAB ---
-      if (userType === "doctor") {
+      if (userType === "doctor" || userType === "technician") {
         // Hide by style
         if (doctorFormGroup) doctorFormGroup.style.display = "none";
         // Hide by adding a class (for CSS fallback)
@@ -938,8 +931,8 @@ assignBirthNumberInput.addEventListener("input", () => {
             child.style.display = "none";
           });
         }
-        // Store doctor id for later use
-        if (doctorSelect) doctorSelect.dataset.doctorId = user.id;
+        // Store doctor id for later use (only for doctor)
+        if (userType === "doctor" && doctorSelect) doctorSelect.dataset.doctorId = user.id;
       } else if (doctorFormGroup) {
         // Show for others
         doctorFormGroup.style.display = "";
@@ -948,6 +941,23 @@ assignBirthNumberInput.addEventListener("input", () => {
           child.style.display = "";
         });
         if (doctorSelect) doctorSelect.dataset.doctorId = "";
+      }
+
+      if (userType === "technician") {
+        // Hide all tabs except Add
+        tabAll?.classList.add("hidden");
+        tabAssign?.classList.add("hidden");
+        tabAdd?.classList.add("hidden");
+
+        // Hide all tab contents except Add
+        tabAllContent?.classList.add("hidden");
+        tabAssignContent?.classList.add("hidden");
+        tabAddContent?.classList.remove("hidden");
+
+        // Set Add tab as active
+        tabAdd?.classList.add("active");
+        tabAll?.classList.remove("active");
+        tabAssign?.classList.remove("active");
       }
     } catch (error) {
       console.error("Error checking user type:", error);
@@ -971,9 +981,34 @@ assignBirthNumberInput.addEventListener("input", () => {
   }
 
   // Load data
-  await loadAllDoctors();
-  await loadAllPatients();
-  checkUserTypeAndAdjustForm();
+  async function loadData() {
+    userType = await getUserType();
+    await loadAllDoctors();
+    if (userType !== "technician") {
+      await loadAllPatients();
+    }
+    checkUserTypeAndAdjustForm();
+  }
+
+  // Helper to get user type before loading data
+  async function getUserType() {
+    try {
+      const response = await fetch("/settings/info", {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        credentials: "include"
+      });
+      if (!response.ok) throw new Error("Failed to fetch user type");
+      const user = await response.json();
+      return user.user_type;
+    } catch (e) {
+      console.error("Error fetching user type:", e);
+      return "";
+    }
+  }
+
+  // Load data on DOMContentLoaded
+  loadData();
 
   // Submit new patient
   addBtn.addEventListener("click", async () => {
@@ -1025,8 +1060,6 @@ assignBirthNumberInput.addEventListener("input", () => {
       password: passwordInput.value
     };
 
-    // Log what is being sent
-    console.log("Sending patient payload:", bodyPayload);
 
     try {
       const resp = await fetch("/patients/add", {
@@ -1035,18 +1068,46 @@ assignBirthNumberInput.addEventListener("input", () => {
         body: JSON.stringify(bodyPayload),
         credentials: "include"
       });
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.error || "Chyba pri vytváraní pacienta.");
 
-      addPatientMessage.textContent = data.message || "Pacient úspešne pridaný.";
+      let data = {};
+      try {
+        data = await resp.json();
+      } catch (e) {
+        data = {};
+      }
+
+      if (userType === "technician") {
+        if (resp.ok && !data.error) {
+          addPatientMessage.textContent = "Pacient bol úspešne vytvorený.";
+          addPatientMessage.classList.remove("error");
+          addPatientMessage.classList.add("success");
+          // Delay reset so user can see the message
+          setTimeout(() => {
+            resetPatientForm();
+            showTab("add");
+          }, 2000); // 2 seconds
+        } else {
+          addPatientMessage.textContent = (data && data.error) || "Nepodarilo sa pridať pacienta.";
+          addPatientMessage.classList.remove("success");
+          addPatientMessage.classList.add("error");
+        }
+        return;
+      }
+
+      // For other users
+      if (!resp.ok || data.error) {
+        throw new Error((data && data.error) || "Chyba pri vytváraní pacienta.");
+      }
+      addPatientMessage.textContent = data?.message || "Pacient úspešne pridaný.";
       addPatientMessage.classList.add("success");
       resetPatientForm();
       showTab("all");
       loadAllPatients();
+
     } catch (err) {
-      // Log error to console
       console.error("Error while sending patient data:", err);
       addPatientMessage.textContent = err.message || "Nepodarilo sa pridať pacienta.";
+      addPatientMessage.classList.remove("success");
       addPatientMessage.classList.add("error");
     }
   });
@@ -1079,8 +1140,6 @@ assignBirthNumberInput.addEventListener("input", () => {
       doctor_id: doctorIdValue
     };
 
-    // Log the payload being sent
-    console.log("Assign patient payload:", bodyPayload);
 
     try {
       const resp = await fetch("/patients/assign", {
@@ -1363,9 +1422,6 @@ birthNumberInput.addEventListener("input", () => {
 
   // Generate and display date of birth and gender if needed
   const { dateOfBirth, gender } = parseBirthNumber(val);
-  // You can display these values in the UI if you want, e.g.:
-  // document.getElementById("patient-dob-preview").textContent = dateOfBirth;
-  // document.getElementById("patient-gender-preview").textContent = gender;
 });
 
 // --- Add this function to fetch unassigned patients for assign tab only ---
@@ -1377,7 +1433,6 @@ async function loadUnassignedPatientsForAssign() {
       credentials: "include"
     });
     const rawText = await response.clone().text();
-    console.log("Raw /patients/unassigned_list response:", rawText);
     const patients = JSON.parse(rawText);
     if (!response.ok) throw new Error("Chyba pri načítaní nezaradených pacientov.");
 

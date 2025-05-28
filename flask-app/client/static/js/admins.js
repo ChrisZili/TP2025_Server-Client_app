@@ -339,9 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const admins = await response.json();
         
-        // Log the raw admin data
-        console.log("Raw Admins API Response:", admins);
-        
         allAdminsData = admins;
 
         // Populate dropdown filters
