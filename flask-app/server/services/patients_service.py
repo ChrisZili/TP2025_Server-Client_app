@@ -357,4 +357,6 @@ class PatientsService:
             message, status = User.check_user_type_required(user_id, "admin")
         if status != 200:
             message, status = User.check_user_type_required(user_id, "doctor")
+        if status != 200:
+            message, status = User.check_user_type_required(user_id, "technician")
         return message, status
