@@ -6,6 +6,7 @@ from server.models import ProcessedImageData
 from server.models.patient_data import PatientData
 from server.models.super_admin_data import SuperAdminData
 from server.models.technician_data import TechnicianData
+from server.models.messages_data import MessageData
 from server.models.user import User
 
 class DashboardService:
@@ -24,7 +25,22 @@ class DashboardService:
         else:
             return {"error": "Unauthorized or invalid user."}, 403
 
-
+    def get_message_count_for_user(self, user_id: int):
+        try:
+            return MessageData.query.filter(
+                (MessageData.sender_id == user_id) | (MessageData.recipient_id == user_id)
+            ).count()
+        except Exception as e:
+            return 0
+        
+    def get_received_messages_for_user(self, user_id: int):
+        try:
+            return MessageData.query.filter(
+                MessageData.recipient_id == user_id,
+                MessageData.is_read == False  # Filter only unread messages
+            ).order_by(MessageData.timestamp.desc()).all()
+        except Exception as e:
+            return []
 
     def get_info_super_admin(self, user_id: int):
         """Získanie základných informácií o nemocnici a počte používateľov."""
@@ -40,6 +56,7 @@ class DashboardService:
             admin_count = len(AdminData.query.all())
             original_image_count = len(OriginalImageData.query.all())
             processed_image_count = len(ProcessedImageData.query.all())
+            message_count = self.get_message_count_for_user(user_id)
 
             return {
                 "user_type": super_admin.user_type,
@@ -50,7 +67,7 @@ class DashboardService:
                 "admin_count": admin_count,
                 "original_image_count": original_image_count,
                 "processed_image_count": processed_image_count,
-                "message_count": 2,
+                "message_count": message_count,
             }, 200
         except Exception as e:
             return {"error": str(e)}, 500
@@ -73,6 +90,8 @@ class DashboardService:
                 for patient in doctor.patients
                 for image in patient.images
             )
+            message_count = self.get_message_count_for_user(user_id)
+
             return {
                 "user_type": admin.user_type,
                 "patient_count": patient_count,
@@ -80,7 +99,7 @@ class DashboardService:
                 "technician_count": technician_count,
                 "original_image_count": original_image_count,
                 "processed_image_count": processed_image_count,
-                "message_count": 2,
+                "message_count": message_count,
             }, 200
         except Exception as e:
             return {"error": str(e)}, 500
@@ -107,6 +126,7 @@ class DashboardService:
                     for patient in doctor.patients
                     for image in patient.images
                 )
+            message_count = self.get_message_count_for_user(user_id)
 
             return {
                 "user_type": doctor.user_type,
@@ -114,7 +134,7 @@ class DashboardService:
                 "technician_count": technician_count,
                 "original_image_count": original_image_count,
                 "processed_image_count": processed_image_count,
-                "message_count": 2,
+                "message_count": message_count,
             }, 200
         except Exception as e:
             return {"error": str(e)}, 500
@@ -127,10 +147,11 @@ class DashboardService:
 
         try:
             original_image_count = 5
+            message_count = self.get_message_count_for_user(user_id)
             return {
                 "user_type": technician.user_type,
                 "original_image_count": original_image_count,
-                "message_count": 2,
+                "message_count": message_count,
             }, 200
         except Exception as e:
             return {"error": str(e)}, 500
@@ -147,11 +168,12 @@ class DashboardService:
                 len(image.processed_images)
                 for image in patient.images
             )
+            message_count = self.get_message_count_for_user(user_id)
             return {
                 "user_type": patient.user_type,
                 "original_image_count": original_image_count,
                 "processed_image_count": processed_image_count,
-                "message_count": 2,
+                "message_count": message_count,
             }, 200
         except Exception as e:
             return {"error": str(e)}, 500

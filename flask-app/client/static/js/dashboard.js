@@ -156,14 +156,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Po načítaní user-a: generujeme menu, zobrazíme rolu
-  async function loadDashboard() {
+// Po načítaní user-a: generujeme menu, zobrazíme rolu
+ async function loadDashboard() {
     try {
       const response = await fetchWithAuth('/dashboard/info');
-      console.log(response)
+      console.log(response);
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa (token?).');
       }
+
       const data = await response.json();
 
       updateCards(data);
@@ -229,4 +230,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Spustíme
   loadDashboard();
+  loadMessages();
+
+  //nove spravy
+  async function loadMessages() {
+    console.log("loadMessages started");
+
+    try {
+      const res = await fetch('/dashboard/messages', {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      console.log("Response received:", res);
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch messages: status ${res.status}`);
+      }
+
+      const messages = await res.json();
+      console.log("Messages parsed:", messages);
+
+      renderMessages(messages);
+
+    } catch (err) {
+      console.error("Dashboard load error:", err);
+    }
+  }
+
+  function renderMessages(messages) {
+    const container = document.getElementById("dashboard-messages");
+    if (!container || !messages) return;
+
+    container.innerHTML = "";
+
+    messages.forEach(msg => {
+      const card = document.createElement("div");
+      card.className = "card message-card";
+      if (!msg.is_read) card.classList.add("unread");
+
+      card.innerHTML = `
+        <strong>${!msg.is_read ? "🔴 " : ""}Správa #${msg.id}</strong><br>
+        <p><strong>Od:</strong> ${msg.sender_email}</p>
+        <p><strong>Pre:</strong> ${msg.recipient_email}</p>
+        <p><strong>Obsah:</strong> ${msg.content}</p>
+        <p class="timestamp"><i class="far fa-clock"></i> ${new Date(msg.timestamp).toLocaleString()}</p>
+      `;
+
+      card.addEventListener("click", async (event) => {
+        if (event.target.closest(".toggle-read-btn")) return;
+
+        try {
+          if (!msg.is_read) {
+            const res = await fetch(`/spravy/${msg.id}/mark_read`, {
+              method: "PUT",
+              credentials: "include"
+            });
+
+            if (!res.ok) {
+              console.error(`Failed to mark as read, status: ${res.status}`);
+            } else {
+              console.log(`Message ${msg.id} marked as read`);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to mark message as read:", err);
+        } finally {
+          // Navigate whether or not mark_read succeeds
+          window.location.href = `/spravy/${msg.id}`;
+        }
+      });
+
+      container.appendChild(card);
+    });
+  }
+
 });

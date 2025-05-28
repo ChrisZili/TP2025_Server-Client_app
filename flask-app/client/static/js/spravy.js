@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   tabAll?.addEventListener("click", async () => {
     showTab("all");
-    await loadAllMessages(); // Re-fetch messages when returning
+    await loadAllMessages();
   });
   tabAdd?.addEventListener("click", () => {
     showTab("add");
@@ -66,15 +66,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Form elements - "Send message"
-  const sendMessageForm = document.getElementById("send-message-form");
-  const sendBtn = document.getElementById("send-message-btn");
+  const sendMessageForm = document.getElementById("send-message-form"); 
   const recipientInput = document.getElementById("message-recipient");
   const messageInput = document.getElementById("message-text");
   const imageInput = document.getElementById("message-image");
   const feedbackDiv = document.getElementById("send-message-feedback");
-
-  //viewCardsBtnAll?.addEventListener("click", () => setViewMode("cards"));
-  //viewListBtnAll?.addEventListener("click", () => setViewMode("list"));
+  const sendBtn = document.getElementById("send-message-btn");
 
   // Add this debounce function
   function debounce(func, delay) {
@@ -117,11 +114,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-
-
   //######################################################
   //here we show messages
 
+  //cards or table wiew
   function setMessageViewMode(mode) {
     localStorage.setItem("messageViewMode", mode);
 
@@ -143,6 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     applyMessageSearch(); // Re-filter on switch
   }
 
+  //filter messages (received/sent)
   function applyMessageSearch() {
     const search = document.getElementById("search-input")?.value.trim().toLowerCase() || "";
 
@@ -170,32 +167,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
-function updateActiveFilterButton(mode) {
-  currentFilterMode = mode;
+  function updateActiveFilterButton(mode) {
+    currentFilterMode = mode;
 
-  // Update active state on filter buttons
+    // Update active state on filter buttons
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.filter === mode);
+    });
+
+    // Let applyMessageSearch handle filtering logic
+    applyMessageSearch();
+  }
+
+  // Attach listeners ONCE to each filter button
   document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.filter === mode);
+    btn.addEventListener("click", () => {
+      const selectedMode = btn.dataset.filter;
+      updateActiveFilterButton(selectedMode);
+    });
   });
 
-  // Let applyMessageSearch handle filtering logic
-  applyMessageSearch();
-}
-
-// Attach listeners ONCE to each filter button
-document.querySelectorAll(".filter-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const selectedMode = btn.dataset.filter;
-    updateActiveFilterButton(selectedMode);
+  // Run this once on page load to apply initial state
+  document.addEventListener("DOMContentLoaded", () => {
+    updateActiveFilterButton(currentFilterMode);
   });
-});
 
-// Run this once on page load to apply initial state
-document.addEventListener("DOMContentLoaded", () => {
-  updateActiveFilterButton(currentFilterMode);
-});
-
-
+  //zobrazit karty
   function renderMessagesCards(messages) {
     const container = document.getElementById("messages-list-cards");
     if (!container) return;
@@ -217,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Check if message has images
         if (msg.images && msg.images.length > 0) {
           console.log(`Message ${msg.id} has ${msg.images.length} images`);
-          // You can do additional logic here, like showing a preview, etc.
         } else {
           console.log(`Message ${msg.id} has no images`);
         }
@@ -238,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       card.innerHTML = `
-        <strong>Správa #${msg.id}</strong><br>
+        <strong>${!msg.is_read ? "🔴 " : ""}Správa #${msg.id}</strong><br>
         <p><strong>Od:</strong> ${msg.sender_email}</p>
         <p><strong>Pre:</strong> ${msg.recipient_email}</p>
         <p><strong>Obsah:</strong> ${msg.content}</p>
@@ -252,42 +248,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  //prepnut is_read 1/0 pre karty
+  document.getElementById("messages-list-cards").addEventListener("click", async (e) => {
+    const btn = e.target.closest(".toggle-read-btn");
+    if (!btn) return;
 
+    e.preventDefault();
+    e.stopPropagation(); // Prevent triggering card click
 
-    document.getElementById("messages-list-cards").addEventListener("click", async (e) => {
-      const btn = e.target.closest(".toggle-read-btn");
-      if (!btn) return;
+    const msgId = btn.dataset.id;
 
-      e.preventDefault();
-      e.stopPropagation(); // Prevent triggering card click
+    try {
+      const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { Accept: "application/json" }
+      });
 
-      const msgId = btn.dataset.id;
+      const result = await resp.json();
+      if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
 
-      try {
-        const resp = await fetch(`/spravy/${msgId}/toggle_read`, {
-          method: "PUT",
-          credentials: "include",
-          headers: { Accept: "application/json" }
-        });
-
-        const result = await resp.json();
-        if (!resp.ok) throw new Error(result.error || "Chyba pri prepnutí stavu.");
-
-        // Update local message data
-        const message = allMessagesData.find(m => m.id == msgId);
-        if (message) {
-          message.is_read = result.is_read;
-          renderMessagesCards(allMessagesData);
-          applyMessageSearch();
-        }
-
-      } catch (err) {
-        console.error("Toggle error:", err);
-        alert("Nepodarilo sa zmeniť stav správy.");
+      // Update local message data
+      const message = allMessagesData.find(m => m.id == msgId);
+      if (message) {
+        message.is_read = result.is_read;
+        renderMessagesCards(allMessagesData);
+        applyMessageSearch();
       }
-    });
 
+    } catch (err) {
+      console.error("Toggle error:", err);
+      alert("Nepodarilo sa zmeniť stav správy.");
+    }
+  });
 
+  //zobrazit spravy ako tabulku
   function renderMessagesTable(messages) {
     const tbody = document.getElementById("messages-list-body");
     tbody.innerHTML = "";
@@ -318,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
       `;
 
-      // Row click (except when clicking on button)
+      // kliknutim an riadok zobrazime detail spravy
       tr.addEventListener("click", async (event) => {
         if (event.target.closest(".toggle-read-btn")) return;
 
@@ -340,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   
-
+  //prepnut is_read 1/0 pre tabulku
   document.getElementById("messages-list-body").addEventListener("click", async (e) => {
   const btn = e.target.closest(".toggle-read-btn");
   if (!btn) return;
@@ -376,10 +371,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
   //##################################################################################
-  //creating messages
+  //creating and sending messages
 
   // Helper to show feedback
   function showFeedback(msg, isError = true) {
@@ -387,13 +380,14 @@ document.addEventListener("DOMContentLoaded", () => {
     feedbackDiv.className = isError ? "error" : "success";
   }
 
-  // Enable button when inputs are not empty
+  // Enable SEND button when inputs are not empty
   [recipientInput, messageInput].forEach((el) =>
     el.addEventListener("input", () => {
       sendBtn.disabled = !(recipientInput.value.trim() && messageInput.value.trim());
     })
   );
   
+  //poslat spravu
   sendBtn.addEventListener("click", async () => {
     showFeedback("");
 

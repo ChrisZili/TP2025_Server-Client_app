@@ -1,6 +1,7 @@
 from server.routes.account import bp as account_bp
 from server.routes.admins import bp as admins_bp
 from server.routes.auth import bp as auth_bp
+from server.routes.dashboard import bp as dashboard_bp
 from server.routes.doctors import bp as doctors_bp
 from server.routes.hospital import bp as hospitals_bp
 from server.routes.technicians import bp as technicians_bp
@@ -15,6 +16,7 @@ def register_blueprints(app):
     app.register_blueprint(account_bp)
     app.register_blueprint(admins_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
     app.register_blueprint(doctors_bp)
     app.register_blueprint(hospitals_bp)
     app.register_blueprint(register_bp)

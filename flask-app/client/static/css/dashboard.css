@@ -24,7 +24,7 @@
 .card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 14px 20px;
   font-weight: bold;
   color: white;
@@ -159,3 +159,76 @@
     flex: 1 1 100%;
   }
 }
+
+/*spravy*/
+.messages-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  grid-auto-flow: dense;
+  margin: 2rem 0;
+}
+
+/* Base styles for all message cards */
+.message-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  width: 100%;
+  max-width: none;
+  flex-shrink: 1;
+  margin-bottom: 1rem;
+  margin-right: 0;
+  padding: 20px;
+  border-radius: 10px;
+  min-height: 160px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  /* Default background and text color */
+  background: linear-gradient(90deg, #2193b0, #4b8c9f);
+  color: #ffffff;
+
+  border-left: 5px solid #4a90e2;
+}
+
+.message-card.unread {
+  background: linear-gradient(90deg, #39B2D1, #27A9CB);
+  color: #000;
+}
+
+/* Headings and text inside message cards */
+.message-card h3,
+.message-card h4 {
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+
+.message-card h3 {
+  font-size: 1.2rem;
+}
+
+.message-card h4 {
+  margin-bottom: 0;
+}
+
+.message-card p {
+  margin: 4px 0 0 0;
+  font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.message-card:hover {
+  opacity: 0.9;
+}
+

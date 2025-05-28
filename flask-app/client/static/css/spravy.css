@@ -5,15 +5,6 @@ html, body {
   flex-direction: column;
 }
 
-.patients-container {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
 /* == Tabs == */
 .tabs-wrapper {
   overflow-x: auto;
@@ -210,7 +201,7 @@ html, body {
 .card.unread {
   padding: 20px;
   border-radius: 10px;
-  background: linear-gradient(90deg, #ADCF66, #8EBF45);
+  background: linear-gradient(90deg, #39B2D1, #27A9CB);
   color: #000;
   cursor: pointer;
   transition: opacity 0.3s;
@@ -236,7 +227,7 @@ html, body {
   margin: 4px 0;
   font-size: 1rem;
   display: -webkit-box;
-  -webkit-line-clamp: 3;        /* Number of lines to show */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -264,6 +255,7 @@ html, body {
   border-radius: 4px;
 }
 
+/*spravy v tabulkovej forme*/
 .messages-list-table {
   width: 100%;
   min-width: 1000px;
@@ -392,15 +384,7 @@ html, body {
   color: #888;
   pointer-events: none;
 }
-.field-error {
-  display: none;     /* skrytý, kým nie je chyba */
-  color: red;
-  font-size: 13px;
-}
-.field-error.active {
-  display: block;
-  margin-top: 5px;
-}
+
 /* == Formuláre == */
 #tab-add-content {
   padding-bottom: 40px;
@@ -499,58 +483,8 @@ html, body {
   border: 1px solid rgba(255, 0, 0, 0.2);
 }
 
-#add-patient-message {
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 5px;
-  font-weight: bold;
-  text-align: center;
-}
-#assign-patient-message {
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 5px;
-  font-weight: bold;
-  text-align: center;
-}
-
-#add-patient-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-#add-patient-message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-#assign-patient-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-#assign-patient-message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
 /* == Tlačidlo == */
 .add-btn {
-  background: #3a7bd5;
-  color: #fff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-.assign-btn {
   background: #3a7bd5;
   color: #fff;
   padding: 12px 20px;
@@ -576,30 +510,7 @@ html, body {
 .assign-btn i {
   margin-right: 8px;
 }
-.gdpr-group {
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-}
 
-.gdpr-group label {
-  font-weight: normal;
-  font-size: 1rem;
-}
-
-/* Password toggle button */
-.password-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.password-wrapper input {
-  width: 100%;
-  padding-right: 50px;
-  box-sizing: border-box;
-}
 
 .toggle-pw {
   width: 48px;

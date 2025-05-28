@@ -170,7 +170,7 @@ def get_message(message_id):
 @bp.route('/<int:message_id>/mark_read', methods=['PUT'])
 @jwt_required()
 def mark_message_as_read(message_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     logger.info("User %s is marking message %s as read", user_id, message_id)
 
     message = db.session.get(MessageData, message_id)
