@@ -109,7 +109,85 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  saveBtn.addEventListener("click", () => {
+  // --- Add error message elements and validation ---
+  function ensureErrorDiv(inputId) {
+    let input = document.getElementById(inputId);
+    if (!input) return null;
+    let errorDiv = input.parentElement.querySelector('.error-message');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.style.color = '#c0392b';
+      errorDiv.style.fontSize = '0.95em';
+      errorDiv.style.marginTop = '2px';
+      input.parentElement.appendChild(errorDiv);
+    }
+    return errorDiv;
+  }
+  const firstNameError = ensureErrorDiv('first_name');
+  const lastNameError = ensureErrorDiv('last_name');
+  const emailError = ensureErrorDiv('email');
+
+  const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function validateFields(showMessages = true) {
+    let valid = true;
+    const firstNameVal = form.first_name.value.trim();
+    const lastNameVal = form.last_name.value.trim();
+    const emailVal = form.email.value.trim();
+
+    // First name validation
+    if (!firstNameVal) {
+      if (showMessages) firstNameError.textContent = "Meno je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(firstNameVal)) {
+      if (showMessages) firstNameError.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      firstNameError.textContent = "";
+    }
+
+    // Last name validation
+    if (!lastNameVal) {
+      if (showMessages) lastNameError.textContent = "Priezvisko je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(lastNameVal)) {
+      if (showMessages) lastNameError.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      lastNameError.textContent = "";
+    }
+
+    // Email validation
+    if (!emailVal) {
+      if (showMessages) emailError.textContent = "Email je povinný.";
+      valid = false;
+    } else if (!emailRegex.test(emailVal)) {
+      if (showMessages) emailError.textContent = "Zadajte platnú emailovú adresu.";
+      valid = false;
+    } else {
+      emailError.textContent = "";
+    }
+
+    return valid;
+  }
+
+  // Show error on input if cleared or invalid
+  form.first_name.addEventListener("input", () => validateFields());
+  form.last_name.addEventListener("input", () => validateFields());
+  form.email.addEventListener("input", () => validateFields());
+
+  // Show error when leaving (blurring) a field if not valid
+  form.first_name.addEventListener("blur", () => validateFields());
+  form.last_name.addEventListener("blur", () => validateFields());
+  form.email.addEventListener("blur", () => validateFields());
+
+  saveBtn.addEventListener("click", (e) => {
+    if (!validateFields(true)) {
+      e.preventDefault();
+      return;
+    }
     confirmModal.style.display = "flex";
   });
 
@@ -119,6 +197,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   confirmBtn.addEventListener("click", async () => {
     confirmModal.style.display = "none";
+    if (!validateFields(true)) {
+      return;
+    }
     const technicianId = getTechnicianIdFromURL();
 
     const data = {
@@ -146,6 +227,9 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(err.message || "Nepodarilo sa uložiť zmeny.");
     }
   });
+
+  // Add back button logic (same as in admin/doctor/hospital/patient details)
+  document.getElementById("back-technician-btn")?.addEventListener("click", () => window.history.back());
 
   loadTechnicianDetails();
   checkUserTypeAndAdjustForm();

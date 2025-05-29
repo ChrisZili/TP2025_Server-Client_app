@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-eVýsledky - Správa pacientov
+Správa pacientov - STU FEI
 {% endblock %}
 
 {% block stylesheet %}
@@ -19,7 +19,6 @@ Správa pacientov
   <div class="tabs-wrapper">
     <div class="tabs" id="tabs">
       <div class="tab active" id="tab-all">Všetci pacienti</div>
-      <div class="tab" id="tab-search">Vyhľadať pacienta</div>
       <div class="tab" id="tab-add">Pridať pacienta</div>
       <div class="tab" id="tab-assign">Priradiť pacienta</div>
     </div>
@@ -42,17 +41,45 @@ Správa pacientov
       </div>
     </div>
 
-    <!-- Select na triedenie pre KARTY -->
-    <div class="sort-options" id="sort-options-all">
-      <label for="sort-select">
-        <i class="fas fa-sort"></i> Zoradiť podľa:
-      </label>
-      <select id="sort-select">
-        <option value="creation" selected>Od najstaršieho</option>
-        <option value="newest">Od najnovšieho</option>
-        <option value="alphabetical-asc">Podľa mena (A-Z)</option>
-        <option value="alphabetical-desc">Podľa mena (Z-A)</option>
-      </select>
+    <!-- Search bar moved here -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Meno, priezvisko, telefón alebo doktor" />
+    </div>
+
+    <div class="filters">
+      <!-- Sorting Dropdown -->
+      <div class="form-group">
+        <label for="sort-select">
+          <i class="fas fa-sort"></i> Zoradiť podľa:
+        </label>
+        <select id="sort-select" class="sort-select">
+          <option value="creation" selected>Od najstarších po najnovších</option>
+          <option value="newest">Od najnovších po najstarších</option>
+          <option value="alphabetical-asc">Abecedne (A-Z)</option>
+          <option value="alphabetical-desc">Abecedne (Z-A)</option>
+        </select>
+      </div>
+
+      <!-- Hospital Filter -->
+      <div class="form-group">
+        <label for="hospital-filter-dropdown">
+          <i class="fas fa-hospital"></i> Nemocnica:
+        </label>
+        <select id="hospital-filter-dropdown" class="sort-select">
+          <option value="">Všetky nemocnice</option>
+        </select>
+      </div>
+
+      <!-- Doctor Filter -->
+      <div class="form-group">
+        <label for="doctor-filter-dropdown">
+          <i class="fas fa-user-md"></i> Doktor:
+        </label>
+        <select id="doctor-filter-dropdown" class="sort-select">
+          <option value="">Všetci doktori</option>
+        </select>
+      </div>
     </div>
 
     <!-- Karty -->
@@ -66,77 +93,39 @@ Správa pacientov
         <table class="patients-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="doctor">Doktor <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">
+                Celé meno
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="created_at">
+                Dátum vytvorenia
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="phone_number">
+                Telefón
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="email">
+                Email
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="doctor">
+                Doktor
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="hospital">
+                Nemocnica
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
             </tr>
           </thead>
           <tbody id="all-list-body">
-            <!-- Generované v JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================== -->
-  <!-- Tab SEARCH (Vyhľadávanie)   -->
-  <!-- =========================== -->
-  <div class="tab-content hidden" id="tab-search-content">
-    <div class="search-header">
-      <h2>Vyhľadávanie pacientov</h2>
-      <div class="header-buttons">
-        <button id="search-view-cards" class="view-toggle active" title="Karty">
-          <i class="fas fa-th-large"></i>
-        </button>
-        <button id="search-view-list" class="view-toggle" title="Zoznam">
-          <i class="fas fa-list"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Tu je vstup pre hľadanie -->
-    <div class="search-bar">
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search-input" placeholder="Meno, priezvisko, telefón alebo doktor" />
-    </div>
-
-    <!-- Select na triedenie pre KARTY -->
-    <div class="sort-options" id="sort-options-search">
-      <label for="search-sort-select">
-        <i class="fas fa-sort"></i> Zoradiť podľa:
-      </label>
-      <select id="search-sort-select">
-        <option value="creation" selected>Od najstaršieho</option>
-        <option value="newest">Od najnovšieho</option>
-        <option value="alphabetical-asc">Podľa mena (A-Z)</option>
-        <option value="alphabetical-desc">Podľa mena (Z-A)</option>
-      </select>
-    </div>
-
-    <!-- Karty -->
-    <div id="search-cards-container">
-      <div class="cards" id="search-results"></div>
-    </div>
-
-    <!-- Tabuľka (list) -->
-    <div id="search-list-container" class="hidden">
-      <div class="table-scroll-wrapper">
-        <table class="patients-list-table">
-          <thead>
-            <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="phone_number">Telefón <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="doctor">Doktor <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
-            </tr>
-          </thead>
-          <tbody id="search-list-body">
             <!-- Generované v JS -->
           </tbody>
         </table>
@@ -174,30 +163,11 @@ Správa pacientov
         <div class="field-error" id="patient-phone-error"></div>
       </div>
 
-      <!-- Dátum narodenia -->
-      <div class="form-group">
-        <label for="patient-birth-date">Dátum narodenia</label>
-        <input type="date" id="patient-birth-date" name="birth_date" required />
-        <div class="field-error" id="patient-birth-date-error"></div>
-      </div>
-
-      <!-- Rodné číslo -->
+      <!-- Rodné číslo (now only 6 digits) -->
       <div class="form-group">
         <label for="patient-birth-number">Rodné číslo</label>
-        <input type="text" id="patient-birth-number" name="birth_number" placeholder="######/####" required />
+        <input type="text" id="patient-birth-number" name="birth_number" placeholder="######" maxlength="6" required />
         <div class="field-error" id="patient-birth-number-error"></div>
-      </div>
-
-      <!-- Pohlavie -->
-      <div class="form-group">
-        <label for="patient-gender">Pohlavie</label>
-        <select id="patient-gender" name="gender" required>
-          <option value="" disabled selected>Vyberte pohlavie</option>
-          <option value="Muž">Muž</option>
-          <option value="Žena">Žena</option>
-          <option value="Iné">Iné</option>
-        </select>
-        <div class="field-error" id="patient-gender-error"></div>
       </div>
 
       <!-- Výber doktora -->
@@ -264,8 +234,15 @@ Správa pacientov
       <!-- Rodné číslo -->
       <div class="form-group">
         <label for="assign-birth-number">Rodné číslo</label>
-        <input type="text" id="assign-birth-number" name="birth_number" placeholder="######/####" required />
+        <input type="text" id="assign-birth-number" name="birth_number" placeholder="######" required />
         <div class="field-error" id="assign-birth-number-error"></div>
+      </div>
+      <!-- Výber pacienta podľa rodného čísla -->
+      <div class="form-group">
+        <label for="assign-patient-dropdown">Vyhľadať pacienta podľa rodného čísla</label>
+        <select id="assign-patient-dropdown" class="form-control">
+          <option value="">Začnite písať rodné číslo...</option>
+        </select>
       </div>
       <!-- Výber doktora -->
       <div class="form-group">

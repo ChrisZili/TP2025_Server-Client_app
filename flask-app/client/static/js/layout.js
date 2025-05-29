@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuConfig = {
     patient: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
-      { icon: "fa fa-flask",   label: "Výsledky",   link: "/vysledky" },
+      { icon: "fa fa-flask",   label: "Výsledky",   link: "/photos/list"  },
       { icon: "fa fa-user-md", label: "Doktor",     link: "/lekari" },
       { icon: "fa fa-envelope",label: "Správy",     link: "/spravy" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
-      { icon: "fa fa-images",  label: "Fotky",        link: "/fotky" },
+      { icon: "fa fa-images",  label: "Fotky",        link: "/photos/list"},
       { icon: "fa fa-upload",  label: "Pridať fotku", link: "/photos/add_photo" },
       { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
       { icon: "fa fa-envelope", label: "Správy",      link: "/spravy" },

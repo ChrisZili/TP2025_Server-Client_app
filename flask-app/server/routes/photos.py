@@ -32,26 +32,17 @@ def get_current_user_id():
     try:
         if user_id:
             user_id = int(user_id)
-            # Debug: Get the user details
-            user = db.session.get(User, user_id)
-            logger.info(f"Current user ID: {user_id}, User type: {user.user_type if user else 'None'}")
+            user = User.query.get(user_id)
+            if not user or user.user_type not in ['super_admin', 'admin', 'doctor', 'technician']:
+                return {'error': 'Unauthorized'}, 403
+
             return user_id
         else:
-            # For testing purposes, use a default admin or doctor ID if needed
-            logger.warning("No JWT token found, using default admin ID")
-            # Try to find a doctor in the system
-            doctor = DoctorData.query.first()
-            if doctor:
-                user_id = doctor.id
-                logger.info(f"Using default doctor ID: {user_id}")
-                return user_id
-            else:
-                # If no doctor found, use ID 1 as fallback
-                logger.warning("No doctor found, using fallback ID: 1")
-                return 1
+            logger.error(f"Invalid user_id from token")
+            return 1
+
     except (ValueError, TypeError) as e:
         logger.error(f"Invalid user_id from token: {user_id}, error: {str(e)}")
-        # Continue with a default ID for testing
         return 1
 
 # Helper function to get available patients

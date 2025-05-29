@@ -119,29 +119,52 @@ html, body {
 .sort-options {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 1rem; /* Space between dropdowns */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  margin-bottom: 1rem; /* Add spacing below the dropdowns */
 }
 
 .sort-options label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.5rem; /* Space between icon and text */
   font-weight: bold;
   font-size: 1rem;
   color: #444;
 }
 
 .sort-options select {
-  padding: 8px 10px;
+  padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  background: #fff;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
 }
 
-#sort-select {
-  min-width: 180px;
+.sort-options select:focus {
+  border-color: #007bff;
+}
+
+/* Example CSS for dropdown styling */
+.sort-select {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  appearance: none; /* Remove default browser styling */
+}
+
+.sort-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
 }
 
 /* == Karty == */
@@ -164,8 +187,10 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
-  max-width: 100%;
+ max-width: 60vw;
+  width: 100%;
   font-size: 1.05rem;
+  margin-right: auto;
 }
 
 .card h3 {
@@ -244,6 +269,24 @@ html, body {
   transform: rotate(0deg);
 }
 
+/* Sorting arrows for table headers */
+.patients-list-table th .arrow-up,
+.patients-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #3a7bd5;
+  vertical-align: middle;
+}
+
+.patients-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.patients-list-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
 .patients-list-table tbody {
   display: block;
   height: 100%;
@@ -256,7 +299,6 @@ html, body {
   display: table;
   width: 100%;
   table-layout: fixed;
-  cursor: pointer;
 }
 
 .patients-list-table tbody tr {
@@ -329,6 +371,14 @@ html, body {
   margin: 0 auto 20px auto;
   box-sizing: border-box;
 }
+.form-group {
+  display: flex; /* Default display for dropdowns */
+}
+
+.form-group.hidden {
+  display: none; /* Hide the dropdown */
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -519,7 +569,7 @@ html, body {
 }
 
 /* == Responz��vne == */
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .patients-container {
     padding: 10px;
     height: auto;
@@ -559,6 +609,11 @@ html, body {
   #sort-select {
     min-width: 20px;
   }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
 
   .patients-list-table thead th,
   .patients-list-table tbody td {
@@ -586,4 +641,53 @@ html, body {
     font-size: 0.95rem;
     padding: 10px 16px;
   }
+}
+
+/* == Filters == */
+/* Default: filters in a row */
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.filters .form-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-direction: row;
+}
+
+/* Responsive: Stack filters vertically on small screens */
+@media (max-width: 600px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .filters .form-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+    gap: 0.2rem;
+  }
+  .filters .form-group label {
+    margin-bottom: 2px;
+  }
+  .filters .form-group select {
+    width: 100%;
+  }
+}
+
+#assign-patient-dropdown {
+  background-color: #e9ecef !important; /* grey background for the select */
+  color: #6c757d !important;
+  border: 1px solid #ced4da !important;
+  cursor: not-allowed;
+}
+
+/* Remove background styling from options to keep them white (default) */
+#assign-patient-dropdown option {
+  background-color: #fff !important;
+  color: #333 !important;
 }

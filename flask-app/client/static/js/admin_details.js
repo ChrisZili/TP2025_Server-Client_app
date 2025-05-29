@@ -7,6 +7,99 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById('toggle-password');
   const passwordInput = document.getElementById('password');
 
+  // --- Add error message elements ---
+  function ensureErrorDiv(inputId) {
+    let input = document.getElementById(inputId);
+    if (!input) return null;
+    let errorDiv = input.parentElement.querySelector('.error-message');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.style.color = '#c0392b';
+      errorDiv.style.fontSize = '0.95em';
+      errorDiv.style.marginTop = '2px';
+      input.parentElement.appendChild(errorDiv);
+    }
+    return errorDiv;
+  }
+  const firstNameError = ensureErrorDiv('first_name');
+  const lastNameError = ensureErrorDiv('last_name');
+  const emailError = ensureErrorDiv('email');
+
+  // Regex for name, email, and phone
+  const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+
+  function validateFields(showMessages = true) {
+    let valid = true;
+    const firstNameVal = form.first_name.value.trim();
+    const lastNameVal = form.last_name.value.trim();
+    const emailVal = form.email.value.trim();
+    const phoneVal = form.phone_number.value.trim();
+
+    // First name validation
+    if (!firstNameVal) {
+      if (showMessages) firstNameError.textContent = "Meno je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(firstNameVal)) {
+      if (showMessages) firstNameError.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      firstNameError.textContent = "";
+    }
+
+    // Last name validation
+    if (!lastNameVal) {
+      if (showMessages) lastNameError.textContent = "Priezvisko je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(lastNameVal)) {
+      if (showMessages) lastNameError.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      lastNameError.textContent = "";
+    }
+
+    // Email validation
+    if (!emailVal) {
+      if (showMessages) emailError.textContent = "Email je povinný.";
+      valid = false;
+    } else if (!emailRegex.test(emailVal)) {
+      if (showMessages) emailError.textContent = "Zadajte platnú emailovú adresu.";
+      valid = false;
+    } else {
+      emailError.textContent = "";
+    }
+
+    // Phone validation (only if something is entered)
+    if (phoneVal) {
+      let phoneError = ensureErrorDiv('phone_number');
+      if (!phoneRegex.test(phoneVal)) {
+        if (showMessages) phoneError.textContent = "Zadajte platné telefónne číslo (napr. +421*********).";
+        valid = false;
+      } else {
+        phoneError.textContent = "";
+      }
+    } else {
+      let phoneError = ensureErrorDiv('phone_number');
+      phoneError.textContent = "";
+    }
+
+    return valid;
+  }
+
+  // Show error on input if cleared or invalid
+  form.first_name.addEventListener("input", () => validateFields());
+  form.last_name.addEventListener("input", () => validateFields());
+  form.email.addEventListener("input", () => validateFields());
+  form.phone_number.addEventListener("input", () => validateFields());
+
+  // Show error when leaving (blurring) a field if not valid
+  form.first_name.addEventListener("blur", () => validateFields());
+  form.last_name.addEventListener("blur", () => validateFields());
+  form.email.addEventListener("blur", () => validateFields());
+  form.phone_number.addEventListener("blur", () => validateFields());
+
   if (toggleBtn && passwordInput) {
     toggleBtn.addEventListener('click', () => {
       const isPassword = passwordInput.type === 'password';
@@ -14,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleBtn.innerHTML = `<i class="fas ${isPassword ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
     });
   }
-
 
   function fetchWithAuth(url, options = {}) {
     return fetch(url, {
@@ -74,7 +166,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  saveBtn.addEventListener("click", () => {
+  saveBtn.addEventListener("click", (e) => {
+    // Validate before showing modal
+    if (!validateFields(true)) {
+      e.preventDefault();
+      return;
+    }
     confirmModal.style.display = "flex";
   });
 
@@ -84,6 +181,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   confirmBtn.addEventListener("click", async () => {
     confirmModal.style.display = "none";
+    // Final validation before saving
+    if (!validateFields(true)) {
+      return;
+    }
     const adminId = getAdminIdFromURL();
 
     const data = {
@@ -114,6 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(err.message || "Nepodarilo sa uložiť zmeny.");
     }
   });
+
+  document.getElementById("back-admin-btn")?.addEventListener("click", () => window.history.back());
 
   loadAdminDetails();
 });

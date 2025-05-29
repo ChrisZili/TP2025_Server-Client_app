@@ -68,8 +68,7 @@
   border-radius: 20px;
   cursor: pointer;
   transition: background 0.3s ease;
-  display: block;
-  margin: 0 auto;
+  display: inline-block;     /* Make sure buttons are inline */
 }
 
 .save-btn:hover {
@@ -167,4 +166,12 @@
   .form-column {
     flex: 1 1 100%;
   }
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;   /* Center the buttons horizontally */
+  align-items: center;       /* Align vertically */
+  gap: 0.5rem;               /* Small gap between buttons */
+  margin-top: 1.5rem;
 }

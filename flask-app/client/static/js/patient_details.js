@@ -145,7 +145,160 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  saveBtn.addEventListener("click", () => {
+  // --- Add error message elements and validation ---
+  function ensureErrorDiv(inputId) {
+    let input = document.getElementById(inputId);
+    if (!input) return null;
+    let errorDiv = input.parentElement.querySelector('.error-message');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.style.color = '#c0392b';
+      errorDiv.style.fontSize = '0.95em';
+      errorDiv.style.marginTop = '2px';
+      input.parentElement.appendChild(errorDiv);
+    }
+    return errorDiv;
+  }
+  const firstNameError = ensureErrorDiv('first_name');
+  const lastNameError = ensureErrorDiv('last_name');
+  const emailError = ensureErrorDiv('email');
+  const phoneError = ensureErrorDiv('phone_number');
+  const birthNumberError = ensureErrorDiv('birth_number');
+
+  const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+  const birthNumberRegex = /^\d{6}$/;
+
+  function validateFields(showMessages = true) {
+    let valid = true;
+    const firstNameVal = form.first_name.value.trim();
+    const lastNameVal = form.last_name.value.trim();
+    const emailVal = form.email.value.trim();
+    const phoneVal = form.phone_number.value.trim();
+    const birthNumberVal = form.birth_number ? form.birth_number.value.trim() : "";
+
+    // First name validation
+    if (!firstNameVal) {
+      if (showMessages) firstNameError.textContent = "Meno je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(firstNameVal)) {
+      if (showMessages) firstNameError.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      firstNameError.textContent = "";
+    }
+
+    // Last name validation
+    if (!lastNameVal) {
+      if (showMessages) lastNameError.textContent = "Priezvisko je povinné.";
+      valid = false;
+    } else if (!nameRegex.test(lastNameVal)) {
+      if (showMessages) lastNameError.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+      valid = false;
+    } else {
+      lastNameError.textContent = "";
+    }
+
+    // Email validation
+    if (!emailVal) {
+      if (showMessages) emailError.textContent = "Email je povinný.";
+      valid = false;
+    } else if (!emailRegex.test(emailVal)) {
+      if (showMessages) emailError.textContent = "Zadajte platnú emailovú adresu.";
+      valid = false;
+    } else {
+      emailError.textContent = "";
+    }
+
+    // Phone validation (only if something is entered)
+    if (phoneVal) {
+      if (!phoneRegex.test(phoneVal)) {
+        if (showMessages) phoneError.textContent = "Zadajte platné telefónne číslo (napr. +421900123456, 0900123456, 421900123456).";
+        valid = false;
+      } else {
+        phoneError.textContent = "";
+      }
+    } else {
+      phoneError.textContent = "";
+    }
+
+    // Birth number validation (must be exactly 6 digits and valid date)
+    if (form.birth_number && form.birth_number.offsetParent !== null) {
+      if (!birthNumberVal) {
+        if (showMessages) birthNumberError.textContent = "Rodné číslo je povinné.";
+        valid = false;
+      } else if (!birthNumberRegex.test(birthNumberVal)) {
+        if (showMessages) birthNumberError.textContent = "Rodné číslo musí mať 6 číslic.";
+        valid = false;
+      } else {
+        // Parse birth number and check validity (same as registration)
+        const year = parseInt(birthNumberVal.slice(0, 2), 10);
+        let month = parseInt(birthNumberVal.slice(2, 4), 10);
+        const day = parseInt(birthNumberVal.slice(4, 6), 10);
+
+        // Gender logic: month > 50 means female
+        let gender = "Muž";
+        if (month > 50) {
+          gender = "Žena";
+          month -= 50;
+        }
+
+        // Guess century: if year > 30, use 1900s, else 2000s
+        const fullYear = year > 30 ? 1900 + year : 2000 + year;
+
+        // Check month and day validity
+        const isMonthValid = month >= 1 && month <= 12;
+        const isDayValid = day >= 1 && day <= 31;
+        let isDateValid = false;
+        if (isMonthValid && isDayValid) {
+          const testDate = new Date(fullYear, month - 1, day);
+          isDateValid =
+            testDate.getFullYear() === fullYear &&
+            testDate.getMonth() === month - 1 &&
+            testDate.getDate() === day;
+        }
+
+        if (!isMonthValid || !isDayValid || !isDateValid) {
+          if (showMessages) birthNumberError.textContent = "Rodné číslo obsahuje neplatný dátum narodenia.";
+          valid = false;
+        } else {
+          birthNumberError.textContent = "";
+        }
+      }
+    } else if (birthNumberError) {
+      birthNumberError.textContent = "";
+    }
+
+    return valid;
+  }
+
+  // Show error on input if cleared or invalid
+  form.first_name.addEventListener("input", () => validateFields());
+  form.last_name.addEventListener("input", () => validateFields());
+  form.email.addEventListener("input", () => validateFields());
+  form.phone_number.addEventListener("input", () => validateFields());
+  if (form.birth_number) form.birth_number.addEventListener("input", () => {
+    // Only allow up to 6 digits
+    let val = form.birth_number.value.replace(/\D/g, "");
+    if (val.length > 6) val = val.substring(0, 6);
+    form.birth_number.value = val;
+    validateFields();
+  });
+
+  // Show error when leaving (blurring) a field if not valid
+  form.first_name.addEventListener("blur", () => validateFields());
+  form.last_name.addEventListener("blur", () => validateFields());
+  form.email.addEventListener("blur", () => validateFields());
+  form.phone_number.addEventListener("blur", () => validateFields());
+  if (form.birth_number) form.birth_number.addEventListener("blur", () => validateFields());
+
+  saveBtn.addEventListener("click", (e) => {
+    if (!validateFields(true)) {
+      e.preventDefault();
+      return;
+    }
     confirmModal.style.display = "flex";
   });
 
@@ -155,6 +308,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   confirmBtn.addEventListener("click", async () => {
     confirmModal.style.display = "none";
+    if (!validateFields(true)) {
+      return;
+    }
     const patientId = getPatientIdFromURL();
 
     const data = {
@@ -192,6 +348,9 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(err.message || "Nepodarilo sa uložiť zmeny.");
     }
   });
+
+  // Add back button logic (same as in admin/doctor/hospital details)
+  document.getElementById("back-patient-btn")?.addEventListener("click", () => window.history.back());
 
   loadPatientDetails();
   checkUserTypeAndAdjustForm();

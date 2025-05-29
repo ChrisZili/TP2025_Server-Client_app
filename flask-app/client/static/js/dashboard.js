@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuConfig = {
     patient: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
-      { icon: "fa fa-flask",   label: "Výsledky",   link: "/vysledky", countTemplate: "${data.processed_image_count} Všetkých výsledkov" },
+      { icon: "fa fa-flask",   label: "Výsledky",   link: "/photos/list", countTemplate: "${data.processed_image_count} Všetkých výsledkov" },
       { icon: "fa fa-user-md", label: "Doktor",     link: "/lekari", countTemplate: "${data.doctor_count} Všetkých doktorov" },
       { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings"},
@@ -16,8 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
-      { icon: "fa fa-images", label: "Fotky", link: "/fotky", countTemplate: "${data.original_image_count} Všetkých fotiek" },
-      { icon: "fa fa-upload", label: "Pridať fotku", link: "/photos/add_photo" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
       { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
       { icon: "fa fa-envelope", label: "Správy", link: "/spravy", countTemplate: "${data.message_count} Všetkých správ" },
       { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
@@ -70,10 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const labelToColorClass = {
       "Nemocnice": "hospitalSky",
       "Admini": "adminSteel",
+      "Doktor": "doctorOcean",
       "Doktori": "doctorOcean",
       "Technici": "techNavy",
       "Pacienti": "patientSoft",
       "Fotky": "photoSky",
+      "Výsledky": "photoSky",
       "Zoznam": "listBlue",
       "Spracované fotky": "resultsIce",
       "Správy": "messageCool",

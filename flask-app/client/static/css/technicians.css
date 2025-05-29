@@ -118,29 +118,56 @@ html, body {
 .sort-options {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
 
 .sort-options label {
+  margin-right: 0.5rem;
+  font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-weight: bold;
-  font-size: 1rem;
-  color: #444;
 }
 
 .sort-options select {
-  padding: 8px 10px;
-  font-size: 1rem;
+  padding: 0.5rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  background: #fff;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #fff;
+  cursor: pointer;
 }
 
+.sort-options select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Make sort dropdown responsive and label above on small screens */
 #sort-select {
   min-width: 180px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  #sort-select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .sort-options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+  }
+  .sort-options label {
+    margin-bottom: 2px;
+  }
+  .sort-options select {
+    width: 100%;
+  }
 }
 
 /* == Karty == */
@@ -148,8 +175,8 @@ html, body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
-}
 
+}
 .card {
   padding: 20px;
   border-radius: 10px;
@@ -163,8 +190,10 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
-  max-width: 100%;
+ max-width: 60vw;
+  width: 100%;
   font-size: 1.05rem;
+  margin-right: auto;
 }
 
 .card h3 {
@@ -243,6 +272,24 @@ html, body {
   transform: rotate(0deg);
 }
 
+/* Sorting arrows for table headers */
+.technicians-list-table th .arrow-up,
+.technicians-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #1a7891;
+  vertical-align: middle;
+}
+
+.technicians-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.technicians-list-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
 .technicians-list-table tbody {
   display: block;
   height: 100%;
@@ -255,7 +302,6 @@ html, body {
   display: table;
   width: 100%;
   table-layout: fixed;
-  cursor: pointer;
 }
 
 .technicians-list-table tbody tr {
@@ -459,11 +505,102 @@ html, body {
   color: #333;
 }
 
-/* Responsívne */
+/* Error message styling */
+.field-error {
+  color: #d32f2f;
+  font-size: 0.95em;
+  margin-top: 2px;
+  min-height: 18px;
+}
+
+/* Add this for dropdowns container */
+.dropdowns-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start; /* Align dropdowns to the left */
+}
+
+/* Each dropdown stays inline until small screens */
+.dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 90vw;
+  margin-bottom: 0; /* Remove extra margin for inline look */
+  /* Remove flex: 1 1 0; to prevent stretching */
+}
+
+/* Dropdown styling for .dropdowns-container */
+.dropdown label {
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: bold;
+}
+
+.dropdown select {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown select:focus {
+  border-color: #007bff;
+}
+
+/* Responsive: stack vertically only on small screens */
 @media (max-width: 600px) {
+  .dropdowns-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .dropdown {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .dropdown label {
+    margin-bottom: 2px;
+  }
+  .dropdown select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Responsívne */
+@media (max-width: 700px) {
   .technicians-container {
     padding: 10px;
     height: auto;
+  }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
   }
 
   .tabs {
@@ -498,7 +635,9 @@ html, body {
   }
 
   #sort-select {
-    min-width: 20px;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
   }
 
   .technicians-list-table thead th,

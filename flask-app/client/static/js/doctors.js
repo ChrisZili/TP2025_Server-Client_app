@@ -1,153 +1,373 @@
 document.addEventListener("DOMContentLoaded", () => {
   // -- All variables --
   let allDoctorsData = [];
+  let currentSortColumn = "full_name"; // Default sort column for A-Z
+  let currentSortDirection = "asc";    // Default sort direction
   let userType = "";
 
-  // For "All" tab
-  let allCurrentSortColumn = "last_name";
-  let allCurrentSortDirection = "asc";
-
-  // For "Search" tab
-  let searchCurrentSortColumn = "last_name";
-  let searchCurrentSortDirection = "asc";
-
-  // DOM elements for view toggles
-  const viewCardsBtnAll = document.getElementById("view-cards");
-  const viewListBtnAll = document.getElementById("view-list");
-  const allCardsContainer = document.getElementById("all-cards-container");
-  const allListContainer = document.getElementById("all-list-container");
-  const sortOptionsAll = document.getElementById("sort-options-all");
-  const allDoctorsList = document.getElementById("all-doctors-cards");
-
-  // DOM elements for search view toggles
-  const viewCardsBtnSearch = document.getElementById("search-view-cards");
-  const viewListBtnSearch = document.getElementById("search-view-list");
-  const searchCardsContainer = document.getElementById("search-cards-container");
-  const searchListContainer = document.getElementById("search-list-container");
-  const sortOptionsSearch = document.getElementById("sort-options-search");
-  const searchResults = document.getElementById("search-results-cards");
+  // DOM elements
   const searchInput = document.getElementById("search-input");
-  const searchSortSelect = document.getElementById("search-sort-select");
-
-  // Tab elements
-  const tabAll = document.getElementById("tab-all");
-  const tabSearch = document.getElementById("tab-search");
-  const tabAdd = document.getElementById("tab-add");
-
-  const tabAllContent = document.getElementById("tab-all-content");
-  const tabSearchContent = document.getElementById("tab-search-content");
-  const tabAddContent = document.getElementById("tab-add-content");
-
-  // Form elements
   const sortSelect = document.getElementById("sort-select");
   const allListBody = document.getElementById("all-list-body");
-  const searchListBody = document.getElementById("search-list-body");
+  const allDoctorsList = document.getElementById("all-doctors-cards");
+  const hospitalFilter = document.getElementById("doctor-hospital-filter");
+  const viewCardsBtn = document.getElementById("view-cards");
+  const viewListBtn = document.getElementById("view-list");
+  const allCardsContainer = document.getElementById("all-cards-container");
+  const allListContainer = document.getElementById("all-list-container");
+  const tableHeaders = document.querySelectorAll("#all-list-container thead th");
+  const addDoctorBtn = document.getElementById("add-doctor-btn");
   const addDoctorMessage = document.getElementById("add-doctor-message");
   const addDoctorForm = document.getElementById("add-doctor-form");
 
-  // Setup password toggle functionality
-  function setupPasswordToggle(inputId, toggleId) {
-    const input = document.getElementById(inputId);
-    const toggle = document.getElementById(toggleId);
+  // Tab elements
+  const tabAll = document.getElementById("tab-all");
+  const tabAdd = document.getElementById("tab-add");
+  const tabAllContent = document.getElementById("tab-all-content");
+  const tabAddContent = document.getElementById("tab-add-content");
 
-    if (input && toggle) {
-      toggle.addEventListener('click', () => {
-        const isHidden = input.type === 'password';
-        input.type = isHidden ? 'text' : 'password';
-        toggle.innerHTML = `<i class="fas ${isHidden ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
-      });
-    }
+  // Inline error elements
+  const doctorTypeErrorDiv = document.getElementById("doctor-type-error");
+  const firstNameErrorDiv = document.getElementById("doctor-first-name-error");
+  const lastNameErrorDiv = document.getElementById("doctor-last-name-error");
+  const phoneErrorDiv = document.getElementById("doctor-phone-error");
+  const genderErrorDiv = document.getElementById("doctor-gender-error");
+  const titleErrorDiv = document.getElementById("doctor-title-error");
+  const suffixErrorDiv = document.getElementById("doctor-suffix-error");
+  const hospitalCodeErrorDiv = document.getElementById("doctor-hospital-code-error");
+  const emailErrorDiv = document.getElementById("doctor-email-error");
+  const passwordErrorDiv = document.getElementById("doctor-password-error");
+  const passwordConfirmErrorDiv = document.getElementById("doctor-password-confirm-error");
+  const gdprErrorDiv = document.getElementById("doctor-gdpr-error");
+
+  // Input elements
+  const doctorTypeInput = document.getElementById("doctor-type");
+  const firstNameInput = document.getElementById("doctor-first-name");
+  const lastNameInput = document.getElementById("doctor-last-name");
+  const phoneInput = document.getElementById("doctor-phone");
+  const genderInput = document.getElementById("doctor-gender");
+  const titleInput = document.getElementById("doctor-title");
+  const suffixInput = document.getElementById("doctor-suffix");
+  const hospitalCodeInput = document.getElementById("doctor-hospital-code");
+  const emailInput = document.getElementById("doctor-email");
+  const passwordInput = document.getElementById("doctor-password");
+  const passwordConfirmInput = document.getElementById("doctor-password-confirm");
+  const gdprCheckbox = document.getElementById("gdpr");
+
+  // Track which fields have been touched (blurred)
+  const touchedFields = {
+    doctorType: false,
+    firstName: false,
+    lastName: false,
+    phone: false,
+    gender: false,
+    title: false,
+    suffix: false,
+    hospitalCode: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+    gdpr: false
+  };
+
+  // Track if a field was ever focused
+  const everFocused = {
+    doctorType: false,
+    firstName: false,
+    lastName: false,
+    phone: false,
+    gender: false,
+    title: false,
+    suffix: false,
+    hospitalCode: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+    gdpr: false
+  };
+
+  function markFocused(fieldKey) {
+    everFocused[fieldKey] = true;
   }
 
-  // Password toggle setup
-  setupPasswordToggle('doctor-password', 'toggle-password');
-  setupPasswordToggle('doctor-password-confirm', 'toggle-password-confirm');
-
-  // -- View mode toggle function --
-  function setViewMode(mode) {
-    localStorage.setItem("doctorViewMode", mode);
-
-    // == ALL tab
-    if (mode === "list") {
-      viewCardsBtnAll?.classList.remove("active");
-      viewListBtnAll?.classList.add("active");
-      allCardsContainer?.classList.add("hidden");
-      allListContainer?.classList.remove("hidden");
-      sortOptionsAll?.classList.add("hidden");
-    } else { // "cards"
-      viewCardsBtnAll?.classList.add("active");
-      viewListBtnAll?.classList.remove("active");
-      allCardsContainer?.classList.remove("hidden");
-      allListContainer?.classList.add("hidden");
-      sortOptionsAll?.classList.remove("hidden");
-    }
-
-    // == SEARCH tab
-    if (mode === "list") {
-      viewCardsBtnSearch?.classList.remove("active");
-      viewListBtnSearch?.classList.add("active");
-      searchCardsContainer?.classList.add("hidden");
-      searchListContainer?.classList.remove("hidden");
-      sortOptionsSearch?.classList.add("hidden");
-    } else { // "cards"
-      viewCardsBtnSearch?.classList.add("active");
-      viewListBtnSearch?.classList.remove("active");
-      searchCardsContainer?.classList.remove("hidden");
-      searchListContainer?.classList.add("hidden");
-      sortOptionsSearch?.classList.remove("hidden");
-    }
-
-    // Re-render views
-    renderAllListTable(allDoctorsData);
-    renderDoctors(allDoctorsData, sortSelect?.value);
-    performSearch(); // Re-render search results
-  }
-
-  // Tab switching function
-  function showTab(tab) {
-    tabAll?.classList.remove("active");
-    tabSearch?.classList.remove("active");
-    tabAdd?.classList.remove("active");
-
-    tabAllContent?.classList.add("hidden");
-    tabSearchContent?.classList.add("hidden");
-    tabAddContent?.classList.add("hidden");
-
-    if (tab === "all") {
-      tabAll?.classList.add("active");
-      tabAllContent?.classList.remove("hidden");
-    } else if (tab === "search") {
-      tabSearch?.classList.add("active");
-      tabSearchContent?.classList.remove("hidden");
-    } else if (tab === "add") {
-      tabAdd?.classList.add("active");
-      tabAddContent?.classList.remove("hidden");
-    }
-  }
-
-  // Helper function to get full name without title
-  function getFullNameWithoutTitle(doctor) {
+  // Helper function to get full name
+  function getFullName(doctor) {
     return `${doctor.first_name || ""} ${doctor.last_name || ""}`.trim().toLowerCase();
   }
 
-  // Doctor sorting function
-  function sortDoctors(doctors, sortValue = "creation") {
-    let sorted = [...doctors];
+  // Populate hospital dropdown
+  function populateHospitalDropdown(doctors) {
+    if (!hospitalFilter) return;
 
-    if (sortValue === "alphabetical-asc") {
-      sorted.sort((a, b) => getFullNameWithoutTitle(a).localeCompare(getFullNameWithoutTitle(b)));
-    } else if (sortValue === "alphabetical-desc") {
-      sorted.sort((a, b) => getFullNameWithoutTitle(b).localeCompare(getFullNameWithoutTitle(a)));
-    } else if (sortValue === "newest") {
-      sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    } else { // "creation" - starší po novší
-      sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    }
-
-    return sorted;
+    const uniqueHospitals = [...new Set(doctors.map((d) => d.hospital?.name).filter((name) => name))];
+    hospitalFilter.innerHTML = '<option value="">Všetky nemocnice</option>';
+    uniqueHospitals.forEach((hospital) => {
+      const option = document.createElement("option");
+      option.value = hospital;
+      option.textContent = hospital;
+      hospitalFilter.appendChild(option);
+    });
   }
 
-  // Reset doctor form
+  // Perform search and render results
+  function performSearch(shouldRender = true) {
+    const query = searchInput?.value.trim().toLowerCase();
+    const selectedHospital = hospitalFilter?.value || "";
+
+    const filtered = allDoctorsData.filter((doctor) => {
+      const hospitalName = doctor.hospital?.name?.toLowerCase() || "";
+      const fullName = getFullName(doctor);
+
+      const matchesQuery =
+        fullName.includes(query) ||
+        doctor.email?.toLowerCase().includes(query) ||
+        doctor.phone_number?.includes(query) ||
+        hospitalName.includes(query);
+
+      const matchesHospital = !selectedHospital || hospitalName === selectedHospital.toLowerCase();
+
+      return matchesQuery && matchesHospital;
+    });
+
+    if (shouldRender) {
+      const sortedDoctors = sortDoctors(filtered);
+      renderAllListTable(sortedDoctors);
+      renderDoctors(sortedDoctors);
+    }
+
+    return filtered; // Return filtered data for further processing
+  }
+
+  // Sort doctors based on the current column and direction
+  function sortDoctors(doctors) {
+    return [...doctors].sort((a, b) => {
+      let valA, valB;
+
+      if (currentSortColumn === "full_name") {
+        valA = getFullName(a);
+        valB = getFullName(b);
+      } else if (currentSortColumn === "phone_number") {
+        valA = a.phone_number || "";
+        valB = b.phone_number || "";
+      } else if (currentSortColumn === "hospital") {
+        valA = (a.hospital?.name || "").toLowerCase();
+        valB = (b.hospital?.name || "").toLowerCase();
+      } else if (currentSortColumn === "created_at") {
+        valA = new Date(a.created_at);
+        valB = new Date(b.created_at);
+      } else {
+        valA = (a[currentSortColumn] || "").toString().toLowerCase();
+        valB = (b[currentSortColumn] || "").toString().toLowerCase();
+      }
+
+      if (valA < valB) return currentSortDirection === "asc" ? -1 : 1;
+      if (valA > valB) return currentSortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  // Render list view
+  function renderAllListTable(doctors) {
+    if (!allListBody) return;
+    allListBody.innerHTML = "";
+
+    if (!Array.isArray(doctors) || doctors.length === 0) {
+      allListBody.innerHTML = "<tr><td colspan='5'>Žiadni doktori nenájdení.</td></tr>";
+      return;
+    }
+
+    doctors.forEach((doctor) => {
+      const tr = document.createElement("tr");
+      const fullName = getFullName(doctor);
+      const hospitalName = doctor.hospital?.name || "-";
+
+      tr.innerHTML = `
+        <td>${fullName}</td>
+        <td>${doctor.created_at || "-"}</td>
+        <td>${doctor.phone_number || "-"}</td>
+        <td>${doctor.email || "-"}</td>
+        <td>${hospitalName}</td>
+      `;
+
+      tr.addEventListener("click", () => {
+        window.location.href = `/doctors/${doctor.id}`;
+      });
+
+      allListBody.appendChild(tr);
+    });
+  }
+
+  // Render card view
+  function renderDoctors(doctors) {
+    if (!allDoctorsList) return;
+    allDoctorsList.innerHTML = "";
+
+    if (!Array.isArray(doctors) || doctors.length === 0) {
+      allDoctorsList.innerHTML = "<p>Žiadni doktori nenájdení.</p>";
+      return;
+    }
+
+    doctors.forEach((doctor) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.addEventListener("click", () => {
+        window.location.href = `/doctors/${doctor.id}`;
+      });
+
+      const fullName = getFullName(doctor);
+      const hospitalName = doctor.hospital?.name || "-";
+
+      card.innerHTML = `
+        <h3>${fullName}</h3>
+        <p>Telefón: ${doctor.phone_number || "-"}</p>
+        <p>Email: ${doctor.email || "-"}</p>
+        <p>Nemocnica: ${hospitalName}</p>
+      `;
+
+      allDoctorsList.appendChild(card);
+    });
+  }
+
+  // Add sorting functionality to table headers
+  tableHeaders.forEach((header) => {
+    header.addEventListener("click", () => {
+      const column = header.getAttribute("data-column");
+      if (!column) return;
+
+      // Toggle sort direction if the same column is clicked
+      if (currentSortColumn === column) {
+        currentSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
+      } else {
+        currentSortColumn = column;
+        currentSortDirection = "asc"; // Default to ascending when a new column is selected
+      }
+
+      // Update header styles
+      tableHeaders.forEach((th) => th.classList.remove("sort-asc", "sort-desc"));
+      header.classList.add(currentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+
+      // Re-render both views
+      const filteredDoctors = performSearch(false); // Get filtered data without re-rendering
+      const sortedDoctors = sortDoctors(filteredDoctors);
+      renderAllListTable(sortedDoctors);
+      renderDoctors(sortedDoctors);
+      updateSortIcons();
+    });
+  });
+
+  // Add event listener for sorting dropdown
+  sortSelect?.addEventListener("change", () => {
+    const sortValue = sortSelect.value;
+
+    // Map dropdown values to columns and directions
+    if (sortValue === "alphabetical-asc") {
+      currentSortColumn = "full_name";
+      currentSortDirection = "asc";
+    } else if (sortValue === "alphabetical-desc") {
+      currentSortColumn = "full_name";
+      currentSortDirection = "desc";
+    } else if (sortValue === "newest") {
+      currentSortColumn = "created_at";
+      currentSortDirection = "desc";
+    } else {
+      // Default: "creation" (Oldest first)
+      currentSortColumn = "created_at";
+      currentSortDirection = "asc";
+    }
+
+    // Re-render both views
+    const filteredDoctors = performSearch(false); // Get filtered data without re-rendering
+    const sortedDoctors = sortDoctors(filteredDoctors);
+    renderAllListTable(sortedDoctors);
+    renderDoctors(sortedDoctors);
+    updateSortIcons();
+  });
+
+  // --- Remember view mode in localStorage ---
+  function switchView(mode) {
+    localStorage.setItem("doctorViewMode", mode); // Remember view mode
+
+    const sortDropdownContainer = sortSelect?.parentElement;
+    const hospitalDropdownContainer = hospitalFilter?.parentElement;
+
+    if (mode === "cards") {
+      allCardsContainer?.classList.remove("hidden");
+      allListContainer?.classList.add("hidden");
+      viewCardsBtn?.classList.add("active");
+      viewListBtn?.classList.remove("active");
+      sortDropdownContainer?.classList.remove("hidden");
+    } else if (mode === "list") {
+      allCardsContainer?.classList.add("hidden");
+      allListContainer?.classList.remove("hidden");
+      viewCardsBtn?.classList.remove("active");
+      viewListBtn?.classList.add("active");
+      sortDropdownContainer?.classList.add("hidden");
+    }
+
+    hospitalDropdownContainer?.classList.remove("hidden");
+
+    if (mode === "list") {
+      updateSortIcons();
+    }
+  }
+
+  // --- Restore view mode on page load ---
+  function restoreDoctorViewMode() {
+    const savedMode = localStorage.getItem("doctorViewMode") || "cards";
+    switchView(savedMode);
+  }
+
+  // Helper function to switch tabs
+  function switchTab(tab) {
+    tabAllContent?.classList.add("hidden");
+    tabAddContent?.classList.add("hidden");
+    tabAll?.classList.remove("active");
+    tabAdd?.classList.remove("active");
+
+    if (tab === "all") {
+      tabAllContent?.classList.remove("hidden");
+      tabAll?.classList.add("active");
+    } else if (tab === "add") {
+      tabAddContent?.classList.remove("hidden");
+      tabAdd?.classList.add("active");
+    }
+  }
+
+  // Load all doctors
+  async function loadAllDoctors() {
+    try {
+        const response = await fetch("/doctors/list", {
+            method: "GET",
+            headers: { Accept: "application/json" },
+            credentials: "include",
+        });
+        if (!response.ok) throw new Error("Chyba pri načítaní doktorov.");
+
+        const doctors = await response.json();
+
+        allDoctorsData = doctors;
+
+        populateHospitalDropdown(doctors);
+        renderAllListTable(doctors);
+        renderDoctors(doctors);
+    } catch (err) {
+        console.error(err);
+        if (allDoctorsList) {
+            allDoctorsList.innerHTML = `<p>Chyba pri načítaní doktorov: ${err.message}</p>`;
+        }
+    }
+  }
+
+  // Debounce function
+  function debounce(func, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+  // Helper function to reset the form
   function resetDoctorForm() {
     if (addDoctorForm) {
       addDoctorForm.reset();
@@ -156,391 +376,30 @@ document.addEventListener("DOMContentLoaded", () => {
       addDoctorMessage.textContent = "";
       addDoctorMessage.classList.remove("error", "success");
     }
+    // Reset touched and everFocused states
+    Object.keys(touchedFields).forEach(k => touchedFields[k] = false);
+    Object.keys(everFocused).forEach(k => everFocused[k] = false);
+    // Clear all inline errors
+    clearError(doctorTypeErrorDiv);
+    clearError(firstNameErrorDiv);
+    clearError(lastNameErrorDiv);
+    clearError(phoneErrorDiv);
+    clearError(genderErrorDiv);
+    clearError(titleErrorDiv);
+    clearError(suffixErrorDiv);
+    clearError(hospitalCodeErrorDiv);
+    clearError(emailErrorDiv);
+    clearError(passwordErrorDiv);
+    clearError(passwordConfirmErrorDiv);
+    clearError(gdprErrorDiv);
   }
 
-  // Check user type and adjust form visibility
-  async function checkUserTypeAndAdjustForm() {
-    try {
-      const response = await fetch("/settings/info", {
-        method: "GET",
-        headers: { Accept: "application/json" },
-        credentials: "include"
-      });
-      if (!response.ok) throw new Error("Failed to fetch user type");
-      const user = await response.json();
-      userType = user.user_type
-      const hospitalCodeGroup = document.querySelector('#doctor-hospital-code')?.closest('.form-group');
-      const doctorType = document.querySelector('#doctor-type')?.closest('.form-group');
+  // Add Doctor functionality
+  if (addDoctorBtn) {
+    addDoctorBtn.addEventListener("click", async () => {
+      addDoctorMessage.textContent = "";
+      addDoctorMessage.classList.remove("error", "success");
 
-      if (hospitalCodeGroup && user.user_type !== "super_admin") {
-        hospitalCodeGroup.style.display = "none";
-        doctorType.style.display = "none";
-      }
-      setTimeout(() => {
-        document.querySelectorAll(".hidden-js").forEach(el => {
-          el.style.visibility = "visible";
-          el.style.opacity = "1";
-          el.classList.remove("hidden-js");
-        });
-      }, 10);
-    } catch (err) {
-      console.error("Nepodarilo sa načítať používateľa:", err);
-    }
-  }
-  function formatDate(dateString) {
-    if (!dateString) return "-";
-    const date = new Date(dateString);
-    return date.toLocaleDateString('sk-SK', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  }
-  // Render all list table with fixed sorting
-  function renderAllListTable(doctors) {
-    if (!allListBody) return;
-    allListBody.innerHTML = "";
-
-    if (!Array.isArray(doctors) || doctors.length === 0) {
-      return; // Empty table for no data
-    }
-
-    let data = [...doctors];
-    data.sort((a, b) => {
-      let valA, valB;
-
-      if (allCurrentSortColumn === "full_name") {
-        valA = getFullNameWithoutTitle(a);
-        valB = getFullNameWithoutTitle(b);
-      } else if (allCurrentSortColumn === "phone_number") {
-        valA = a.phone_number || "";
-        valB = b.phone_number || "";
-      } else if (allCurrentSortColumn === "hospital") {
-        valA = (a.hospital?.name || "").toLowerCase();
-        valB = (b.hospital?.name || "").toLowerCase();
-      } else {
-        valA = (a[allCurrentSortColumn] || "").toString().toLowerCase();
-        valB = (b[allCurrentSortColumn] || "").toString().toLowerCase();
-      }
-
-      if (valA < valB) return allCurrentSortDirection === "asc" ? -1 : 1;
-      if (valA > valB) return allCurrentSortDirection === "asc" ? 1 : -1;
-      return 0;
-    });
-
-    data.forEach(d => {
-      const tr = document.createElement("tr");
-      const fullName = `${d.title || ""} ${d.first_name} ${d.last_name} ${d.suffix || ""}`.trim();
-      const hospitalName = d.hospital?.name || "-";
-
-      tr.innerHTML = `
-        <td>${fullName}</td>
-        <td>${formatDate(d.created_at) || "-"}</td>
-        <td>${d.phone_number || "-"}</td>
-        <td>${d.email || "-"}</td>
-        <td>${hospitalName}</td>
-      `;
-
-      tr.addEventListener("click", () => {
-        window.location.href = `/doctors/${d.id}`;
-      });
-
-      allListBody.appendChild(tr);
-    });
-  }
-
-  // Search list table rendering with fixed sorting
-  function renderSearchListTable(doctors) {
-    if (!searchListBody) return;
-    searchListBody.innerHTML = "";
-
-    if (!Array.isArray(doctors) || doctors.length === 0) {
-      return;
-    }
-
-    let data = [...doctors];
-    data.sort((a, b) => {
-      let valA, valB;
-
-      if (searchCurrentSortColumn === "full_name") {
-        valA = getFullNameWithoutTitle(a);
-        valB = getFullNameWithoutTitle(b);
-      } else if (searchCurrentSortColumn === "phone_number") {
-        valA = a.phone_number || "";
-        valB = b.phone_number || "";
-      } else if (searchCurrentSortColumn === "hospital") {
-        valA = (a.hospital?.name || "").toLowerCase();
-        valB = (b.hospital?.name || "").toLowerCase();
-      } else {
-        valA = (a[searchCurrentSortColumn] || "").toString().toLowerCase();
-        valB = (b[searchCurrentSortColumn] || "").toString().toLowerCase();
-      }
-
-      if (valA < valB) return searchCurrentSortDirection === "asc" ? -1 : 1;
-      if (valA > valB) return searchCurrentSortDirection === "asc" ? 1 : -1;
-      return 0;
-    });
-
-    data.forEach(d => {
-      const tr = document.createElement("tr");
-      const fullName = `${d.title || ""} ${d.first_name} ${d.last_name} ${d.suffix || ""}`.trim();
-      const hospitalName = d.hospital?.name || "-";
-
-      tr.innerHTML = `
-        <td>${fullName}</td>
-        <td>${d.created_at || "-"}</td>
-        <td>${d.phone_number || "-"}</td>
-        <td>${d.email || "-"}</td>
-        <td>${hospitalName}</td>
-      `;
-
-      tr.addEventListener("click", () => {
-        window.location.href = `/doctors/${d.id}`;
-      });
-
-      searchListBody.appendChild(tr);
-    });
-  }
-
-  // Load all doctors
-  async function loadAllDoctors() {
-    try {
-      const response = await fetch("/doctors/list", {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        credentials: "include"
-      });
-      if (!response.ok) throw new Error("Chyba pri načítaní doktorov.");
-      const doctors = await response.json();
-      allDoctorsData = doctors;
-
-      // Render both views
-      renderDoctors(doctors, sortSelect?.value);
-      renderAllListTable(doctors);
-    } catch (err) {
-      console.error(err);
-      if (allDoctorsList) {
-        allDoctorsList.innerHTML = `<p>Chyba pri načítaní doktorov: ${err.message}</p>`;
-      }
-    }
-  }
-
-  // Card view rendering
-  function renderDoctors(doctors, sortValue) {
-    if (!allDoctorsList) return;
-
-    if (!Array.isArray(doctors) || doctors.length === 0) {
-      allDoctorsList.innerHTML = "<p>Žiadni doktori nenájdení.</p>";
-      return;
-    }
-
-    const sorted = sortDoctors(doctors, sortValue);
-    allDoctorsList.innerHTML = "";
-
-    const container = document.createElement("div");
-    container.classList.add("cards");
-
-    sorted.forEach(d => {
-      const hospitalName = d.hospital ? d.hospital.name : "";
-
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.addEventListener("click", () => {
-        window.location.href = `/doctors/${d.id}`;
-      });
-
-      const name = document.createElement("h3");
-      name.textContent = `${d.title || ""} ${d.first_name} ${d.last_name} ${d.suffix || ""}`.trim();
-
-      const created_at = document.createElement("p");
-      created_at.textContent = `Deň vytvorenia: ${formatDate(d.created_at)}`;
-
-      const email = document.createElement("p");
-      email.textContent = `Email: ${d.email}`;
-
-      const phone = document.createElement("p");
-      phone.textContent = `Telefón: ${d.phone_number}`;
-
-      const hospital = document.createElement("p");
-      hospital.textContent = `Nemocnica: ${hospitalName}`;
-
-      card.appendChild(name);
-      card.appendChild(created_at)
-      card.appendChild(phone);
-      card.appendChild(email);
-      card.appendChild(hospital);
-
-      container.appendChild(card);
-    });
-
-    allDoctorsList.appendChild(container);
-  }
-
-  // Search function
-  function performSearch() {
-    const query = searchInput?.value.trim().toLowerCase();
-    const mode = localStorage.getItem("doctorViewMode") || "cards";
-
-    if (searchResults) {
-      searchResults.innerHTML = "";
-    }
-
-    if (!query) {
-      return;
-    }
-
-    const filtered = allDoctorsData.filter(d => {
-      const hospitalName = d.hospital?.name?.toLowerCase() || "";
-      const fullName = `${d.first_name} ${d.last_name}`.toLowerCase();
-
-      return (
-        d.first_name?.toLowerCase().includes(query) ||
-        d.last_name?.toLowerCase().includes(query) ||
-        d.phone_number?.includes(query) ||
-        fullName.includes(query) ||
-        hospitalName.includes(query)
-      );
-    });
-
-    const sortValue = searchSortSelect?.value || "creation";
-
-    if (mode === "list") {
-      renderSearchListTable(filtered);
-    } else {
-      // Cards view
-      const sortedFiltered = sortDoctors(filtered, sortValue);
-
-      if (sortedFiltered.length === 0 && searchResults) {
-        searchResults.innerHTML = `<p>Pre "${query}" neboli nájdené žiadne výsledky.</p>`;
-        return;
-      }
-
-      const container = document.createElement("div");
-      container.classList.add("cards");
-
-      sortedFiltered.forEach(d => {
-        const hospitalName = d.hospital?.name || "";
-
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.addEventListener("click", () => {
-          window.location.href = `/doctors/${d.id}`;
-        });
-
-        const name = document.createElement("h3");
-        name.textContent = `${d.title || ""} ${d.first_name} ${d.last_name} ${d.suffix || ""}`.trim();
-
-        const phone = document.createElement("p");
-        phone.textContent = `Telefón: ${d.phone_number}`;
-
-        const hospital = document.createElement("p");
-        hospital.textContent = `Nemocnica: ${hospitalName}`;
-
-        const email = document.createElement("p");
-        email.textContent = `Email: ${d.email}`;
-
-        card.appendChild(name);
-        card.appendChild(phone);
-        card.appendChild(hospital);
-        card.appendChild(email);
-        container.appendChild(card);
-      });
-
-      if (searchResults) {
-        searchResults.appendChild(container);
-      }
-    }
-  }
-
-  // Add debouncing for search
-  function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-  }
-
-  const debouncedSearch = debounce(performSearch, 300);
-  searchInput?.addEventListener("keyup", debouncedSearch);
-  searchSortSelect?.addEventListener("change", performSearch);
-  sortSelect?.addEventListener("change", () => {
-    renderDoctors(allDoctorsData, sortSelect.value);
-  });
-  // -- Event Listeners --
-  // Tab switching
-  tabAll?.addEventListener("click", () => showTab("all"));
-  tabSearch?.addEventListener("click", () => showTab("search"));
-  tabAdd?.addEventListener("click", () => {
-    showTab("add");
-    resetDoctorForm();
-  });
-
-  // View toggle buttons
-  viewCardsBtnAll?.addEventListener("click", () => setViewMode("cards"));
-  viewListBtnAll?.addEventListener("click", () => setViewMode("list"));
-  viewCardsBtnSearch?.addEventListener("click", () => setViewMode("cards"));
-  viewListBtnSearch?.addEventListener("click", () => setViewMode("list"));
-
-  // Table header sorting for All tab
-  const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
-  allHeaderCells?.forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.getAttribute("data-column");
-      if (!col) return;
-
-      if (allCurrentSortColumn === col) {
-        allCurrentSortDirection = (allCurrentSortDirection === "asc") ? "desc" : "asc";
-      } else {
-        allCurrentSortColumn = col;
-        allCurrentSortDirection = "asc";
-      }
-
-      allHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
-      th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
-
-      renderAllListTable(allDoctorsData);
-    });
-  });
-
-  // Table header sorting for Search tab
-  const searchHeaderCells = document.querySelectorAll("#search-list-container thead th");
-  searchHeaderCells?.forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.getAttribute("data-column");
-      if (!col) return;
-
-      if (searchCurrentSortColumn === col) {
-        searchCurrentSortDirection = (searchCurrentSortDirection === "asc") ? "desc" : "asc";
-      } else {
-        searchCurrentSortColumn = col;
-        searchCurrentSortDirection = "asc";
-      }
-
-      searchHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
-      th.classList.add(searchCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
-
-      performSearch();
-    });
-  });
-
-  // Set initial view mode from localStorage
-  const savedMode = localStorage.getItem("doctorViewMode") || "cards";
-  setViewMode(savedMode);
-
-  // Initial tab
-  showTab("all");
-
-  // Load data
-  loadAllDoctors();
-  checkUserTypeAndAdjustForm();
-
-  const addBtn = document.getElementById("add-doctor-btn");
-  if (addBtn) {
-    addBtn.addEventListener("click", async () => {
-      const msg = document.getElementById("add-doctor-message");
-      msg.textContent = "";
-      msg.classList.remove("error", "success");
       const role = document.getElementById("doctor-type").value;
       const firstName = document.getElementById("doctor-first-name").value.trim();
       const lastName = document.getElementById("doctor-last-name").value.trim();
@@ -553,28 +412,73 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("doctor-password").value;
       const confirmPassword = document.getElementById("doctor-password-confirm").value;
       const gdprChecked = document.getElementById("gdpr")?.checked;
-      console.log(email);
-      console.log(password);
-      if (!firstName || !lastName || !email || !phone || !gender || !password || !confirmPassword || (!hospitalCode && userType === "super_admin")) {
-        msg.textContent = "Vyplňte všetky povinné polia.";
-        msg.classList.add("error");
+
+      // Validation regex patterns
+      const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/; // Allows letters, accents, and spaces (2-255 characters)
+      const phoneRegex = /^(?:\+421|421|0)\d{9}$/; // E.164 format for phone numbers
+      const noNumbersRegex = /^[^\d]*$/; // Ensures no numbers are present
+
+      // Validation checks
+      if (!nameRegex.test(firstName)) {
+        addDoctorMessage.textContent = "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+        addDoctorMessage.classList.add("error");
         return;
       }
+
+      if (!nameRegex.test(lastName)) {
+        addDoctorMessage.textContent = "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
+      // if (!phoneRegex.test(phone)) {
+      //   addDoctorMessage.textContent = "Telefónne číslo musí byť vo formáte E.164 (napr. +421123456789).";
+      //   addDoctorMessage.classList.add("error");
+      //   return;
+      // }
+
+      if (title && !noNumbersRegex.test(title)) {
+        addDoctorMessage.textContent = "Titul nesmie obsahovať čísla.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
+      if (suffix && !noNumbersRegex.test(suffix)) {
+        addDoctorMessage.textContent = "Sufix nesmie obsahovať čísla.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        // !phone ||           // <-- removed from required
+        // !gender ||          // <-- removed from required
+        !password ||
+        !confirmPassword ||
+        (!hospitalCode && userType === "super_admin")
+      ) {
+        addDoctorMessage.textContent = "Vyplňte všetky povinné polia.";
+        addDoctorMessage.classList.add("error");
+        return;
+      }
+
       if (!role && userType === "super_admin") {
-        msg.textContent = "Vyberte typ doktora.";
-        msg.classList.add("error");
+        addDoctorMessage.textContent = "Vyberte typ doktora.";
+        addDoctorMessage.classList.add("error");
         return;
       }
 
       if (password !== confirmPassword) {
-        msg.textContent = "Heslá sa nezhodujú.";
-        msg.classList.add("error");
+        addDoctorMessage.textContent = "Heslá sa nezhodujú.";
+        addDoctorMessage.classList.add("error");
         return;
       }
 
       if (!gdprChecked) {
-        msg.textContent = "Musíte súhlasiť so spracovaním údajov (GDPR).";
-        msg.classList.add("error");
+        addDoctorMessage.textContent = "Musíte súhlasiť so spracovaním údajov (GDPR).";
+        addDoctorMessage.classList.add("error");
         return;
       }
 
@@ -593,25 +497,288 @@ document.addEventListener("DOMContentLoaded", () => {
             suffix,
             password,
             hospital_code: hospitalCode,
-            role
-          })
+            role,
+          }),
         });
 
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Chyba pri vytváraní doktora.");
 
-        msg.textContent = result.message || "Doktor úspešne pridaný.";
-        msg.classList.add("success");
+        addDoctorMessage.textContent = result.message || "Doktor úspešne pridaný.";
+        addDoctorMessage.classList.add("success");
 
         resetDoctorForm();
-        showTab("all");
+        switchTab("all");
         loadAllDoctors();
       } catch (err) {
         console.error(err);
-        msg.textContent = err.message || "Nepodarilo sa pridať doktora.";
-        msg.classList.add("error");
+        addDoctorMessage.textContent = err.message || "Nepodarilo sa pridať doktora.";
+        addDoctorMessage.classList.add("error");
       }
     });
   }
 
+  // Password toggle functionality
+  function setupPasswordToggle(inputId, toggleId) {
+    const input = document.getElementById(inputId);
+    const toggle = document.getElementById(toggleId);
+
+    if (input && toggle) {
+      toggle.addEventListener('click', () => {
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        const icon = toggle.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-eye', isHidden);
+          icon.classList.toggle('fa-eye-slash', !isHidden);
+        }
+      });
+    }
+  }
+
+  // Setup for both password fields
+  setupPasswordToggle('doctor-password', 'toggle-password');
+  setupPasswordToggle('doctor-password-confirm', 'toggle-password-confirm');
+
+  // Add event listeners
+  searchInput?.addEventListener("keyup", debounce(performSearch, 300));
+  hospitalFilter?.addEventListener("change", performSearch);
+  viewCardsBtn?.addEventListener("click", () => switchView("cards"));
+  viewListBtn?.addEventListener("click", () => switchView("list"));
+  tabAll?.addEventListener("click", () => switchTab("all"));
+  tabAdd?.addEventListener("click", () => switchTab("add"));
+
+  // Initial setup
+  loadAllDoctors();
+  switchTab("all");
+  restoreDoctorViewMode(); // Use remembered view mode on load
+
+  // After DOMContentLoaded or in your initial setup
+  if (sortSelect) {
+    sortSelect.value = "alphabetical-asc";
+  }
+
+  function updateSortIcons() {
+    tableHeaders.forEach((th) => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      if (col === currentSortColumn) {
+        th.classList.add(currentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+      }
+    });
+  }
+
+  function showError(div, msg) {
+    div.textContent = msg;
+  }
+  function clearError(div) {
+    div.textContent = "";
+  }
+
+  function validateDoctorForm() {
+    let isValid = true;
+    clearError(doctorTypeErrorDiv);
+    clearError(firstNameErrorDiv);
+    clearError(lastNameErrorDiv);
+    clearError(phoneErrorDiv);
+    clearError(genderErrorDiv);
+    clearError(titleErrorDiv);
+    clearError(suffixErrorDiv);
+    clearError(hospitalCodeErrorDiv);
+    clearError(emailErrorDiv);
+    clearError(passwordErrorDiv);
+    clearError(passwordConfirmErrorDiv);
+    clearError(gdprErrorDiv);
+
+    const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+    const noNumbersRegex = /^[^\d]*$/;
+
+    // Doctor type
+    if (!doctorTypeInput.value) {
+      isValid = false;
+      if (touchedFields.doctorType) showError(doctorTypeErrorDiv, "Typ doktora je povinný.");
+    }
+
+    // First name
+    if (!firstNameInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno je povinné.");
+    } else if (!nameRegex.test(firstNameInput.value.trim())) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Last name
+    if (!lastNameInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko je povinné.");
+    } else if (!nameRegex.test(lastNameInput.value.trim())) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Phone
+    // if (!phoneInput.value.trim()) {
+    //   isValid = false;
+    //   if (touchedFields.phone) showError(phoneErrorDiv, "Telefón je povinný.");
+    // } else
+    if (phoneInput.value.trim() && !phoneRegex.test(phoneInput.value.trim())) {
+      isValid = false;
+      if (touchedFields.phone) showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
+    }
+
+    // Gender
+    // if (!genderInput.value) {
+    //   isValid = false;
+    //   if (touchedFields.gender) showError(genderErrorDiv, "Pohlavie je povinné.");
+    // }
+
+    // Title
+    if (titleInput.value && !noNumbersRegex.test(titleInput.value)) {
+      isValid = false;
+      if (touchedFields.title) showError(titleErrorDiv, "Titul nesmie obsahovať čísla.");
+    }
+
+    // Suffix
+    if (suffixInput.value && !noNumbersRegex.test(suffixInput.value)) {
+      isValid = false;
+      if (touchedFields.suffix) showError(suffixErrorDiv, "Sufix nesmie obsahovať čísla.");
+    }
+
+    // Hospital code (required for super_admin)
+    if (hospitalCodeInput && hospitalCodeInput.offsetParent !== null && !hospitalCodeInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.hospitalCode) showError(hospitalCodeErrorDiv, "Kód nemocnice je povinný.");
+    }
+
+    // Email
+    if (!emailInput.value.trim()) {
+      isValid = false;
+      if (touchedFields.email) showError(emailErrorDiv, "Email je povinný.");
+    }
+
+    // Password
+    if (!passwordInput.value) {
+      isValid = false;
+      if (touchedFields.password) showError(passwordErrorDiv, "Heslo je povinné.");
+    }
+
+    // Confirm password
+    if (!passwordConfirmInput.value || passwordInput.value !== passwordConfirmInput.value) {
+      isValid = false;
+      if (touchedFields.passwordConfirm) showError(passwordConfirmErrorDiv, "Heslá sa nezhodujú.");
+    }
+
+    // GDPR
+    if (!gdprCheckbox.checked) {
+      isValid = false;
+      if (touchedFields.gdpr) showError(gdprErrorDiv, "Musíte súhlasiť so spracovaním osobných údajov.");
+    }
+
+    return isValid;
+  }
+
+  // Mark field as touched and validate
+  function markTouched(fieldKey) {
+    touchedFields[fieldKey] = true;
+    validateDoctorForm();
+  }
+
+  // Add blur listeners to mark fields as touched
+  doctorTypeInput.addEventListener("blur", () => markTouched("doctorType"));
+  firstNameInput.addEventListener("blur", () => markTouched("firstName"));
+  lastNameInput.addEventListener("blur", () => markTouched("lastName"));
+  phoneInput.addEventListener("blur", () => markTouched("phone"));
+  genderInput.addEventListener("blur", () => markTouched("gender"));
+  titleInput.addEventListener("blur", () => markTouched("title"));
+  suffixInput.addEventListener("blur", () => markTouched("suffix"));
+  hospitalCodeInput.addEventListener("blur", () => markTouched("hospitalCode"));
+  emailInput.addEventListener("blur", () => markTouched("email"));
+  passwordInput.addEventListener("blur", () => markTouched("password"));
+  passwordConfirmInput.addEventListener("blur", () => markTouched("passwordConfirm"));
+  gdprCheckbox.addEventListener("blur", () => markTouched("gdpr"));
+
+  // Also validate on input for instant feedback (optional)
+  [
+    doctorTypeInput, firstNameInput, lastNameInput, phoneInput, genderInput, titleInput, suffixInput,
+    hospitalCodeInput, emailInput, passwordInput, passwordConfirmInput
+  ].forEach(input => {
+    if (input) input.addEventListener("input", validateDoctorForm);
+  });
+  gdprCheckbox.addEventListener("change", validateDoctorForm);
+
+  // On submit, mark all as touched and validate
+  addDoctorBtn.addEventListener("click", async () => {
+    // ...existing code...
+    Object.keys(touchedFields).forEach(k => touchedFields[k] = true);
+    if (!validateDoctorForm()) {
+      addDoctorMessage.textContent = "Vyplňte všetky polia správne.";
+      addDoctorMessage.classList.add("error");
+      return;
+    }
+    // ...existing code...
+  });
+
+  // Find the doctor type form group robustly (move here!)
+  const doctorTypeFormGroup =
+    document.getElementById("doctor-type")?.closest(".form-group") ||
+    document.getElementById("doctor-type")?.parentElement ||
+    document.querySelector('label[for="doctor-type"]')?.parentElement;
+
+  // --- Find hospital code form group robustly ---
+  const hospitalCodeFormGroup =
+    hospitalCodeInput?.closest(".form-group") ||
+    hospitalCodeInput?.parentElement ||
+    document.querySelector('label[for="doctor-hospital-code"]')?.parentElement;
+
+  async function checkUserTypeAndAdjustFilters() {
+    try {
+      const response = await fetch("/settings/info", {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        credentials: "include"
+      });
+      if (!response.ok) throw new Error("Failed to fetch user type");
+      const user = await response.json();
+      userType = user.user_type;
+
+      // Hide hospital filter by default
+      const hospitalFilterDropdown = document.getElementById("doctor-hospital-filter");
+      if (hospitalFilterDropdown) {
+        const wrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+        if (wrapper) wrapper.style.display = "none";
+      }
+
+      // Show hospital filter only for super_admin
+      if (userType === "super_admin" && hospitalFilterDropdown) {
+        const wrapper = hospitalFilterDropdown.closest(".dropdown") || hospitalFilterDropdown.parentElement;
+        if (wrapper) wrapper.style.display = "";
+      }
+
+      // Hide doctor type dropdown for admin and set value to "doctor"
+      if (userType === "admin" && doctorTypeFormGroup) {
+        doctorTypeFormGroup.style.display = "none";
+        const doctorTypeInput = document.getElementById("doctor-type");
+        if (doctorTypeInput) doctorTypeInput.value = "doctor";
+      } else if (doctorTypeFormGroup) {
+        doctorTypeFormGroup.style.display = "";
+      }
+
+      // --- Hide hospital code input for admin and set value automatically ---
+      if (userType === "admin" && hospitalCodeFormGroup) {
+        hospitalCodeFormGroup.style.display = "none";
+        if (hospitalCodeInput && user.hospital_code) {
+          hospitalCodeInput.value = user.hospital_code;
+        }
+      } else if (hospitalCodeFormGroup) {
+        hospitalCodeFormGroup.style.display = "";
+      }
+    } catch (err) {
+      console.error("Error fetching user type:", err);
+    }
+  }
+
+  // At the end of DOMContentLoaded:
+  checkUserTypeAndAdjustFilters();
 });

@@ -1,9 +1,7 @@
 .hidden-js {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease-in;
+  display: none !important;
 }
+
 #main {
   min-height: 600px; /* alebo viac, podľa očakávanej výšky */
 }
@@ -77,8 +75,8 @@
   border-radius: 20px;
   cursor: pointer;
   transition: background 0.3s ease;
-  display: block;
-  margin: 0 auto;
+  display: inline-block; /* inline for row layout */
+  margin: 0;             /* remove auto margin */
 }
 
 .save-btn:hover {
@@ -164,6 +162,15 @@
 
 .toggle-pw:hover i {
   color: #333;
+}
+
+/* Button row layout for back/save buttons */
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 /* Responzívne pre menšie obrazovky */

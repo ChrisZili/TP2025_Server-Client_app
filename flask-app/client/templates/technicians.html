@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-eVýsledky - Technici
+Technici - STU FEI
 {% endblock %}
 
 {% block stylesheet %}
@@ -19,7 +19,6 @@ Správa technikov
   <div class="tabs-wrapper">
     <div class="tabs" id="tabs">
       <div class="tab active" id="tab-all">Všetci technici</div>
-      <div class="tab" id="tab-search">Vyhľadať technika</div>
       <div class="tab" id="tab-add">Pridať technika</div>
     </div>
   </div>
@@ -41,17 +40,36 @@ Správa technikov
       </div>
     </div>
 
-    <!-- Select na triedenie pre KARTY -->
-    <div class="sort-options" id="sort-options-all">
-      <label for="sort-select">
-        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
-      </label>
-      <select id="sort-select">
-        <option value="creation" selected>Od starších po novších</option>
-        <option value="newest">Od novších po starších</option>
-        <option value="alphabetical-asc">Abecedne A → Z</option>
-        <option value="alphabetical-desc">Abecedne Z → A</option>
-      </select>
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Meno, priezvisko alebo nemocnica" />
+    </div>
+
+    <div class="dropdowns-container">
+      <div class="dropdown" id="sort-options-all">
+        <!-- Sort label and select -->
+        <label for="sort-select">
+          <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+        </label>
+        <select id="sort-select">
+          <option value="creation" selected>Od starších po novších</option>
+          <option value="newest">Od novších po starších</option>
+          <option value="alphabetical-asc">Abecedne A → Z</option>
+          <option value="alphabetical-desc">Abecedne Z → A</option>
+        </select>
+      </div>
+
+      <div class="dropdown" id="filter-options-hospital">
+        <!-- Filter label and select -->
+        <label for="hospital-filter-dropdown">
+          <i class="fas fa-filter"></i> Filtrovať podľa nemocnice:
+        </label>
+        <select id="hospital-filter-dropdown">
+          <option value="">Všetky nemocnice</option>
+          <!-- Options will be dynamically populated -->
+        </select>
+      </div>
     </div>
 
     <!-- Karty -->
@@ -65,10 +83,26 @@ Správa technikov
         <table class="technicians-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">
+                Celé meno
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="created_at">
+                Dátum vytvorenia
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="email">
+                Email
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="hospital">
+                Nemocnica
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
             </tr>
           </thead>
           <tbody id="all-list-body">
@@ -95,12 +129,6 @@ Správa technikov
       </div>
     </div>
 
-    <!-- Tu je vstup pre hľadanie -->
-    <div class="search-bar">
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search-input" placeholder="Meno, priezvisko alebo nemocnica" />
-    </div>
-
     <!-- Select na triedenie pre KARTY -->
     <div class="sort-options" id="sort-options-search">
       <label for="search-sort-select">
@@ -125,10 +153,26 @@ Správa technikov
         <table class="technicians-list-table">
           <thead>
             <tr>
-              <th data-column="full_name">Celé meno <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="email">Email <i class="fas fa-sort"></i></th>
-              <th data-column="hospital">Nemocnica <i class="fas fa-sort"></i></th>
+              <th data-column="full_name">
+                Celé meno
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="created_at">
+                Dátum vytvorenia
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="email">
+                Email
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="hospital">
+                Nemocnica
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
             </tr>
           </thead>
           <tbody id="search-list-body">
@@ -149,23 +193,23 @@ Správa technikov
       <div class="form-group">
         <label for="technician-first-name">Meno</label>
         <input type="text" id="technician-first-name" name="first_name" required />
+        <div class="field-error" id="technician-first-name-error"></div>
       </div>
-
       <div class="form-group">
         <label for="technician-last-name">Priezvisko</label>
         <input type="text" id="technician-last-name" name="last_name" required />
+        <div class="field-error" id="technician-last-name-error"></div>
       </div>
-
       <div class="form-group">
         <label for="technician-hospital-code">Kód nemocnice</label>
         <input type="text" id="technician-hospital-code" name="hospital_code" required />
+        <div class="field-error" id="technician-hospital-code-error"></div>
       </div>
-
       <div class="form-group">
         <label for="technician-email">Email</label>
         <input type="email" id="technician-email" name="email" required />
+        <div class="field-error" id="technician-email-error"></div>
       </div>
-
       <div class="form-group">
         <label for="technician-password">Heslo</label>
         <div class="input-wrapper password-wrapper">
@@ -174,25 +218,24 @@ Správa technikov
                 <i class="fas fa-eye-slash" aria-hidden="true"></i>
             </button>
         </div>
+        <div class="field-error" id="technician-password-error"></div>
       </div>
-
       <div class="form-group">
-        <label for="technician-password-confirm">Potvrdenie hesla</label>
+        <label for="technician-password-confirm">Potvrdiť heslo</label>
         <div class="input-wrapper password-wrapper">
-            <input type="password" id="technician-password-confirm" name="confirm_password" required />
+            <input type="password" id="technician-password-confirm" name="password_confirm" autocomplete="new-password" required />
             <button type="button" class="toggle-pw" id="toggle-password-confirm" aria-label="Zobraziť alebo skryť heslo" tabindex="-1">
                 <i class="fas fa-eye-slash" aria-hidden="true"></i>
             </button>
         </div>
+        <div class="field-error" id="technician-password-confirm-error"></div>
       </div>
 
       <div class="form-group gdpr-group">
-        <input type="checkbox" id="gdpr" name="gdpr" />
-        <label for="gdpr">
-          Súhlasím so spracovaním osobných údajov podľa GDPR.
-          <a href="#">(Zobraziť podmienky)</a>
-        </label>
+        <input type="checkbox" id="gdpr" name="gdpr" required />
+        <label for="gdpr">Súhlasím so spracovaním osobných údajov</label>
       </div>
+      <div class="field-error" id="gdpr-error"></div>
       <div id="add-technician-message"></div>
       <button id="add-technician-btn" class="add-btn" type="button">Pridať technika</button>
     </form>

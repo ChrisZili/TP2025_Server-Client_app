@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let allAdminsData = [];
 
   // For "All" tab
-  let allCurrentSortColumn = "last_name";
-  let allCurrentSortDirection = "asc";
+  let allCurrentSortColumn = "full_name"; // Default to full_name for A-Z
+  let allCurrentSortDirection = "asc";    // Default to ascending
 
   // For "Search" tab
-  let searchCurrentSortColumn = "last_name";
-  let searchCurrentSortDirection = "asc";
+  let searchCurrentSortColumn = "full_name"; // Default to full_name for A-Z
+  let searchCurrentSortDirection = "asc";    // Default to ascending
 
   // DOM elements for view toggles
   const viewCardsBtnAll = document.getElementById("view-cards");
@@ -44,6 +44,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const addAdminMessage = document.getElementById("add-admin-message");
   const addAdminForm = document.getElementById("add-admin-form");
 
+  // Add references for new dropdown filters
+  const adminRoleFilter = document.getElementById("admin-role-filter");
+  const adminHospitalFilter = document.getElementById("admin-hospital-filter");
+
   // Setup password toggle functionality
   function setupPasswordToggle(inputId, toggleId) {
     const input = document.getElementById(inputId);
@@ -53,7 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
       toggle.addEventListener('click', () => {
         const isHidden = input.type === 'password';
         input.type = isHidden ? 'text' : 'password';
-        toggle.innerHTML = `<i class="fas ${isHidden ? 'fa-eye' : 'fa-eye-slash'}"></i>`;
+        const icon = toggle.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-eye', isHidden);
+          icon.classList.toggle('fa-eye-slash', !isHidden);
+        }
       });
     }
   }
@@ -66,40 +74,36 @@ document.addEventListener("DOMContentLoaded", () => {
   function setViewMode(mode) {
     localStorage.setItem("adminViewMode", mode);
 
-    // == ALL tab
     if (mode === "list") {
+      // Activate list view
       viewCardsBtnAll?.classList.remove("active");
       viewListBtnAll?.classList.add("active");
       allCardsContainer?.classList.add("hidden");
       allListContainer?.classList.remove("hidden");
-      sortOptionsAll?.classList.add("hidden");
+
+      // Hide the sort dropdown
+      sortOptionsAll?.classList.add("hidden"); // Explicitly hide the sort dropdown
+
+      // Ensure the filter dropdown is visible
+      adminHospitalFilter?.parentElement?.classList.remove("hidden");
     } else { // "cards"
+      // Activate cards view
       viewCardsBtnAll?.classList.add("active");
       viewListBtnAll?.classList.remove("active");
       allCardsContainer?.classList.remove("hidden");
       allListContainer?.classList.add("hidden");
-      sortOptionsAll?.classList.remove("hidden");
+
+      // Show the sort dropdown
+      sortOptionsAll?.classList.remove("hidden"); // Explicitly show the sort dropdown
+
+      // Ensure the filter dropdown is visible
+      adminHospitalFilter?.parentElement?.classList.remove("hidden");
     }
 
-    // == SEARCH tab
-    if (mode === "list") {
-      viewCardsBtnSearch?.classList.remove("active");
-      viewListBtnSearch?.classList.add("active");
-      searchCardsContainer?.classList.add("hidden");
-      searchListContainer?.classList.remove("hidden");
-      sortOptionsSearch?.classList.add("hidden");
-    } else { // "cards"
-      viewCardsBtnSearch?.classList.add("active");
-      viewListBtnSearch?.classList.remove("active");
-      searchCardsContainer?.classList.remove("hidden");
-      searchListContainer?.classList.add("hidden");
-      sortOptionsSearch?.classList.remove("hidden");
-    }
-
-    // Re-render views
-    renderAllListTable(allAdminsData);
-    renderAdmins(allAdminsData, sortSelect?.value);
-    performSearch(); // Re-render search results
+    // Reapply search and filters
+    performSearch();
+    updateSortIconsAll();
+    updateSortIconsSearch();
   }
 
   function showTab(tab) {
@@ -259,25 +263,95 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- Filter Admins Based on Search and Dropdown Filters ---
+  function filterAdmins(query, role, hospital) {
+    query = query.toLowerCase();
+    return allAdminsData.filter(admin => {
+      const matchesQuery =
+        (!query || (admin.first_name && admin.first_name.toLowerCase().includes(query)) ||
+          (admin.last_name && admin.last_name.toLowerCase().includes(query)) ||
+          (admin.email && admin.email.toLowerCase().includes(query)) ||
+          (admin.phone_number && admin.phone_number.includes(query)) ||
+          (admin.hospital?.name && admin.hospital.name.toLowerCase().includes(query)));
+
+      const matchesRole = !role || (admin.role && admin.role === role);
+      const matchesHospital = !hospital || (admin.hospital?.name && admin.hospital.name === hospital);
+
+      return matchesQuery && matchesRole && matchesHospital;
+    });
+  }
+
+  // --- Perform Search and Apply Filters + Sorting ---
+  function performSearch() {
+    const mode = localStorage.getItem("adminViewMode") || "cards";
+    const query = (searchInput?.value || "").trim();
+    const role = adminRoleFilter?.value || "";
+    const hospital = adminHospitalFilter?.value || "";
+    const sortVal = sortSelect?.value || "creation";
+
+    // Filter admins based on search query and dropdown filters
+    let filtered = filterAdmins(query, role, hospital);
+
+    // Sort the filtered admins
+    filtered = sortAdmins(filtered, sortVal);
+
+    // Render the results in the selected view mode
+    if (mode === "list") {
+      renderAllListTable(filtered);
+    } else {
+      renderAdmins(filtered, sortVal);
+    }
+  }
+
+  // --- Populate Dropdown Filters ---
+  function populateDropdownFilters(admins) {
+    if (adminRoleFilter) {
+      const uniqueRoles = [...new Set(admins.map(admin => admin.role).filter(role => role))];
+      adminRoleFilter.innerHTML = '<option value="">Všetky role</option>';
+      uniqueRoles.forEach(role => {
+        const option = document.createElement("option");
+        option.value = role;
+        option.textContent = role;
+        adminRoleFilter.appendChild(option);
+      });
+    }
+
+    if (adminHospitalFilter) {
+      const uniqueHospitals = [...new Set(admins.map(admin => admin.hospital?.name).filter(hospital => hospital))];
+      adminHospitalFilter.innerHTML = '<option value="">Všetky nemocnice</option>';
+      uniqueHospitals.forEach(hospital => {
+        const option = document.createElement("option");
+        option.value = hospital;
+        option.textContent = hospital;
+        adminHospitalFilter.appendChild(option);
+      });
+    }
+  }
+
   async function loadAllAdmins() {
     try {
-      const response = await fetch("/admins/list", {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        credentials: "include"
-      });
-      if (!response.ok) throw new Error("Chyba pri načítaní adminov.");
-      const admins = await response.json();
-      allAdminsData = admins;
+        const response = await fetch("/admins/list", {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+            credentials: "include"
+        });
+        if (!response.ok) throw new Error("Chyba pri načítaní adminov.");
 
-      // Render both views
-      renderAdmins(admins, sortSelect?.value);
-      renderAllListTable(admins);
+        const admins = await response.json();
+
+        allAdminsData = admins;
+
+        // Populate dropdown filters
+        populateDropdownFilters(admins);
+
+        // Render both views
+        renderAdmins(admins, sortSelect?.value);
+        renderAllListTable(admins);
     } catch (err) {
-      console.error(err);
-      if (allAdminsList) {
-        allAdminsList.innerHTML = `<p>Chyba pri načítaní adminov: ${err.message}</p>`;
-      }
+        console.error(err);
+        if (allAdminsList) {
+            allAdminsList.innerHTML = `<p>Chyba pri načítaní adminov: ${err.message}</p>`;
+        }
     }
   }
 
@@ -343,80 +417,6 @@ document.addEventListener("DOMContentLoaded", () => {
       year: 'numeric'
     });
   }
-  function performSearch() {
-    const query = searchInput?.value.trim().toLowerCase();
-    const mode = localStorage.getItem("adminViewMode") || "cards";
-
-    if (searchResults) {
-      searchResults.innerHTML = "";
-    }
-
-    if (!query) {
-      return;
-    }
-
-    const filtered = allAdminsData.filter(a => {
-      const hospitalName = a.hospital?.name?.toLowerCase() || "";
-      const fullName = `${a.first_name} ${a.last_name}`.toLowerCase();
-
-      return (
-        a.first_name?.toLowerCase().includes(query) ||
-        a.last_name?.toLowerCase().includes(query) ||
-        a.phone_number?.includes(query) ||
-        fullName.includes(query) ||
-        hospitalName.includes(query)
-      );
-    });
-
-    const sortValue = searchSortSelect?.value || "creation";
-
-    if (mode === "list") {
-      renderSearchListTable(filtered);
-    } else {
-      // Cards view
-      const sortedFiltered = sortAdmins(filtered, sortValue);
-
-      if (sortedFiltered.length === 0 && searchResults) {
-        searchResults.innerHTML = `<p>Pre "${query}" neboli nájdené žiadne výsledky.</p>`;
-        return;
-      }
-
-      const container = document.createElement("div");
-      container.classList.add("cards");
-
-      sortedFiltered.forEach(a => {
-        const hospitalName = a.hospital?.name || "";
-
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.addEventListener("click", () => {
-          window.location.href = `/admins/${a.id}`;
-        });
-
-        const name = document.createElement("h3");
-        name.textContent = `${a.first_name} ${a.last_name}`;
-
-        const phone = document.createElement("p");
-        phone.textContent = `Telefón: ${a.phone_number}`;
-
-        const hospital = document.createElement("p");
-        hospital.textContent = `Nemocnica: ${hospitalName}`;
-
-        const email = document.createElement("p");
-        email.textContent = `Email: ${a.email}`;
-
-        card.appendChild(name);
-        card.appendChild(phone);
-        card.appendChild(hospital);
-        card.appendChild(email);
-        container.appendChild(card);
-      });
-
-      if (searchResults) {
-        searchResults.appendChild(container);
-      }
-    }
-  }
 
   function debounce(func, delay) {
     let timeout;
@@ -428,10 +428,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const debouncedSearch = debounce(performSearch, 300);
   searchInput?.addEventListener("keyup", debouncedSearch);
-  searchSortSelect?.addEventListener("change", performSearch);
-  sortSelect?.addEventListener("change", () => {
-    renderAdmins(allAdminsData, sortSelect.value);
-  });
+  adminRoleFilter?.addEventListener("change", performSearch);
+  adminHospitalFilter?.addEventListener("change", performSearch);
+  sortSelect?.addEventListener("change", performSearch);
+
   // -- Event Listeners --
   // Tab switching
   tabAll?.addEventListener("click", () => showTab("all"));
@@ -446,6 +446,46 @@ document.addEventListener("DOMContentLoaded", () => {
   viewListBtnAll?.addEventListener("click", () => setViewMode("list"));
   viewCardsBtnSearch?.addEventListener("click", () => setViewMode("cards"));
   viewListBtnSearch?.addEventListener("click", () => setViewMode("list"));
+
+  // --- Add sort arrow icons to table headers ---
+  function updateSortIconsAll() {
+    const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
+    allHeaderCells.forEach(th => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      // Remove old arrow if present
+      const oldArrow = th.querySelector('.sort-arrow');
+      if (oldArrow) th.removeChild(oldArrow);
+
+      if (col === allCurrentSortColumn) {
+        th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+        // Add arrow
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        arrow.textContent = allCurrentSortDirection === "asc" ? " ▲" : " ▼";
+        th.appendChild(arrow);
+      }
+    });
+  }
+  function updateSortIconsSearch() {
+    const searchHeaderCells = document.querySelectorAll("#search-list-container thead th");
+    searchHeaderCells.forEach(th => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      // Remove old arrow if present
+      const oldArrow = th.querySelector('.sort-arrow');
+      if (oldArrow) th.removeChild(oldArrow);
+
+      if (col === searchCurrentSortColumn) {
+        th.classList.add(searchCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
+        // Add arrow
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        arrow.textContent = searchCurrentSortDirection === "asc" ? " ▲" : " ▼";
+        th.appendChild(arrow);
+      }
+    });
+  }
 
   // Table header sorting for All tab
   const allHeaderCells = document.querySelectorAll("#all-list-container thead th");
@@ -464,7 +504,8 @@ document.addEventListener("DOMContentLoaded", () => {
       allHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
       th.classList.add(allCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
 
-      renderAllListTable(allAdminsData);
+      updateSortIconsAll();
+      performSearch();
     });
   });
 
@@ -485,9 +526,22 @@ document.addEventListener("DOMContentLoaded", () => {
       searchHeaderCells.forEach(cell => cell.classList.remove("sort-asc", "sort-desc"));
       th.classList.add(searchCurrentSortDirection === "asc" ? "sort-asc" : "sort-desc");
 
+      updateSortIconsSearch();
       performSearch();
     });
   });
+
+  // Set initial sort select value to alphabetical-asc
+  if (sortSelect) {
+    sortSelect.value = "alphabetical-asc";
+  }
+  if (searchSortSelect) {
+    searchSortSelect.value = "alphabetical-asc";
+  }
+
+  // Call updateSortIcons on initial load and after view mode change
+  updateSortIconsAll();
+  updateSortIconsSearch();
 
   // Set initial view mode from localStorage
   const savedMode = localStorage.getItem("adminViewMode") || "cards";
@@ -499,6 +553,166 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load data
   loadAllAdmins();
 
+  // Inline error elements
+  const firstNameErrorDiv = document.getElementById("admin-first-name-error");
+  const lastNameErrorDiv = document.getElementById("admin-last-name-error");
+  const phoneErrorDiv = document.getElementById("admin-phone-error");
+  const genderErrorDiv = document.getElementById("admin-gender-error");
+  const hospitalCodeErrorDiv = document.getElementById("admin-hospital-code-error");
+  const emailErrorDiv = document.getElementById("admin-email-error");
+  const passwordErrorDiv = document.getElementById("admin-password-error");
+  const passwordConfirmErrorDiv = document.getElementById("admin-password-confirm-error");
+  const gdprErrorDiv = document.getElementById("gdpr-error");
+
+  // Input elements
+  const firstNameInput = document.getElementById("admin-first-name");
+  const lastNameInput = document.getElementById("admin-last-name");
+  const phoneInput = document.getElementById("admin-phone");
+  const genderInput = document.getElementById("admin-gender");
+  const hospitalCodeInput = document.getElementById("admin-hospital-code");
+  const emailInput = document.getElementById("admin-email");
+  const passwordInput = document.getElementById("admin-password");
+  const passwordConfirmInput = document.getElementById("admin-password-confirm");
+  const gdprCheckbox = document.getElementById("gdpr");
+
+  // Track which fields have been touched (blurred)
+  const touchedFields = {
+    firstName: false,
+    lastName: false,
+    phone: false,
+    gender: false,
+    hospitalCode: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+    gdpr: false
+  };
+
+  // Inline error display functions
+  function showError(div, msg) {
+    if (div) div.textContent = msg;
+  }
+  function clearError(div) {
+    if (div) div.textContent = "";
+  }
+
+  // Validation function
+  function validateAdminForm() {
+    let isValid = true;
+    clearError(firstNameErrorDiv);
+    clearError(lastNameErrorDiv);
+    clearError(phoneErrorDiv);
+    clearError(genderErrorDiv);
+    clearError(hospitalCodeErrorDiv);
+    clearError(emailErrorDiv);
+    clearError(passwordErrorDiv);
+    clearError(passwordConfirmErrorDiv);
+    clearError(gdprErrorDiv);
+
+    const firstNameVal = firstNameInput.value.trim();
+    const lastNameVal = lastNameInput.value.trim();
+    const phoneVal = phoneInput.value.trim();
+    const genderVal = genderInput.value;
+    const hospitalCodeVal = hospitalCodeInput.value.trim();
+    const emailVal = emailInput.value.trim();
+    const passwordVal = passwordInput.value;
+    const passwordConfirmVal = passwordConfirmInput.value;
+
+    const nameRegex = /^[a-zA-ZÀ-ž\s]{2,255}$/;
+    const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
+
+    // First name
+    if (!firstNameVal) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno je povinné.");
+    } else if (!nameRegex.test(firstNameVal)) {
+      isValid = false;
+      if (touchedFields.firstName) showError(firstNameErrorDiv, "Meno musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Last name
+    if (!lastNameVal) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko je povinné.");
+    } else if (!nameRegex.test(lastNameVal)) {
+      isValid = false;
+      if (touchedFields.lastName) showError(lastNameErrorDiv, "Priezvisko musí obsahovať iba písmená a mať dĺžku 2 až 255 znakov.");
+    }
+
+    // Phone
+    if (!phoneVal) {
+      isValid = false;
+      if (touchedFields.phone) showError(phoneErrorDiv, "Telefónne číslo je povinné.");
+    } else if (!phoneRegex.test(phoneVal)) {
+      isValid = false;
+      if (touchedFields.phone) showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");
+    }
+
+    // Gender
+    if (!genderVal) {
+      isValid = false;
+      if (touchedFields.gender) showError(genderErrorDiv, "Pohlavie je povinné.");
+    }
+
+    // Hospital code
+    if (!hospitalCodeVal) {
+      isValid = false;
+      if (touchedFields.hospitalCode) showError(hospitalCodeErrorDiv, "Kód nemocnice je povinný.");
+    }
+
+    // Email
+    if (!emailVal) {
+      isValid = false;
+      if (touchedFields.email) showError(emailErrorDiv, "Email je povinný.");
+    }
+
+    // Password
+    if (!passwordVal) {
+      isValid = false;
+      if (touchedFields.password) showError(passwordErrorDiv, "Heslo je povinné.");
+    }
+
+    // Confirm password
+    if (!passwordConfirmVal || passwordVal !== passwordConfirmVal) {
+      isValid = false;
+      if (touchedFields.passwordConfirm) showError(passwordConfirmErrorDiv, "Heslá sa nezhodujú.");
+    }
+
+    // GDPR checkbox
+    if (!gdprCheckbox.checked) {
+      isValid = false;
+      if (touchedFields.gdpr) showError(gdprErrorDiv, "Musíte súhlasiť so spracovaním osobných údajov.");
+    }
+
+    return isValid;
+  }
+
+  // Mark field as touched and validate
+  function markTouched(fieldKey) {
+    touchedFields[fieldKey] = true;
+    validateAdminForm();
+  }
+
+  // Add blur listeners to mark fields as touched
+  firstNameInput.addEventListener("blur", () => markTouched("firstName"));
+  lastNameInput.addEventListener("blur", () => markTouched("lastName"));
+  phoneInput.addEventListener("blur", () => markTouched("phone"));
+  genderInput.addEventListener("blur", () => markTouched("gender"));
+  hospitalCodeInput.addEventListener("blur", () => markTouched("hospitalCode"));
+  emailInput.addEventListener("blur", () => markTouched("email"));
+  passwordInput.addEventListener("blur", () => markTouched("password"));
+  passwordConfirmInput.addEventListener("blur", () => markTouched("passwordConfirm"));
+  gdprCheckbox.addEventListener("blur", () => markTouched("gdpr"));
+
+  // Also validate on input for instant feedback (optional)
+  [
+    firstNameInput, lastNameInput, phoneInput, genderInput, hospitalCodeInput,
+    emailInput, passwordInput, passwordConfirmInput
+  ].forEach(input => {
+    if (input) input.addEventListener("input", validateAdminForm);
+  });
+  gdprCheckbox.addEventListener("change", validateAdminForm);
+
   // Admin form submission
   const addBtn = document.getElementById("add-admin-btn");
   if (addBtn) {
@@ -507,39 +721,26 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage.textContent = "";
       addMessage.classList.remove("error", "success");
 
-      const firstName = document.getElementById("admin-first-name").value.trim();
-      const lastName = document.getElementById("admin-last-name").value.trim();
-      const phone = document.getElementById("admin-phone").value.trim();
-      const gender = document.getElementById("admin-gender").value;
-      const hospitalCode = document.getElementById("admin-hospital-code").value.trim();
-      const email = document.getElementById("admin-email").value.trim();
-      const password = document.getElementById("admin-password").value;
-      const passwordConfirm = document.getElementById("admin-password-confirm").value;
-      const gdprChecked = document.getElementById("gdpr").checked;
+      // Mark all as touched for submit
+      Object.keys(touchedFields).forEach(k => touchedFields[k] = true);
 
-      if (!firstName || !lastName || !phone || !gender || !hospitalCode || !email || !password || !passwordConfirm) {
-        addMessage.textContent = "Vyplňte všetky polia vrátane emailu a hesla.";
+      // Validate and show main error if needed
+      const isFormOk = validateAdminForm();
+      if (!isFormOk) {
+        addMessage.textContent = "Vyplňte všetky polia správne.";
         addMessage.classList.add("error");
         return;
       }
 
-      if (!/^[\d]+$/.test(phone)) {
-        addMessage.textContent = "Telefón musí obsahovať iba čísla.";
-        addMessage.classList.add("error");
-        return;
-      }
-
-      if (password !== passwordConfirm) {
-        addMessage.textContent = "Heslá sa nezhodujú.";
-        addMessage.classList.add("error");
-        return;
-      }
-
-      if (!gdprChecked) {
-        addMessage.textContent = "Musíte súhlasiť so spracovaním údajov (GDPR).";
-        addMessage.classList.add("error");
-        return;
-      }
+      const firstName = firstNameInput.value.trim();
+      const lastName = lastNameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const gender = genderInput.value;
+      const hospitalCode = hospitalCodeInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const passwordConfirm = passwordConfirmInput.value;
+      const gdprChecked = gdprCheckbox.checked;
 
       try {
         const resp = await fetch("/admins/add", {
