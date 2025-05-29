@@ -21,21 +21,21 @@ from server.services.methods_service import MethodsService
 logger = logging.getLogger(__name__)
 methods_service = MethodsService()
 
+
 class PhotoService:
     def __init__(self, base_upload_path=Config.UPLOAD_FOLDER):
-        self.base_upload_path = base_upload_path
-        
+        self.base_upload_path = os.path.abspath(base_upload_path)
+
     def _create_user_directory(self, user_id):
         """Create a directory for the user if it doesn't exist."""
         user_dir = os.path.join(self.base_upload_path, str(user_id))
         os.makedirs(user_dir, exist_ok=True)
-        return user_dir
+        return os.path.abspath(user_dir)
 
     def _generate_unique_filename(self, original_filename):
         """Generate a unique filename using UUID while preserving the original extension."""
         ext = os.path.splitext(original_filename)[1]
         return f"{uuid.uuid4().hex}{ext}"
-    
 
     def save_file_for_user(self, user_id, file_storage):
         """
@@ -65,10 +65,11 @@ class PhotoService:
 
         return file_path
 
-    def save_photo(self, photo_file, user_id, patient_id, eye_side, diagnosis=None, device_name=None, device_type=None, camera_type=None,quality=None):
+    def save_photo(self, photo_file, user_id, patient_id, eye_side, diagnosis=None, device_name=None, device_type=None,
+                   camera_type=None, quality=None):
         """
         Save a photo file and create database entry.
-        
+
         Args:
             photo_file: FileStorage object from request.files
             user_id: ID of the user uploading the photo
@@ -77,7 +78,7 @@ class PhotoService:
             diagnosis: Optional diagnosis text
             device_id: Optional ID of the device used to take the photo
             quality: Quality of the image (default: 'good')
-            
+
         Returns:
             tuple: (OriginalImageData object, status code, message)
         """
@@ -85,18 +86,21 @@ class PhotoService:
             # Validate inputs
             if not photo_file:
                 return None, 400, "No photo file provided"
-            
+
             if not photo_file.filename:
                 return None, 400, "Invalid filename"
-                
-            # Create user directory
+
+            # Create user directory and get absolute path
             user_dir = self._create_user_directory(patient_id)
-            
+
             # Generate unique filename
             filename = self._generate_unique_filename(secure_filename(photo_file.filename))
-            file_path = self.save_file_for_user(patient_id, photo_file)
-            
-            # Create relative path for database storage
+            abs_file_path = os.path.join(user_dir, filename)
+
+            # Save the file
+            photo_file.save(abs_file_path)
+
+            # Create device entry
             new_device = DeviceData(
                 device_name=device_name,
                 device_type=device_type,
@@ -106,9 +110,10 @@ class PhotoService:
             db.session.add(new_device)
             db.session.commit()
             device_id = new_device.id
-            # Create database entry
+
+            # Create database entry with absolute path
             photo_data = OriginalImageData(
-                original_image_path=file_path,
+                original_image_path=abs_file_path,
                 quality=quality,
                 eye_side=eye_side,
                 diagnosis=diagnosis,
@@ -116,13 +121,13 @@ class PhotoService:
                 creator_id=user_id,
                 patient_id=patient_id
             )
-            
+
             db.session.add(photo_data)
             db.session.commit()
-            logger.info(f"Photo saved successfully: {photo_data.id}")
-            
+            logger.info(f"Photo saved successfully: {photo_data.id} at absolute path: {abs_file_path}")
+
             return photo_data, 200, "Photo saved successfully"
-            
+
         except Exception as e:
             logger.error(f"Error saving photo: {str(e)}")
             db.session.rollback()
@@ -186,27 +191,27 @@ class PhotoService:
         """Delete a photo and its file."""
         try:
             photo = OriginalImageData.query.get(photo_id)
-            
+
             if not photo:
                 return False, 404, "Photo not found"
-                
+
             # Check if user has permission (creator or admin)
             if photo.creator_id != user_id:
                 user = User.query.get(user_id)
                 if not user or not (user.is_admin() or user.is_super_admin()):
                     return False, 403, "Permission denied"
-            
+
             # Delete file
             file_path = os.path.join(self.base_upload_path, photo.original_image_path)
             if os.path.exists(file_path):
                 os.remove(file_path)
-            
+
             # Delete database entry
             db.session.delete(photo)
             db.session.commit()
-            
+
             return True, 200, "Photo deleted successfully"
-            
+
         except Exception as e:
             logger.error(f"Error deleting photo: {str(e)}")
             db.session.rollback()
@@ -223,16 +228,91 @@ class PhotoService:
             logger.error(f"Error retrieving photo: {str(e)}")
             return None, 500, f"Error retrieving photo: {str(e)}"
 
-    def sent_image_to_processing(self, 
-                                 photo_id, 
-                                 method_name, 
+    def get_adjacent_photo_ids(self, photo_id, user_id):
+        """
+        Get the IDs of the previous and next photos based on creation date.
+
+        Args:
+            photo_id: The ID of the current photo
+            user_id: The ID of the current user
+
+        Returns:
+            tuple: (prev_id, next_id) - The IDs of the previous and next photos,
+                  or None if there is no previous or next photo
+        """
+        try:
+            # Get the current photo
+            current_photo = OriginalImageData.query.get(photo_id)
+            if not current_photo:
+                return None, None
+
+            # Get all photos accessible to the user, ordered by creation date
+            user_photos, _, _ = self.get_user_photos(user_id)
+            if not user_photos:
+                return None, None
+
+            # Sort photos by creation date
+            sorted_photos = sorted(user_photos, key=lambda p: p.created_at)
+
+            # Find the index of the current photo
+            current_index = next((i for i, p in enumerate(sorted_photos) if p.id == int(photo_id)), -1)
+
+            if current_index == -1:
+                return None, None
+
+            # Get previous and next photo IDs
+            prev_id = sorted_photos[current_index - 1].id if current_index > 0 else None
+            next_id = sorted_photos[current_index + 1].id if current_index < len(sorted_photos) - 1 else None
+
+            return prev_id, next_id
+
+        except Exception as e:
+            logger.error(f"Error getting adjacent photo IDs: {str(e)}")
+            return None, None
+
+    def check_processing_server_availability(self):
+        """
+        Check if the processing server is available.
+
+        Returns:
+            tuple: (available (bool), message (str))
+        """
+        try:
+            # Attempt to connect to the processing service health endpoint
+            response = requests.get(
+                f"{Config.PROCESSING_SERVICE_URL}/health",
+                timeout=3  # Short timeout to avoid long waits
+            )
+
+            if response.status_code == 200:
+                return True, "Processing server is available"
+            else:
+                logger.warning(f"Processing server returned status code: {response.status_code}")
+                return False, f"Processing server is not available (status code: {response.status_code})"
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error connecting to processing server: {str(e)}")
+            return False, "Cannot connect to the processing server"
+        except Exception as e:
+            logger.error(f"Unexpected error checking processing server: {str(e)}")
+            return False, f"Error checking processing server: {str(e)}"
+
+    def sent_image_to_processing(self,
+                                 photo_id,
+                                 method_name,
                                  method_parameters,
-                                 user_id, patient_id, 
-                                 eye_side, diagnosis, 
-                                 device_name, device_type, 
+                                 user_id, patient_id,
+                                 eye_side, diagnosis,
+                                 device_name, device_type,
                                  camera_type):
         """Send a photo to processing."""
         try:
+            # First, check if the processing server is available
+            server_available, message = self.check_processing_server_availability()
+            if not server_available:
+                logger.error(f"Processing server not available: {message}")
+                return False, 503, f"Processing server is not available: {message}"
+
             photo = OriginalImageData.query.get(photo_id)
             if not photo:
                 return False, 404, "Photo not found"
@@ -243,8 +323,8 @@ class PhotoService:
             method_parameters = method.parameters
             # if not method_parameters:
             #     return False, 404, "Method parameters not found"
-            
-                        # Create a new ProcessedImageData instance
+
+            # Create a new ProcessedImageData instance
             processed_photo = ProcessedImageData(
                 created_at=datetime.now(),
                 status="Čaká na spracovanie",
@@ -255,18 +335,18 @@ class PhotoService:
             # Add and commit to the database
             db.session.add(processed_photo)
             db.session.commit()
-            
+
             payload = {
-                "file":{
+                "file": {
                     "id": int(processed_photo.id),
                     "data": base64.b64encode(open(photo.original_image_path, 'rb').read()).decode('utf-8'),
                     "extension": file_extension
                 },
-                "method":{
+                "method": {
                     "name": method_name,
                     "parameters": method_parameters
                 },
-                "metadata":{
+                "metadata": {
                     "original_photo_id": int(photo_id),
                     "user_id": int(user_id),
                     "patient_id": int(patient_id),
@@ -281,24 +361,33 @@ class PhotoService:
 
             # print(f"Payload: {payload}")
 
-
             print(f"Sending image to processing: {photo.original_image_path}")
 
-            # Send the image to the processing service
-            response = requests.post(
-                f"{Config.PROCESSING_SERVICE_URL}/process-image",
-                json=payload
-            )
-            if response.status_code != 200:
-                print(f"Failed to send image to processing: {response.status_code}")
-                return False, 500, "Failed to send image to processing"
-            else:
-                print(f"Image sent to processing successfully: {response.status_code}")
-                return True, 200, "Image sent to processing successfully"
+            # Send the image to the processing service with a timeout
+            try:
+                response = requests.post(
+                    f"{Config.PROCESSING_SERVICE_URL}/process-image",
+                    json=payload,
+                    timeout=10  # 10 second timeout
+                )
+                if response.status_code != 200:
+                    print(f"Failed to send image to processing: {response.status_code}")
+                    # Update the status to indicate the error
+                    processed_photo.status = "Chyba spracovania"
+                    db.session.commit()
+                    return False, 500, f"Failed to send image to processing: {response.status_code}"
+                else:
+                    print(f"Image sent to processing successfully: {response.status_code}")
+                    return True, 200, "Image sent to processing successfully"
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Network error sending image to processing: {str(e)}")
+                processed_photo.status = "Chyba spracovania"
+                db.session.commit()
+                return False, 500, f"Network error sending image to processing: {str(e)}"
         except Exception as e:
             logger.error(f"Error sending image to processing: {str(e)}")
             return False, 500, f"Error sending image to processing: {str(e)}"
-        
+
     def process_received_data(self, status, answer, file_id, file_data, file_extension):
         """Process the received data from the processing service."""
         try:
@@ -306,22 +395,43 @@ class PhotoService:
             processed_image = ProcessedImageData.query.get(file_id)
             if not processed_image:
                 return False, "Processed image not found"
-            
-            # Save the file to the user's directory (from base64 string)
-            orig_path = processed_image.original_image.original_image_path
 
-            # zmena prípony na .tif
-            file_path = Path(orig_path).with_suffix(".tif")            # Update the processed image with the received data
+            # Get the patient ID from the original image
+            patient_id = processed_image.original_image.patient_id
+
+            # Create directory for the patient if it doesn't exist and get absolute path
+            patient_dir = self._create_user_directory(patient_id)
+
+            # Generate unique filename with original extension
+            unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
+
+            # Create absolute file path
+            abs_file_path = os.path.join(patient_dir, unique_filename)
+
+            # Save the received base64 image data
+            try:
+                with open(abs_file_path, "wb") as f:
+                    f.write(base64.b64decode(file_data))
+            except Exception as e:
+                logger.error(f"Error saving image file: {str(e)}")
+                return False, f"Error saving image file: {str(e)}"
+
+            # Update the processed image with the received data
             processed_image.status = "Spracované"
             processed_image.answer = answer
-            processed_image.processed_image_path = file_path
+            processed_image.processed_image_path = abs_file_path  # Store absolute path
             processed_image.processed_image_extension = file_extension
+
+            logger.info(f"Saving processed image with absolute path: {abs_file_path}")
+
             db.session.commit()
+
+            logger.info(f"Processed image saved: {abs_file_path}")
             return True, "Processed image updated successfully"
         except Exception as e:
             logger.error(f"Error processing received data: {str(e)}")
             return False, f"Error processing received data: {str(e)}"
-        
+
     def save_base64_file_for_user(self, user_id, base64_data, extension):
         """
         Save a base64-encoded file in a user-specific folder.
@@ -339,32 +449,31 @@ class PhotoService:
         with open(file_path, "wb") as f:
             f.write(base64.b64decode(base64_data))
         return file_path
-        
+
     def update_photo_diagnosis(self, photo_id, new_diagnosis):
         """Update the diagnosis for a specific photo.
-        
+
         Args:
             photo_id: ID of the photo to update
             new_diagnosis: New diagnosis text
-            
+
         Returns:
             tuple: (success (bool), status code (int), message (str))
         """
         try:
             photo = OriginalImageData.query.get(photo_id)
-            
+
             if not photo:
                 return False, 404, "Photo not found"
-            
+
             photo.diagnosis = new_diagnosis
             db.session.commit()
-            
+
             logger.info(f"Updated diagnosis for photo {photo_id}")
             return True, 200, "Diagnosis updated successfully"
-            
+
         except Exception as e:
             logger.error(f"Error updating diagnosis: {str(e)}")
             db.session.rollback()
             return False, 500, f"Error updating diagnosis: {str(e)}"
-        
-    
+

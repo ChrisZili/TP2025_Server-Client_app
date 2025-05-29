@@ -65,10 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const bDate = parseDate(b.dataset.createdAt);
         return sortValue === 'date-desc' ? bDate - aDate : aDate - bDate;
       } else {
-        const aName = a.dataset.name.toLowerCase();
-        const bName = b.dataset.name.toLowerCase();
-        return sortValue === 'name-desc' ? 
-          bName.localeCompare(aName, 'sk') : 
+        // Sort by patient name by default
+        const aName = a.dataset.patientName.toLowerCase();
+        const bName = b.dataset.patientName.toLowerCase();
+        return sortValue === 'name-desc' ?
+          bName.localeCompare(aName, 'sk') :
           aName.localeCompare(bName, 'sk');
       }
     });
@@ -77,21 +78,29 @@ document.addEventListener("DOMContentLoaded", () => {
   function applySearchAndSort(searchTerm) {
     searchTerm = searchTerm.toLowerCase().trim();
     currentSearchTerm = searchTerm;
-    
+
     // Show/hide table body based on search term
     if (!searchTerm) {
       table.classList.add('empty-search');
       return;
     }
-    
+
     table.classList.remove('empty-search');
-    
+
     // Filter rows
     const filteredRows = rows.filter(row => {
-      const text = Array.from(row.children)
-        .map(cell => cell.textContent.trim().toLowerCase())
-        .join(' ');
-      return text.includes(searchTerm);
+      // Check if any cell contains the search term
+      const patientName = row.dataset.patientName?.toLowerCase() || '';
+      const method = row.dataset.method?.toLowerCase() || '';
+      const status = row.dataset.status?.toLowerCase() || '';
+      const answer = row.dataset.answer?.toLowerCase() || '';
+      const createdAt = row.dataset.createdAt?.toLowerCase() || '';
+
+      return patientName.includes(searchTerm) ||
+             method.includes(searchTerm) ||
+             status.includes(searchTerm) ||
+             answer.includes(searchTerm) ||
+             createdAt.includes(searchTerm);
     });
 
     // Sort filtered rows
@@ -123,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Filter functionality
-  const filterElements = ['filter-patient', 'filter-doctor', 'filter-method'];
+  const filterElements = ['filter-patient', 'filter-method', 'filter-status', 'filter-answer'];
   filterElements.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
@@ -137,21 +146,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function applyFilters() {
     if (currentTab !== 'all') return;
-    
+
     const patientFilter = document.getElementById('filter-patient')?.value.toLowerCase() || '';
-    const doctorFilter = document.getElementById('filter-doctor')?.value.toLowerCase() || '';
     const methodFilter = document.getElementById('filter-method')?.value.toLowerCase() || '';
+    const statusFilter = document.getElementById('filter-status')?.value.toLowerCase() || '';
+    const answerFilter = document.getElementById('filter-answer')?.value.toLowerCase() || '';
 
     rows.forEach(row => {
-      const patientName = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-      const doctorName = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-      const method = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-      
+      const patientName = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
+      const method = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+      const status = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+      const answer = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+
       const patientMatch = !patientFilter || patientName === patientFilter;
-      const doctorMatch = !doctorFilter || doctorName === doctorFilter;
       const methodMatch = !methodFilter || method === methodFilter;
-      
-      row.style.display = patientMatch && doctorMatch && methodMatch ? '' : 'none';
+      const statusMatch = !statusFilter || status === statusFilter;
+      const answerMatch = !answerFilter || answer === answerFilter;
+
+      row.style.display = patientMatch && methodMatch && statusMatch && answerMatch ? '' : 'none';
     });
   }
 
@@ -170,8 +182,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let sortAscending = true;
 
   function getColumnIndex(column) {
-    const columns = ['name', 'patient_name', 'doctor_name', 'method', 'status', 'created_at'];
-    return columns.indexOf(column);
+    // Map column names to their indices in the table
+    // Note: these are 0-based indices
+    const columnMap = {
+      'patient_name': 0,
+      'method': 1,
+      'status': 2,
+      'answer': 3,
+      'created_at': 4
+    };
+    return columnMap[column] || 0;
   }
 
   function resetSorting() {
@@ -187,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function toggleSort(column) {
     const header = document.querySelector(`th[data-column="${column}"]`);
     const icon = header.querySelector('.sort-icon');
-    
+
     // Remove sorting classes from all headers
     document.querySelectorAll('th.sortable').forEach(th => {
       if (th !== header) {
@@ -211,18 +231,18 @@ document.addEventListener("DOMContentLoaded", () => {
       icon.classList.toggle('asc', sortAscending);
       icon.classList.toggle('desc', !sortAscending);
     }
-    
+
     const sortedRows = rows.sort((a, b) => {
       const aValue = a.children[getColumnIndex(column)].textContent.trim();
       const bValue = b.children[getColumnIndex(column)].textContent.trim();
-      
+
       if (column === 'created_at') {
-        return sortAscending ? 
-          parseDate(aValue) - parseDate(bValue) : 
+        return sortAscending ?
+          parseDate(aValue) - parseDate(bValue) :
           parseDate(bValue) - parseDate(aValue);
       } else {
-        return sortAscending ? 
-          aValue.localeCompare(bValue, 'sk') : 
+        return sortAscending ?
+          aValue.localeCompare(bValue, 'sk') :
           bValue.localeCompare(aValue, 'sk');
       }
     });

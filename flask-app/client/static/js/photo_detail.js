@@ -241,19 +241,21 @@ document.addEventListener('DOMContentLoaded', function() {
       const deviceType = detailDiv.dataset.deviceType;
       const cameraType = detailDiv.dataset.cameraType;
 
-      // Get selected method (only one allowed for this example)
-      const checkedMethod = document.querySelector('input[name="methods"]:checked:not([disabled])');
-      if (!checkedMethod) {
-        alert('Prosím vyberte metódu na spracovanie.');
+      // Get all checked methods
+      const checkedMethods = Array.from(document.querySelectorAll('input[name="methods"]:checked:not([disabled])'));
+      if (checkedMethods.length === 0) {
+        alert('Prosím vyberte aspoň jednu metódu na spracovanie.');
         return;
       }
-      const methodName = checkedMethod.value;
-      const methodParameters = {};
+
+      // Collect method names and parameters
+      const methodNames = checkedMethods.map(method => method.value);
+      const methodParametersList = methodNames.map(() => ({})); // Empty objects for parameters
 
       // Show loader with initial message
       if (processingLoader) {
         processingLoader.style.display = 'flex';
-        processingMessage.textContent = 'Spracováva sa, čakajte prosím...';
+        processingMessage.textContent = 'Kontrola dostupnosti servera...';
       }
 
       fetch('/photos/sent_to_processing', {
@@ -263,8 +265,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         body: JSON.stringify({
           photo_id: photoId,
-          method_name: methodName,
-          method_parameters: methodParameters,
+          method_names: methodNames,
+          method_parameters_list: methodParametersList,
           user_id: userId,
           patient_id: patientId,
           eye_side: eyeSide,
@@ -275,6 +277,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
       })
       .then(response => {
+        if (response.status === 503) {
+          // Server unavailable - special handling
+          return response.json().then(data => {
+            throw new Error(`Server nedostupný: ${data.message || 'Spracovateľský server je momentálne nedostupný.'}`);
+          });
+        }
         if (!response.ok) {
           return response.text().then(text => { throw new Error(text); });
         }
@@ -282,29 +290,44 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(data => {
         if (processingLoader) {
-          processingMessage.textContent = 'Úspešne odoslané na spracovanie!';
-          processingMessage.style.color = '#4CAF50';
-          
+          const successCount = data.results ? data.results.filter(r => r.success).length : 0;
+          const totalCount = data.results ? data.results.length : 0;
+
+          if (successCount === totalCount) {
+            processingMessage.textContent = 'Všetky metódy boli úspešne odoslané na spracovanie!';
+            processingMessage.style.color = '#4CAF50';
+          } else {
+            processingMessage.textContent = `Odoslané na spracovanie: ${successCount} z ${totalCount} metód`;
+            processingMessage.style.color = successCount > 0 ? '#FFA500' : '#f44336';
+          }
+
           // Refresh the table and hide the message after 2 seconds
           setTimeout(() => {
             processingLoader.style.display = 'none';
             refreshProcessedImagesTable();
           }, 2000);
         }
-        
+
         // Reset all unchecked checkboxes
         methodCheckboxes.forEach(cb => {
           if (!cb.disabled) {
             cb.checked = false;
           }
         });
-        // Hide the button after successful processing
+        // Hide the button after processing
         sendBtn.style.display = 'none';
       })
       .catch(error => {
         if (processingLoader) {
-          processingMessage.textContent = 'Chyba pri odosielaní: ' + error.message;
-          processingMessage.style.color = '#f44336';
+          // Check if it's a server availability error
+          if (error.message && error.message.includes('Server nedostupný')) {
+            processingMessage.textContent = error.message;
+            processingMessage.style.color = '#f44336';
+          } else {
+            processingMessage.textContent = 'Chyba pri odosielaní: ' + error.message;
+            processingMessage.style.color = '#f44336';
+          }
+
           setTimeout(() => {
             processingLoader.style.display = 'none';
           }, 3000);
