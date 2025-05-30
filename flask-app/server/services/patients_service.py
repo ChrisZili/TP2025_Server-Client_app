@@ -96,7 +96,7 @@ class PatientsService:
             if patient.doctor_id:
                 doctor = DoctorData.query.get(patient.doctor_id)
                 if doctor:
-                    item["doctor_id"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
+                    item["doctor_id"] = doctor.id if doctor.id else None
                     item["doctor_name"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
                     item["hospital_id"] = doctor.hospital.id if doctor.hospital else None
                     item["hospital_name"] = doctor.hospital.name if doctor.hospital else None
