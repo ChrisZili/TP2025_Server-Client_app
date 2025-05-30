@@ -316,18 +316,17 @@ class PhotoService:
             tuple: (available (bool), message (str))
         """
         try:
-            # Attempt to connect to the processing service health endpoint
-            response = requests.get(
-                f"{Config.PROCESSING_SERVICE_URL}/health",
-                timeout=3  # Short timeout to avoid long waits
-            )
-
+            url = f"{Config.PROCESSING_SERVICE_URL}/health"
+            logger.info(f"Checking processing server health at: {url}")
+            response = requests.get(url, timeout=3)
             if response.status_code == 200:
                 return True, "Processing server is available"
             else:
                 logger.warning(f"Processing server returned status code: {response.status_code}")
                 return False, f"Processing server is not available (status code: {response.status_code})"
-
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Connection error: {e}")
+            return False, "Processing server is not running or unreachable"
         except requests.exceptions.RequestException as e:
             logger.error(f"Error connecting to processing server: {str(e)}")
             return False, "Cannot connect to the processing server"

@@ -163,18 +163,20 @@ document.addEventListener("DOMContentLoaded", () => {
           if (missingFields) {
             throw new Error('Please fill in all required fields');
           }
-          
-          // Check server health before proceeding
-          submitButton.textContent = "Kontrola servera...";
-          submitButton.disabled = true;
-          
-          const serverIsAvailable = await checkServerHealth();
-          if (!serverIsAvailable) {
-            // The error message is already shown by checkServerHealth
-            submitButton.textContent = originalButtonText;
-            submitButton.disabled = false;
-            return;
-          }
+
+          // Check if any methods are selected
+          // const methodsChecked = form.querySelectorAll('input[name="methods"]:checked').length > 0;
+
+          // if (methodsChecked) {
+          //   submitButton.textContent = "Kontrola servera...";
+          //   submitButton.disabled = true;
+          //   const serverIsAvailable = await checkServerHealth();
+          //   if (!serverIsAvailable) {
+          //     submitButton.textContent = originalButtonText;
+          //     submitButton.disabled = false;
+          //     return;
+          //   }
+          // }
   
           // Create FormData object
           const formData = new FormData(form);

@@ -313,13 +313,12 @@ def add_photo_post():
         photo_file = request.files.get('photo')
         methods_to_process = request.form.getlist('methods')
 
-        for method in methods_to_process:
-            logger.info(f"Method to process: {method}")
         # Log the received data
         logger.info(f"Received form data: patient_id={patient_id}, eye={eye_side}, quality={quality}, "
-                    f"device_name={device_name}, device_type={device_type}")
-
-        # Save photo using PhotoService
+                  f"device_name={device_name}, device_type={device_type}")
+        logger.info(f"Methods to process: {methods_to_process}")
+        
+        # Save photo first
         photo_data, status, message = photo_service.save_photo(
             photo_file=photo_file,
             user_id=user_id,
@@ -330,66 +329,59 @@ def add_photo_post():
             device_type=device_type,
             camera_type=camera_type
         )
-
         if status != 200:
             raise Exception(message)
-
+            
         photo_id = int(photo_data.id)
-        user_id = int(user_id)
-        patient_id = int(patient_id)
-
-        # Process multiple methods in parallel if selected
-        if methods_to_process:
-            # Check if processing server is available
-            server_available, server_message = photo_service.check_processing_server_availability()
-
-            if not server_available:
-                logger.warning(f"Processing server not available: {server_message}")
-                # Still save the photo but warn about processing server
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return {
-                        "status": "partial_success",
-                        "message": f"Photo uploaded successfully but processing server is unavailable: {server_message}",
-                        "photo_id": photo_id
-                    }, 200
-                else:
-                    flash(f'Photo uploaded successfully but processing server is unavailable: {server_message}',
-                          'warning')
-                    return redirect(url_for('photos.photo_detail', photo_id=photo_id))
-
-            results = []
-            method_objects = [method for method in get_process_types() if method.name in methods_to_process]
-
-            for method in method_objects:
-                success, status, message = photo_service.sent_image_to_processing(
-                    photo_id, method.name, method.parameters, user_id, patient_id,
-                    eye_side, quality, device_name, device_type, camera_type
-                )
-
-                results.append({
-                    "method_name": method.name,
-                    "success": success,
-                    "message": message
-                })
-
-                if not success:
-                    logger.warning(f"Failed to process method {method.name}: {message}")
-
-        # Return JSON response for AJAX request or redirect for form submit
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return {"status": "success", "message": "Photo uploaded successfully", "photo_id": photo_id}, 200
-        else:
+        
+        # If no methods, just save and redirect
+        if not methods_to_process:
             flash('Photo uploaded successfully!', 'success')
-            return redirect(url_for('photos.add_photo_get'))
+            return redirect(url_for('photos.photos_list'))
+            
+        # If methods, check processing server
+        server_available, server_message = photo_service.check_processing_server_availability()
+        if not server_available:
+            flash('Photo uploaded successfully but processing server is unavailable: ' + server_message, 'warning')
+            return redirect(url_for('photos.photo_detail', photo_id=photo_id))
+            
+        # Server is available, process the methods
+        logger.info(f"Processing server is available, processing {len(methods_to_process)} methods")
+        results = []
+        success_count = 0
+        method_objects = [method for method in get_process_types() if method.name in methods_to_process]
+
+        for method in method_objects:
+            success, status, message = photo_service.sent_image_to_processing(
+                photo_id, method.name, method.parameters, user_id, int(patient_id),
+                eye_side, quality, device_name, device_type, camera_type
+            )
+
+            results.append({
+                "method_name": method.name,
+                "success": success,
+                "message": message
+            })
+
+            if success:
+                success_count += 1
+            else:
+                logger.warning(f"Failed to process method {method.name}: {message}")
+                
+        # Show appropriate success/partial success message
+        if success_count == len(method_objects):
+            flash('Photo uploaded and all methods sent for processing successfully!', 'success')
+        elif success_count > 0:
+            flash(f'Photo uploaded but only {success_count} of {len(method_objects)} methods were processed successfully.', 'warning')
+        else:
+            flash('Photo uploaded but no methods could be processed.', 'warning')
+            
+        return redirect(url_for('photos.photo_detail', photo_id=photo_id))
 
     except Exception as e:
         logger.exception(f"Error processing form: {str(e)}")
-        # Return JSON response for AJAX request or redirect for form submit
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return {"status": "error", "message": str(e)}, 500
-        else:
-            flash('An error occurred while processing your request.', 'error')
-            return redirect(url_for('photos.add_photo_get'))
+        flash(f'An error occurred: {str(e)}', 'error')
+        return redirect(url_for('photos.add_photo_get'))
 
 
 @bp.route('/delete/<photo_id>', methods=['POST'])
@@ -812,9 +804,18 @@ def check_server_health():
     """Check if the processing server is available and return status"""
     logger.info("==== Checking processing server health ====")
     
-    server_available, message = photo_service.check_processing_server_availability()
-    
-    return jsonify({
-        "available": server_available,
-        "message": message
-    }), 200 if server_available else 503
+    try:
+        server_available, message = photo_service.check_processing_server_availability()
+        
+        # Always return 200 HTTP status to avoid client-side errors
+        # The "available" field in the response indicates whether the processing server is up
+        return jsonify({
+            "available": server_available,
+            "message": message
+        }), 200
+    except Exception as e:
+        logger.exception("Error checking server health: %s", str(e))
+        return jsonify({
+            "available": False,
+            "message": f"Error checking server health: {str(e)}"
+        }), 200  # Return 200 even for errors to avoid client-side issues
