@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tr.innerHTML = `
         <td>${fullName}</td>
-        <td>${doctor.created_at || "-"}</td>
+        <td>${formatDate(doctor.created_at)}</td>
         <td>${doctor.phone_number || "-"}</td>
         <td>${doctor.email || "-"}</td>
         <td>${hospitalName}</td>
@@ -222,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>Telefón: ${doctor.phone_number || "-"}</p>
         <p>Email: ${doctor.email || "-"}</p>
         <p>Nemocnica: ${hospitalName}</p>
+        <p>Deň vytvorenia: ${formatDate(doctor.created_at)}</p>
       `;
 
       allDoctorsList.appendChild(card);
@@ -781,4 +782,14 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
 
   // At the end of DOMContentLoaded:
   checkUserTypeAndAdjustFilters();
+
+  function formatDate(dateString) {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('sk-SK', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
 });
