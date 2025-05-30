@@ -7,7 +7,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: stretch; 
+    align-items: center;
 }
 
 .section-header {
@@ -58,10 +58,14 @@
 .search-container {
     width: 100%;
     max-width: 100%;
-    margin: 0 auto 20px;
-    display: none;
-    padding: 0 20px;
+    margin: 0 0 1rem 0;
+    padding: 0;
     box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
 }
 
 .search-bar-fullwidth {
@@ -70,6 +74,9 @@
     max-width: 100%;
     margin-left: 0;
     margin-right: 0;
+    margin-bottom: 0;
+    flex: 1 1 320px;
+    min-width: 220px;
 }
 
 .search-bar-fullwidth input {
@@ -98,8 +105,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 15px;
-    margin-top: 10px;
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 .sort-options label {
@@ -112,15 +119,15 @@
 }
 
 .sort-options select {
-    border-radius: 20px;
+    width: 160px;
     padding: 10px 14px;
-    font-size: 1rem;
     border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 1rem;
     background-color: #fff;
     color: #333;
     outline: none;
     transition: border-color 0.2s ease;
-    min-width: 180px;
     max-width: 100%;
     box-sizing: border-box;
 }
@@ -138,95 +145,78 @@
 
 /* Filters Section */
 .filters-container {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  justify-content: flex-start; /* add this */
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    background: transparent;
+    padding: 10px 0;
+    box-shadow: none;
+    border: none;
 }
 
 .filter-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-direction: row;
-  margin-bottom: 0;
-  width: auto;
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 7px;
 }
 
 .filter-group label {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 0;
-  color: #444;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    font-weight: bold;
+    margin-right: 5px;
+    white-space: nowrap;
+    color: #444;
+    font-size: 1rem;
 }
 
-.filter-group select,
 .filter-input {
-  border-radius: 20px;
-  padding: 10px 14px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s ease;
-  width: auto;
-  min-width: 180px;
-  max-width: 100%;
-  box-sizing: border-box;
+    width: 160px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+    box-shadow: none;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
-.filter-group select:focus,
 .filter-input:focus {
-  border-color: #66b2ff;
+    border-color: #1a7891;
+    outline: none;
 }
 
-/* Responsive: stack vertically on small screens */
-@media (max-width: 600px) {
-  .filters-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-  .filter-group {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    width: 100%;
-    gap: 0.2rem;
-    margin-bottom: 0.5rem;
-  }
-  .filter-group label {
-    margin-bottom: 2px;
-  }
-  .filter-group select,
-  .filter-input {
-    width: 100%;
+.filter-input option {
+    padding: 4px;
     max-width: 100%;
-  }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Table Styling */
 .table-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 100vh;
     margin-top: 20px;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
 }
 
 .photo-table {
     width: 100%;
-    min-width: 1000px;
+    min-width: 800px;
     border-collapse: collapse;
     background: #fff;
     border-radius: 8px;
-    table-layout: fixed;
+    table-layout: auto;
     box-shadow: none;
     margin: 0 auto;
 }
@@ -236,10 +226,10 @@
 }
 
 .photo-table thead th {
-    text-align: left;
-    padding: 14px 16px;
+    text-align: center;
+    padding: 12px 14px;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     position: sticky;
     top: 0;
@@ -249,18 +239,11 @@
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 .photo-table tbody {
-    display: block;
     width: 100%;
-}
-
-.photo-table thead,
-.photo-table tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
 }
 
 .photo-table tbody tr {
@@ -274,13 +257,12 @@
 }
 
 .photo-table td {
-    padding: 14px 16px;
-    font-size: 1.05rem;
+    padding: 10px 14px;
+    font-size: 0.95rem;
     color: #444;
     vertical-align: middle;
-    word-wrap: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    text-align: center;
 }
 
 /* Hide table body when search is empty */
@@ -300,26 +282,27 @@
 }
 
 .sort-icon {
-  font-size: 1rem;
-  margin-left: 6px;
-  color: #1a7891;
-  font-weight: bold;
-  vertical-align: middle;
-  user-select: none;
-  transition: color 0.2s;
-  display: inline;
+    font-size: 1rem;
+    margin-left: 6px;
+    color: #1a7891;
+    font-weight: bold;
+    vertical-align: middle;
+    user-select: none;
+    transition: color 0.2s;
+    display: inline;
+    position: static;
 }
 
-.sortable .sort-icon::after {
-  content: '';
+.sort-icon::after {
+    content: '';
 }
 
 .sortable.asc .sort-icon::after {
-  content: " ▲";
+    content: " ▲";
 }
 
 .sortable.desc .sort-icon::after {
-  content: " ▼";
+    content: " ▼";
 }
 
 /* Responsive design */
@@ -331,7 +314,7 @@
 
 @media (max-width: 992px) {
     .filters-container {
-        justify-content: flex-start; /* was: center */
+        justify-content: center;
     }
 }
 
@@ -360,4 +343,114 @@
     .search-container {
         padding: 0 10px;
     }
+}
+
+/* --- Additions for full consistency with admin/filters styling --- */
+
+/* Make sort dropdown in search tab look like filter selects */
+.sort-options select {
+    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s ease;
+    min-width: 180px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.sort-options select:focus {
+    border-color: #66b2ff;
+}
+
+/* Make search tab container align and space like filters */
+.search-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 1rem 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Make search bar and sort options consistent with filter-group */
+.search-bar-fullwidth {
+    margin-bottom: 0;
+    flex: 1 1 320px;
+    min-width: 220px;
+}
+
+.sort-options {
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 600px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 0;
+    }
+    .search-bar-fullwidth {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    .sort-options label,
+    .sort-options select {
+        font-size: 0.95rem;
+    }
+}
+
+/* --- Optional: Make sorting arrows match admin style (▲ ▼) --- */
+.sort-icon {
+    font-size: 1rem;
+    margin-left: 6px;
+    color: #1a7891;
+    font-weight: bold;
+    vertical-align: middle;
+    user-select: none;
+    transition: color 0.2s;
+    display: inline;
+    position: static;
+}
+
+.sortable .sort-icon::after {
+    content: '';
+}
+
+.sortable.asc .sort-icon::after {
+    content: " ▲";
+}
+
+.sortable.desc .sort-icon::after {
+    content: " ▼";
+}
+
+/* Unified dropdown styling for all filters and sorts */
+.filter-input,
+.sort-options select {
+    width: 160px;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s ease;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-input:focus,
+.sort-options select:focus {
+    border-color: #66b2ff;
 }

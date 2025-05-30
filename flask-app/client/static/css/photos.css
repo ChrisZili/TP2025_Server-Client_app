@@ -116,52 +116,48 @@
 
 /* Styling for the filters section - updated to match doctors style */
 .filters-container {
+  width: 100%;
+  margin: 0 auto 20px;
   display: flex;
-  gap: 1rem;
+  gap: 15px;
   align-items: center;
-  margin-bottom: 1rem;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  background: transparent;
+  padding: 10px 0;
+  box-shadow: none;
+  border: none;
 }
 
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  flex-direction: row;
   margin-bottom: 0;
-  width: auto;
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
+  gap: 7px;
 }
 
 .filter-group label {
   font-weight: bold;
-  font-size: 1.1rem;
-  margin-bottom: 0;
+  margin-right: 5px;
+  white-space: nowrap;
   color: #444;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.filter-group select {
-  border-radius: 20px;
-  padding: 10px 14px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s ease;
-  width: auto;
-  min-width: 180px;
-  max-width: 100%;
-  box-sizing: border-box;
 }
 
-.filter-group select:focus {
-  border-color: #66b2ff;
+.filter-input {
+  width: 160px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  box-shadow: none;
+}
+
+.filter-input:focus {
+  border-color: #1a7891;
+  outline: none;
 }
 
 /* Sorting arrows like technicians */
@@ -180,6 +176,62 @@
 
 .photo-table th.sort-desc .arrow-down {
   display: inline;
+}
+
+/* --- Unified dropdown styling for filters and sorts (match processed_images.css) --- */
+.filter-input,
+.sort-options select {
+  width: 160px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-input:focus,
+.sort-options select:focus {
+  border-color: #66b2ff;
+}
+
+/* Responsive dropdowns */
+@media (max-width: 768px) {
+  .filter-input,
+  .sort-options select {
+    width: 120px;
+    font-size: 0.95rem;
+    padding: 7px 8px;
+  }
+}
+
+/* --- Sort icon for sortable headers (match processed_images.css) --- */
+.sortable .sort-icon {
+  font-size: 1rem;
+  margin-left: 6px;
+  color: #1a7891;
+  font-weight: bold;
+  vertical-align: middle;
+  user-select: none;
+  transition: color 0.2s;
+  display: inline;
+  position: static;
+}
+
+.sortable .sort-icon::after {
+  content: '';
+}
+
+.sortable.sort-asc .sort-icon::after {
+  content: " ▲";
+}
+
+.sortable.sort-desc .sort-icon::after {
+  content: " ▼";
 }
 
 /* Responsive design */
