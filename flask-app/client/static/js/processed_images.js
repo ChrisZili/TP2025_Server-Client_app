@@ -256,17 +256,30 @@ document.addEventListener("DOMContentLoaded", () => {
     sortedRows.forEach(row => tbody.appendChild(row));
   }
 
-  // --- New sorting algorithm modeled after admins.js ---
+  // --- Sorting algorithm for all columns ---
 
   let currentSortColumn = "created_at"; // Default sort column
   let currentSortDirection = "desc";    // Default direction (newest first)
 
+  function getColumnIndex(column) {
+    // Map column names to their indices in the table (0-based)
+    const columnMap = {
+      'patient_name': 0,
+      'method': 1,
+      'status': 2,
+      'answer': 3,
+      'created_at': 4,
+      'date': 4
+      // Add more if you have more columns
+    };
+    return columnMap[column] ?? 0;
+  }
+
   function getCellValue(row, column) {
+    // Always use the data-created-at attribute for both 'created_at' and 'date'
     if (column === "created_at" || column === "date") {
-      // Use data attribute for date
       return row.getAttribute('data-created-at') || "";
     }
-    // Use cell text for other columns
     const idx = getColumnIndex(column);
     return row.children[idx]?.textContent.trim().toLowerCase() || "";
   }
@@ -276,8 +289,8 @@ document.addEventListener("DOMContentLoaded", () => {
       let valA = getCellValue(a, column);
       let valB = getCellValue(b, column);
 
+      // Always parse as date for both 'created_at' and 'date'
       if (column === "created_at" || column === "date") {
-        // Parse as date
         valA = parseDate(valA);
         valB = parseDate(valB);
         return direction === "asc" ? valA - valB : valB - valA;
@@ -293,13 +306,11 @@ document.addEventListener("DOMContentLoaded", () => {
     headerCells.forEach(th => {
       const col = th.getAttribute("data-column");
       th.classList.remove("sort-asc", "sort-desc");
-      // Remove old arrow if present
       const oldArrow = th.querySelector('.sort-arrow');
       if (oldArrow) th.removeChild(oldArrow);
 
       if (col === column) {
         th.classList.add(direction === "asc" ? "sort-asc" : "sort-desc");
-        // Add arrow
         const arrow = document.createElement("span");
         arrow.className = "sort-arrow";
         arrow.textContent = direction === "asc" ? " ▲" : " ▼";
@@ -308,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Main: Add event listeners to headers
+  // Main: Add event listeners to all headers with data-column
   const headerCells = table.querySelectorAll("thead th[data-column]");
   const tbody = table.querySelector("tbody");
 
