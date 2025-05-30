@@ -30,35 +30,64 @@ class PhotoService:
         """Create a directory for the user if it doesn't exist."""
         user_dir = os.path.join(self.base_upload_path, str(user_id))
         os.makedirs(user_dir, exist_ok=True)
+        
+        # Create original and processed subdirectories
+        original_dir = os.path.join(user_dir, "original")
+        processed_dir = os.path.join(user_dir, "processed")
+        os.makedirs(original_dir, exist_ok=True)
+        os.makedirs(processed_dir, exist_ok=True)
+        
         return os.path.abspath(user_dir)
 
-    def _generate_unique_filename(self, original_filename):
-        """Generate a unique filename using UUID while preserving the original extension."""
-        ext = os.path.splitext(original_filename)[1]
-        return f"{uuid.uuid4().hex}{ext}"
+    def _get_image_sequence_number(self, patient_id):
+        """Get the next sequence number for a patient's images."""
+        # Count existing images for this patient and add 1
+        existing_count = OriginalImageData.query.filter_by(patient_id=patient_id).count()
+        return existing_count + 1
 
-    def save_file_for_user(self, user_id, file_storage):
+    def _generate_image_filename(self, patient_id, eye_side, device_type, original_filename):
+        """Generate a filename based on the new naming convention."""
+        # Get sequence number for this patient
+        seq_num = self._get_image_sequence_number(patient_id)
+        
+        # Normalize eye_side to L/R
+        eye_code = "P" if eye_side.lower() == "right" else "L"
+        
+        # Normalize device_type (remove spaces, special chars)
+        device_code = device_type.replace(" ", "_").lower() if device_type else "unknown"
+        
+        # Get file extension
+        ext = os.path.splitext(original_filename)[1]
+        
+        # Create filename: patient_id_sequence_eye_device.ext
+        return f"{patient_id}_{seq_num}_{eye_code}_{device_code}{ext}"
+
+    def save_file_for_user(self, user_id, file_storage, is_processed=False):
         """
         Save a file (original or processed) in a user-specific folder.
 
         Args:
             user_id: The ID of the user (or patient) to associate the file with.
             file_storage: The FileStorage object (from Flask's request.files).
+            is_processed: Whether this is a processed image (True) or original (False)
 
         Returns:
             The full path to the saved file.
         """
-        # Ensure the user directory exists
-        user_dir = os.path.join(self.base_upload_path, str(user_id))
-        os.makedirs(user_dir, exist_ok=True)
-
+        # Ensure the user directory exists with the new structure
+        user_dir = self._create_user_directory(user_id)
+        
+        # Choose the appropriate subfolder
+        subfolder = "processed" if is_processed else "original"
+        target_dir = os.path.join(user_dir, subfolder)
+        
         # Generate a unique filename
         original_filename = secure_filename(file_storage.filename)
         ext = os.path.splitext(original_filename)[1]
         unique_filename = f"{uuid.uuid4().hex}{ext}"
 
         # Full file path
-        file_path = os.path.join(user_dir, original_filename)
+        file_path = os.path.join(target_dir, unique_filename)
 
         # Save the file
         file_storage.save(file_path)
@@ -92,10 +121,19 @@ class PhotoService:
 
             # Create user directory and get absolute path
             user_dir = self._create_user_directory(patient_id)
+            
+            # Get original images directory
+            original_dir = os.path.join(user_dir, "original")
 
-            # Generate unique filename
-            filename = self._generate_unique_filename(secure_filename(photo_file.filename))
-            abs_file_path = os.path.join(user_dir, filename)
+            # Generate filename based on the new naming convention
+            filename = self._generate_image_filename(
+                patient_id, 
+                eye_side, 
+                device_type,
+                secure_filename(photo_file.filename)
+            )
+            
+            abs_file_path = os.path.join(original_dir, filename)
 
             # Save the file
             photo_file.save(abs_file_path)
@@ -388,7 +426,7 @@ class PhotoService:
             logger.error(f"Error sending image to processing: {str(e)}")
             return False, 500, f"Error sending image to processing: {str(e)}"
 
-    def process_received_data(self, status, answer, file_id, file_data, file_extension):
+    def process_received_data(self, status, answer, file_id, file_data, file_extension, processed_at=None, created_at=None):
         """Process the received data from the processing service."""
         try:
             # Find the processed image by ID
@@ -398,15 +436,35 @@ class PhotoService:
 
             # Get the patient ID from the original image
             patient_id = processed_image.original_image.patient_id
+            original_photo_id = processed_image.original_image.id
 
             # Create directory for the patient if it doesn't exist and get absolute path
-            patient_dir = self._create_user_directory(patient_id)
+            user_dir = self._create_user_directory(patient_id)
+            
+            # Get processed images directory
+            processed_dir = os.path.join(user_dir, "processed")
 
-            # Generate unique filename with original extension
-            unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
-
-            # Create absolute file path
-            abs_file_path = os.path.join(patient_dir, unique_filename)
+            # Generate unique filename with new naming convention
+            original_image = processed_image.original_image
+            eye_code = "P" if original_image.eye_side.lower() == "right" else "L"
+            method_name = processed_image.process_type.replace(" ", "_").lower()
+            
+            # Create filename: patient_id_original-id_eye_method_timestamp.extension
+            # Use processed_at if provided, otherwise use current time
+            if processed_at:
+                try:
+                    # Try to parse the timestamp from string if provided
+                    processing_time = datetime.fromisoformat(processed_at)
+                except (ValueError, TypeError):
+                    # Use current time if parsing fails
+                    processing_time = datetime.now()
+            else:
+                processing_time = datetime.now()
+                
+            timestamp = processing_time.strftime("%Y%m%d_%H%M%S")
+            filename = f"{patient_id}_{original_photo_id}_{eye_code}_{method_name}_{timestamp}.{file_extension}"
+            
+            abs_file_path = os.path.join(processed_dir, filename)
 
             # Save the received base64 image data
             try:
@@ -420,7 +478,19 @@ class PhotoService:
             processed_image.status = "Spracované"
             processed_image.answer = answer
             processed_image.processed_image_path = abs_file_path  # Store absolute path
-            processed_image.processed_image_extension = file_extension
+            
+            # If created_at is provided, update the created_at timestamp
+            if created_at:
+                try:
+                    # Only update if the existing created_at is None or very recent
+                    if not processed_image.created_at or (datetime.now() - processed_image.created_at).total_seconds() < 60:
+                        processed_image.created_at = datetime.fromisoformat(created_at)
+                except (ValueError, TypeError):
+                    # If parsing fails, keep the existing created_at
+                    pass
+            
+            # Note: We're not storing processed_image_extension in the model anymore
+            # The extension is now included in the filename
 
             logger.info(f"Saving processed image with absolute path: {abs_file_path}")
 
@@ -432,7 +502,7 @@ class PhotoService:
             logger.error(f"Error processing received data: {str(e)}")
             return False, f"Error processing received data: {str(e)}"
 
-    def save_base64_file_for_user(self, user_id, base64_data, extension):
+    def save_base64_file_for_user(self, user_id, base64_data, extension, is_processed=False):
         """
         Save a base64-encoded file in a user-specific folder.
         Returns the full file path.
@@ -440,11 +510,16 @@ class PhotoService:
         import base64
         import uuid
         # Ensure the user directory exists
-        user_dir = os.path.join(self.base_upload_path, str(user_id))
-        os.makedirs(user_dir, exist_ok=True)
+        user_dir = self._create_user_directory(user_id)
+        
+        # Choose the appropriate subfolder
+        subfolder = "processed" if is_processed else "original"
+        target_dir = os.path.join(user_dir, subfolder)
+        
         # Generate a unique filename
         unique_filename = f"{uuid.uuid4().hex}.{extension}"
-        file_path = os.path.join(user_dir, unique_filename)
+        file_path = os.path.join(target_dir, unique_filename)
+        
         # Decode and save the file
         with open(file_path, "wb") as f:
             f.write(base64.b64decode(base64_data))

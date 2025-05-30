@@ -40,7 +40,10 @@
       <tr><th>Pacient</th>  <td id="detail-patient">{{ processed_image.patient_name }}</td></tr>
       <tr><th>Metóda</th>   <td id="detail-method">{{ processed_image.method }}</td></tr>
       <tr><th>Stav</th>     <td id="detail-status">{{ processed_image.status }}</td></tr>
-      <tr><th>Dátum</th>    <td id="detail-date">{{ processed_image.created_at }}</td></tr>
+      <tr><th>Dátum a čas vytvorenia</th><td id="detail-date">{{ processed_image.created_at }}</td></tr>
+      {% if processed_image.processed_at %}
+      <tr><th>Dátum a čas spracovania</th><td id="detail-processed">{{ processed_image.processed_at }}</td></tr>
+      {% endif %}
       <tr><th>Výsledok</th> <td id="detail-answer">{{ processed_image.answer }}</td></tr>
     </table>
 
@@ -62,6 +65,7 @@
     <pre id="json-content">{% set filtered_data = {
       'answer': processed_image.answer,
       'created_at': processed_image.created_at,
+      'processed_at': processed_image.processed_at,
       'id': processed_image.id,
       'method': processed_image.method,
       'status': processed_image.status,
@@ -75,6 +79,7 @@
 <div id="processed-image-data" style="display: none;">{% set filtered_data = {
   'answer': processed_image.answer,
   'created_at': processed_image.created_at,
+  'processed_at': processed_image.processed_at,
   'id': processed_image.id,
   'method': processed_image.method,
   'status': processed_image.status,

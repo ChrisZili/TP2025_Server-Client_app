@@ -52,7 +52,7 @@ Detaily Fotky
         <td class="photo-detail-td">{{ photo.name }}</td>
       </tr> -->
       <tr>
-        <th class="photo-detail-th">Dátum</th>
+        <th class="photo-detail-th">Dátum a čas</th>
         <td class="photo-detail-td">{{ photo.date }}</td>
       </tr>
       <tr>
@@ -139,7 +139,11 @@ Detaily Fotky
               <span class="sort-icon"></span>
             </th>
             <th class="photo-detail-th sortable" data-sort="date">
-              Dátum
+              Dátum a čas vytvorenia
+              <span class="sort-icon"></span>
+            </th>
+            <th class="photo-detail-th sortable" data-sort="processed">
+              Dátum a čas spracovania
               <span class="sort-icon"></span>
             </th>
           </tr>
@@ -154,7 +158,8 @@ Detaily Fotky
               <span class="status-dot" data-status="{{ img.status|default('-', true) }}"></span>
               {{ img.status|default('-', true) }}
             </td>
-            <td class="photo-detail-td">{{ img.created_at|default('-', true) }}</td>
+            <td class="photo-detail-td text-nowrap">{{ img.created_at|default('-', true) }}</td>
+            <td class="photo-detail-td text-nowrap">{{ img.processed_at|default('-', true) }}</td>
           </tr>
           {% endfor %}
         </tbody>

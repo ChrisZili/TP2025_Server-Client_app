@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function getColumnIndex(column) {
-    const columns = ['method', 'status', 'date'];
+    const columns = ['method', 'status', 'date', 'processed'];
     return columns.indexOf(column);
   }
 
@@ -182,6 +182,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add new rows
         data.forEach(img => {
+          // Ensure all fields exist
+          const method = img.method || '-';
+          const status = img.status || '-';
+          const createdAt = img.created_at || '-';
+          const processedAt = img.processed_at || '-';
+          
           const row = document.createElement('tr');
           row.className = 'processed-image-row';
           row.dataset.processedImageId = img.id;
@@ -191,12 +197,13 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           
           row.innerHTML = `
-            <td class="photo-detail-td">${img.method || '-'}</td>
+            <td class="photo-detail-td">${method}</td>
             <td class="photo-detail-td">
-              <span class="status-dot" data-status="${img.status || '-'}"></span>
-              ${img.status || '-'}
+              <span class="status-dot" data-status="${status}"></span>
+              ${status}
             </td>
-            <td class="photo-detail-td">${img.created_at || '-'}</td>
+            <td class="photo-detail-td text-nowrap">${createdAt}</td>
+            <td class="photo-detail-td text-nowrap">${processedAt}</td>
           `;
           
           // Add click handler for the new row

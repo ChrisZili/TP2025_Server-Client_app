@@ -152,7 +152,7 @@ def photos_list():
             "eye": "Pravé" if photo.eye_side == "right" else "Ľavé",
             "patient": patient_name,
             "doctor": doctor_name,
-            "date": photo.created_at.strftime("%d.%m.%Y"),
+            "date": photo.created_at.strftime("%d.%m.%Y %H:%M:%S"),
             "url": url_for('photos.serve_photo', filepath=photo.original_image_path),
             "device_type": device_type
         }
@@ -202,7 +202,7 @@ def photo_detail(photo_id):
         "eye": "Pravé" if photo.eye_side == "right" else "Ľavé",
         "patient": photo.patient.get_full_name() if photo.patient else "Unknown Patient",
         "doctor": photo.patient.doctor.get_full_name() if photo.patient and photo.patient.doctor else "Unknown Doctor",
-        "date": photo.created_at.strftime("%d.%m.%Y"),
+        "date": photo.created_at.strftime("%d.%m.%Y %H:%M:%S"),
         "url": url_for('photos.serve_photo', filepath=os.path.relpath(full_path, Config.UPLOAD_FOLDER)),
         "patient_id": photo.patient.id if photo.patient else "",
         "diagnosis": photo.diagnosis if hasattr(photo, "diagnosis") else "",
@@ -219,14 +219,42 @@ def photo_detail(photo_id):
         if img.processed_image_path and os.path.exists(img.processed_image_path):
             processed_url = url_for('photos.serve_photo',
                                     filepath=os.path.relpath(img.processed_image_path, Config.UPLOAD_FOLDER))
+            
+            # Extract processing timestamp from filename if possible
+            processed_at = ""
+            try:
+                # Get filename and split it
+                filename = os.path.basename(img.processed_image_path)
+                # Expected format: patient_id_original-id_eye_method_YYYYMMDD_HHMMSS.ext
+                name_parts = os.path.splitext(filename)[0].split('_')
+                if len(name_parts) >= 6:  # At least patient_id, orig_id, eye, method, date, time
+                    # Try to extract date and time (the last two parts before extension)
+                    date_part = name_parts[-2]
+                    time_part = name_parts[-1]
+                    if len(date_part) == 8 and len(time_part) == 6:  # YYYYMMDD and HHMMSS
+                        # Format as readable date
+                        year, month, day = date_part[:4], date_part[4:6], date_part[6:8]
+                        hour, minute, second = time_part[:2], time_part[2:4], time_part[4:6]
+                        processed_at = f"{day}.{month}.{year} {hour}:{minute}:{second}"
+            except:
+                # If any error occurs in parsing, just leave processed_at empty
+                pass
+                
         else:
             processed_url = ""
+            processed_at = ""
 
+        # Ensure created_at is always present and formatted
+        created_at = ""
+        if img.created_at:
+            created_at = img.created_at.strftime("%d.%m.%Y %H:%M:%S")
+            
         processed_images.append({
             "id": img.id,
             "method": getattr(img, 'process_type', ''),
             "status": getattr(img, 'status', ''),
-            "created_at": img.created_at.strftime("%d.%m.%Y") if img.created_at else '',
+            "created_at": created_at,
+            "processed_at": processed_at,
             "url": processed_url,
             "name": os.path.basename(img.processed_image_path) if img.processed_image_path else ''
         })
@@ -507,6 +535,8 @@ def recieve():
         # Extract data from the request
         status = data.get('status')
         answer = data.get('answer')
+        processed_at = data.get('processed_at')  # Get the processed_at timestamp if available
+        created_at = data.get('created_at')  # Get the created_at timestamp if available
         file_data = data.get('file', {})
 
         if not all([status, file_data]):
@@ -518,7 +548,9 @@ def recieve():
             answer=answer,
             file_id=file_data.get('id'),
             file_data=file_data.get('data'),
-            file_extension=file_data.get('extension')
+            file_extension=file_data.get('extension'),
+            processed_at=processed_at,  # Pass the processed_at timestamp
+            created_at=created_at  # Pass the created_at timestamp
         )
 
         if success:
@@ -561,6 +593,7 @@ def processed_image_detail(processed_image_id):
     # ---------- spracovaný obrázok -----------------------------------------
     processed_url = ""
     processed_name = ""
+    processed_at = ""
     if processed.processed_image_path:
         processed_path = processed.processed_image_path
         try:
@@ -571,6 +604,26 @@ def processed_image_detail(processed_image_id):
             logger.info(f"Processed image path: {processed_path}")
             logger.info(f"Relative path: {rel_path}")
             logger.info(f"Processed URL: {processed_url}")
+            
+            # Extract processing timestamp from filename if possible
+            try:
+                # Get filename and split it
+                filename = os.path.basename(processed_path)
+                # Expected format: patient_id_original-id_eye_method_YYYYMMDD_HHMMSS.ext
+                name_parts = os.path.splitext(filename)[0].split('_')
+                if len(name_parts) >= 6:  # At least patient_id, orig_id, eye, method, date, time
+                    # Try to extract date and time (the last two parts before extension)
+                    date_part = name_parts[-2]
+                    time_part = name_parts[-1]
+                    if len(date_part) == 8 and len(time_part) == 6:  # YYYYMMDD and HHMMSS
+                        # Format as readable date
+                        year, month, day = date_part[:4], date_part[4:6], date_part[6:8]
+                        hour, minute, second = time_part[:2], time_part[2:4], time_part[4:6]
+                        processed_at = f"{day}.{month}.{year} {hour}:{minute}:{second}"
+            except:
+                # If any error occurs in parsing, just leave processed_at empty
+                pass
+                
         except Exception as e:
             logger.error(f"Error creating URL for processed image: {e}")
             flash("Error loading processed image", "error")
@@ -587,7 +640,8 @@ def processed_image_detail(processed_image_id):
         "id": processed.id,
         "method": processed.process_type,
         "status": processed.status,
-        "created_at": processed.created_at.strftime("%d.%m.%Y") if processed.created_at else "",
+        "created_at": processed.created_at.strftime("%d.%m.%Y %H:%M:%S") if processed.created_at else "",
+        "processed_at": processed_at,
         "answer": processed.answer,
         "url": processed_url,
         "patient_name": patient_name,
@@ -630,12 +684,35 @@ def processed_images_list():
             doctor_name = original.creator.get_full_name()
         else:
             doctor_name = str(original.creator_id) if original and hasattr(original, 'creator_id') else "-"
+            
+        # Extract processing timestamp from filename if possible
+        processed_at = ""
+        if img.processed_image_path:
+            try:
+                # Get filename and split it
+                filename = os.path.basename(img.processed_image_path)
+                # Expected format: patient_id_original-id_eye_method_YYYYMMDD_HHMMSS.ext
+                name_parts = os.path.splitext(filename)[0].split('_')
+                if len(name_parts) >= 6:  # At least patient_id, orig_id, eye, method, date, time
+                    # Try to extract date and time (the last two parts before extension)
+                    date_part = name_parts[-2]
+                    time_part = name_parts[-1]
+                    if len(date_part) == 8 and len(time_part) == 6:  # YYYYMMDD and HHMMSS
+                        # Format as readable date
+                        year, month, day = date_part[:4], date_part[4:6], date_part[6:8]
+                        hour, minute, second = time_part[:2], time_part[2:4], time_part[4:6]
+                        processed_at = f"{day}.{month}.{year} {hour}:{minute}:{second}"
+            except:
+                # If any error occurs in parsing, just leave processed_at empty
+                pass
+                
         table_data.append({
             "id": img.id,
             "name": os.path.basename(img.processed_image_path) if img.processed_image_path else "",
             "method": img.process_type,
             "status": img.status,
-            "created_at": img.created_at.strftime("%d.%m.%Y") if img.created_at else "",
+            "created_at": img.created_at.strftime("%d.%m.%Y %H:%M:%S") if img.created_at else "",
+            "processed_at": processed_at,
             "patient_name": patient_name,
             "doctor_name": doctor_name,
             "answer": img.answer if hasattr(img, "answer") else "-",
@@ -687,13 +764,39 @@ def get_processed_images(photo_id):
 
         processed_images = []
         for img in photo.processed_images:
+            # Format created_at timestamp
+            created_at = img.created_at.strftime("%d.%m.%Y %H:%M:%S") if img.created_at else '-'
+            
+            # Extract processed_at from filename if it exists
+            processed_at = "-"
+            if img.processed_image_path:
+                try:
+                    # Try to extract timestamp from the filename
+                    filename = os.path.basename(img.processed_image_path)
+                    name_parts = os.path.splitext(filename)[0].split('_')
+                    if len(name_parts) >= 6:  # At least patient_id, orig_id, eye, method, date, time
+                        date_part = name_parts[-2]
+                        time_part = name_parts[-1]
+                        if len(date_part) == 8 and len(time_part) == 6:  # YYYYMMDD and HHMMSS
+                            year, month, day = date_part[:4], date_part[4:6], date_part[6:8]
+                            hour, minute, second = time_part[:2], time_part[2:4], time_part[4:6]
+                            processed_at = f"{day}.{month}.{year} {hour}:{minute}:{second}"
+                except:
+                    # If any error in parsing, leave processed_at as default
+                    pass
+            
+            processed_url = ""
+            if img.processed_image_path and os.path.exists(img.processed_image_path):
+                processed_url = url_for('photos.serve_photo', 
+                                      filepath=os.path.relpath(img.processed_image_path, Config.UPLOAD_FOLDER))
+            
             processed_images.append({
                 "id": img.id,
                 "method": img.process_type,
                 "status": img.status,
-                "created_at": img.created_at.strftime("%d.%m.%Y") if img.created_at else '',
-                "url": url_for('photos.serve_photo',
-                               filepath=img.processed_image_path) if img.processed_image_path else ''
+                "created_at": created_at,
+                "processed_at": processed_at,
+                "url": processed_url
             })
 
         return jsonify(processed_images), 200

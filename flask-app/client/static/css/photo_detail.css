@@ -307,10 +307,11 @@ h3 {
 
 .status-dot {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  margin-right: 8px;
+  margin-right: 5px;
+  vertical-align: middle;
 }
 
 .status-dot[data-status="Čaká na spracovanie"] {
@@ -319,6 +320,10 @@ h3 {
 
 .status-dot[data-status="Spracované"] {
   background-color: #2ecc71; /* green */
+}
+
+.status-dot[data-status="Chyba spracovania"] {
+  background-color: #f44336; /* red */
 }
 
 /* Edit functionality styles */
@@ -448,10 +453,10 @@ h3 {
   margin: 0;
   font-size: 14px;
   border-radius: 0;
-  table-layout: auto; /* Allow table to adjust to content */
+  table-layout: fixed; /* Use fixed layout for better control */
   overflow: visible;
   box-shadow: none;
-  min-width: 400px; /* Ensure minimum width for mobile */
+  min-width: 650px; /* Ensure minimum width to prevent cramping */
 }
 
 #processed-images-table thead {
@@ -465,12 +470,43 @@ h3 {
   color: #333;
   border-bottom: 1px solid #ddd;
   white-space: nowrap; /* Prevent wrapping of header text */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Make sure the date columns have enough space */
+#processed-images-table th:nth-child(3),
+#processed-images-table th:nth-child(4) {
+  min-width: 180px; /* Minimum width for date column headers */
+}
+
+/* Add specific widths for each column to ensure consistency */
+#processed-images-table th:nth-child(1) {
+  width: 25%; /* Method column */
+}
+
+#processed-images-table th:nth-child(2) {
+  width: 20%; /* Status column */
+}
+
+#processed-images-table th:nth-child(5),
+#processed-images-table th:nth-child(6) {
+  width: 27.5%; /* Date columns */
 }
 
 #processed-images-table td {
   padding: 8px 10px;
   border-bottom: 1px solid #eee;
   color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure cells in date columns don't wrap */
+#processed-images-table td:nth-child(5),
+#processed-images-table td:nth-child(6) {
+  white-space: nowrap;
+  min-width: 180px; /* Minimum width for date columns */
 }
 
 #processed-images-table tbody tr {
@@ -540,8 +576,10 @@ h3 {
 .table-scroll-wrapper {
   max-height: 300px;
   overflow-y: auto;
+  overflow-x: auto; /* Enable horizontal scrolling */
   margin-bottom: 20px;
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  width: 100%; /* Take full width of container */
 }
 
 /* Media queries for mobile responsiveness */
@@ -560,4 +598,29 @@ h3 {
   .table-scroll-wrapper {
     max-height: 250px;
   }
+}
+
+/* Utility class to prevent text wrapping */
+.text-nowrap {
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Minimum width for the entire table to prevent cramping */
+#processed-images-table {
+  min-width: 650px; 
+}
+
+/* Ensure date columns have enough space and don't wrap */
+#processed-images-table td:nth-child(3),
+#processed-images-table td:nth-child(4) {
+  white-space: nowrap;
+  min-width: 160px; /* Minimum width for date cells */
+}
+
+#processed-images-table th:nth-child(3),
+#processed-images-table th:nth-child(4) {
+  white-space: nowrap;
+  min-width: 160px; /* Minimum width for date headers */
 }

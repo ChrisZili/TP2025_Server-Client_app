@@ -108,7 +108,8 @@ Spracované fotky
           <th class="sortable" data-column="method">Metóda<span class="sort-icon"></span></th>
           <th class="sortable" data-column="status">Stav<span class="sort-icon"></span></th>
           <th class="sortable" data-column="answer">Výsledok<span class="sort-icon"></span></th>
-          <th class="sortable" data-column="created_at">Dátum<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="created_at">Dátum a čas vytvorenia<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="processed_at">Dátum a čas spracovania<span class="sort-icon"></span></th>
         </tr>
       </thead>
       <tbody>
@@ -120,13 +121,15 @@ Spracované fotky
             data-method="{{ img.method }}"
             data-status="{{ img.status }}"
             data-answer="{{ img.answer }}"
-            data-created-at="{{ img.created_at }}">
+            data-created-at="{{ img.created_at }}"
+            data-processed-at="{{ img.processed_at }}">
           <!-- <td>{{ img.name|default('-', true) }}</td> -->
           <td>{{ img.patient_name|default('-', true) }}</td>
           <td>{{ img.method|default('-', true) }}</td>
           <td>{{ img.status|default('-', true) }}</td>
           <td>{{ img.answer|default('-', true) }}</td>
           <td>{{ img.created_at|default('-', true) }}</td>
+          <td>{{ img.processed_at|default('-', true) }}</td>
         </tr>
         {% endfor %}
       </tbody>

@@ -537,3 +537,14 @@
   display: table-row-group;
   width: auto;
 }
+
+/* Add specific width for date column to accommodate timestamps */
+.photo-table th:first-child,
+.photo-table td:first-child {
+  min-width: 180px; /* Make date column wider for timestamps */
+}
+
+/* Ensure text in date column doesn't wrap */
+.photo-table td:first-child {
+  white-space: nowrap;
+}
