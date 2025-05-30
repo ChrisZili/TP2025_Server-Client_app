@@ -37,19 +37,6 @@ Spracované fotky
       </select>
     </div>
     <div class="filter-group">
-      <label for="filter-doctor">Odoslal na spracovanie:</label>
-      <select id="filter-doctor" class="filter-input">
-        <option value="">Všetci</option>
-        {% set unique_doctors = [] %}
-        {% for img in processed_images %}
-          {% if img.doctor_name and img.doctor_name != '-' and img.doctor_name not in unique_doctors %}
-            {% set _ = unique_doctors.append(img.doctor_name) %}
-            <option value="{{ img.doctor_name }}">{{ img.doctor_name }}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
-    </div>
-    <div class="filter-group">
       <label for="filter-method">Metóda:</label>
       <select id="filter-method" class="filter-input">
         <option value="">Všetky</option>
@@ -62,13 +49,40 @@ Spracované fotky
         {% endfor %}
       </select>
     </div>
+    <div class="filter-group">
+      <label for="filter-status">Stav:</label>
+      <select id="filter-status" class="filter-input">
+        <option value="">Všetky</option>
+        {% set unique_statuses = [] %}
+        {% for img in processed_images %}
+          {% if img.status and img.status != '-' and img.status not in unique_statuses %}
+            {% set _ = unique_statuses.append(img.status) %}
+            <option value="{{ img.status }}">{{ img.status }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filter-answer">Výsledok:</label>
+      <select id="filter-answer" class="filter-input">
+        <option value="">Všetky</option>
+        {% set unique_answers = [] %}
+        {% for img in processed_images %}
+          {% if img.answer and img.answer != '-' and img.answer|string not in unique_answers and unique_answers|length < 15 %}
+            {% set truncated_answer = img.answer|string|truncate(30, true, '...') %}
+            {% set _ = unique_answers.append(img.answer|string) %}
+            <option value="{{ img.answer }}">{{ truncated_answer }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
   </div>
 
   <!-- Search container -->
   <div class="search-container">
     <div class="search-bar-fullwidth">
       <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search-input" placeholder="Názov fotky, pacient, doktor alebo nemocnica" />
+      <input type="text" id="search-input" placeholder="Pacient, metóda, stav alebo výsledok" />
     </div>
     <div class="sort-options">
       <label>
@@ -77,23 +91,23 @@ Spracované fotky
       <select id="search-sort-select">
         <option value="date-desc">Od novších po starších</option>
         <option value="date-asc">Od starších po novších</option>
-        <option value="name-asc">Abecedne A → Z</option>
-        <option value="name-desc">Abecedne Z → A</option>
+        <option value="name-asc">Pacient A → Z</option>
+        <option value="name-desc">Pacient Z → A</option>
       </select>
     </div>
   </div>
 
   <!-- <h2 class="section-header">Zoznam spracovaných obrázkov</h2> -->
-  
+
   <div class="table-scroll-wrapper">
     <table class="photo-table" id="processed-images-table">
       <thead>
         <tr>
           <!-- <th class="sortable" data-column="name">Názov<span class="sort-icon"></span></th> -->
           <th class="sortable" data-column="patient_name">Pacient<span class="sort-icon"></span></th>
-          <th class="sortable" data-column="doctor_name">Odoslal na spracovanie<span class="sort-icon"></span></th>
           <th class="sortable" data-column="method">Metóda<span class="sort-icon"></span></th>
           <th class="sortable" data-column="status">Stav<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="answer">Výsledok<span class="sort-icon"></span></th>
           <th class="sortable" data-column="created_at">Dátum<span class="sort-icon"></span></th>
         </tr>
       </thead>
@@ -103,15 +117,15 @@ Spracované fotky
             data-detail-url="{{ url_for('photos.processed_image_detail', processed_image_id=img.id) }}"
             data-name="{{ img.name|urlencode }}"
             data-patient-name="{{ img.patient_name }}"
-            data-doctor-name="{{ img.doctor_name }}"
             data-method="{{ img.method }}"
             data-status="{{ img.status }}"
+            data-answer="{{ img.answer }}"
             data-created-at="{{ img.created_at }}">
           <!-- <td>{{ img.name|default('-', true) }}</td> -->
           <td>{{ img.patient_name|default('-', true) }}</td>
-          <td>{{ img.doctor_name|default('-', true) }}</td>
           <td>{{ img.method|default('-', true) }}</td>
           <td>{{ img.status|default('-', true) }}</td>
+          <td>{{ img.answer|default('-', true) }}</td>
           <td>{{ img.created_at|default('-', true) }}</td>
         </tr>
         {% endfor %}

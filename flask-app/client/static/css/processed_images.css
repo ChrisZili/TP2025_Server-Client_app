@@ -136,11 +136,10 @@
     align-items: center;
     justify-content: flex-start;
     flex-wrap: wrap;
-    background: #f7f7f7;
-    border-radius: 8px;
-    padding: 16px 20px 10px 20px;
+    background: transparent;
+    padding: 10px 0;
     box-shadow: none;
-    border: 1px solid #e0e0e0;
+    border: none;
 }
 
 .filter-group {
@@ -167,11 +166,21 @@
     background-color: #fff;
     transition: border-color 0.3s ease;
     box-shadow: none;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .filter-input:focus {
     border-color: #1a7891;
     outline: none;
+}
+
+.filter-input option {
+    padding: 4px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Table Styling */
@@ -294,25 +303,21 @@
         display: block;
         overflow-x: auto;
     }
-    
-    .photo-table th, 
+
+    .photo-table th,
     .photo-table td {
         min-width: 120px;
     }
-    
+
     .photo-table th:last-child,
     .photo-table td:last-child {
         min-width: 150px;
     }
-    
+
     .filter-input {
         width: 120px;
         font-size: 0.95rem;
         padding: 7px 8px;
-    }
-    
-    .filters-container {
-        padding: 10px 8px 6px 8px;
     }
     
     .search-container {

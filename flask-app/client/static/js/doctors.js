@@ -342,9 +342,9 @@ document.addEventListener("DOMContentLoaded", () => {
             credentials: "include",
         });
         if (!response.ok) throw new Error("Chyba pri načítaní doktorov.");
-        
+
         const doctors = await response.json();
-        
+
         allDoctorsData = doctors;
 
         populateHospitalDropdown(doctors);
@@ -622,7 +622,7 @@ const phoneRegex = /^(?:\+\d{3}|\d{3}|0)\d{9}$/;
     // if (!phoneInput.value.trim()) {
     //   isValid = false;
     //   if (touchedFields.phone) showError(phoneErrorDiv, "Telefón je povinný.");
-    // } else 
+    // } else
     if (phoneInput.value.trim() && !phoneRegex.test(phoneInput.value.trim())) {
       isValid = false;
       if (touchedFields.phone) showError(phoneErrorDiv, "Neplatné tel. číslo (napr. +421000000000).");

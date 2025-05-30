@@ -22,16 +22,9 @@ class PatientsService:
             email = data.get('email')
             password = data.get('password')
 
-            if not all([first_name, last_name, phone_number, birth_date, birth_number, gender, email, password]):
+            if not all([first_name, last_name, birth_number, email, password]):
                 logger.error("Chýbajú povinné údeje pri registrácii pacienta")
                 return {'error': 'Missing required fields'}, 400
-
-            if PatientData.query.filter_by(birth_number=birth_number).first():
-                logger.error("Pacient s rodným číslom %s už existuje", birth_number)
-                return {'error': 'Patient with this birth number already exists'}, 400
-            if PatientData.query.filter_by(phone_number=phone_number).first():
-                logger.error("Pacient s telefónnym číslom %s už existuje", phone_number)
-                return {'error': 'Patient with this phone number already exists'}, 400
 
             new_patient = PatientData(
                 first_name=first_name,
@@ -103,7 +96,7 @@ class PatientsService:
             if patient.doctor_id:
                 doctor = DoctorData.query.get(patient.doctor_id)
                 if doctor:
-                    item["doctor_id"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
+                    item["doctor_id"] = doctor.id if doctor.id else None
                     item["doctor_name"] = f"{doctor.title + ' ' if doctor.title else ''}{doctor.first_name} {doctor.last_name}{' ' + doctor.suffix if doctor.suffix else ''}"
                     item["hospital_id"] = doctor.hospital.id if doctor.hospital else None
                     item["hospital_name"] = doctor.hospital.name if doctor.hospital else None
@@ -364,4 +357,6 @@ class PatientsService:
             message, status = User.check_user_type_required(user_id, "admin")
         if status != 200:
             message, status = User.check_user_type_required(user_id, "doctor")
+        if status != 200:
+            message, status = User.check_user_type_required(user_id, "technician")
         return message, status

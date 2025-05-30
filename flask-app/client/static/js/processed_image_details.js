@@ -1,159 +1,125 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", function() {
+  console.log("Processed image details script loaded");
 
-  /* ========== 1.  DÁTA Z HTML ====================================== */
-  const dataHolder = document.getElementById("processed-image-data");
-  if (!dataHolder) return;
+  // Toggle image functionality
+  const container = document.querySelector('.processed-image-container');
+  const originalImage = document.getElementById('original-image');
+  const processedImage = document.getElementById('processed-image');
+  const imageToggle = document.getElementById('image-toggle');
+  const originalLabel = document.querySelector('.switch-label:first-child');
+  const processedLabel = document.querySelector('.switch-label:last-child');
 
-  let data;
-  try { data = JSON.parse(dataHolder.dataset.json); }
-  catch (e) { console.error("Chybný JSON:", e); return; }
+  // JSON Modal Variables
+  const jsonModal = document.getElementById('json-modal');
+  const showJsonBtn = document.getElementById('show-json-btn');
+  const closeJsonBtn = document.querySelector('.close-modal');
+  const jsonContent = document.getElementById('json-content');
+  const dataHolder = document.getElementById('processed-image-data');
 
-  /* ========== 2.  DOM PRVKY ======================================== */
-  const canvas   = document.getElementById("canvas");
-  const ctx      = canvas.getContext("2d");
-  const swMain   = document.getElementById("overlay-switch");
-  const colMain  = document.getElementById("mask-color");
+  // Debug logging for troubleshooting
+  console.log("JSON Modal Elements:", {
+    modal: jsonModal ? "Found" : "Missing",
+    button: showJsonBtn ? "Found" : "Missing",
+    closeBtn: closeJsonBtn ? "Found" : "Missing",
+    content: jsonContent ? "Found" : "Missing",
+    dataHolder: dataHolder ? "Found" : "Missing"
+  });
 
-  const modal    = document.getElementById("img-modal");
-  const mCanvas  = document.getElementById("modal-canvas");
-  const mCtx     = mCanvas.getContext("2d");
-  const swModal  = document.getElementById("modal-overlay-switch");
-  const colModal = document.getElementById("modal-mask-color");
-
-  /* ========== 3.  TEXTY ============================================ */
-  document.getElementById("detail-method").textContent = data.method || "-";
-  document.getElementById("detail-status").textContent = data.status || "-";
-  document.getElementById("detail-date").textContent   = fmtDate(data.created_at);
-  document.getElementById("detail-answer").textContent = data.answer || "-";
-
-  const backLink = document.getElementById("original-photo-link");
-  if (data.original_photo_id)
-    backLink.href = `/photos/detail/${data.original_photo_id}`;
-  else
-    backLink.style.display = "none";
-
-  /* ========== 4.  OBRÁZOK + MASKA ================================== */
-  const baseImg = await loadImage(data.original_image.url);
-  const mask    = await decodeTifMask(data.url);
-
-  /* ========== 5.  ULOŽENÁ FARBA ==================================== */
-  const COLOR_KEY = "maskColor";
-  const savedColor = localStorage.getItem(COLOR_KEY) || "#ffffff";
-  colMain.value = colModal.value = savedColor;
-  let tintedMask = tintMask(mask, savedColor);
-
-  /* ========== 6.  KRESLENIE ======================================== */
-  function draw(ctxDest, w, h, showMask, tint) {
-    ctxDest.clearRect(0, 0, w, h);
-    ctxDest.drawImage(baseImg, 0, 0, w, h);
-    if (showMask) ctxDest.drawImage(tint, 0, 0, w, h);
+  if (dataHolder) {
+    console.log("Data attribute exists:", dataHolder.hasAttribute('data-json'));
   }
 
-  canvas.width  = baseImg.width;
-  canvas.height = baseImg.height;
-  draw(ctx, canvas.width, canvas.height, swMain.checked, tintedMask);
+  // Image Toggle Functionality
+  if (originalImage && processedImage && imageToggle) {
+    // Set initial state
+    originalImage.style.opacity = '1';
+    processedImage.style.opacity = '0';
 
-  /* ========== 7.  EVENTY =========================================== */
-
-  /* -- prepínanie masky v náhľade -- */
-  swMain.addEventListener("change", () =>
-    draw(ctx, canvas.width, canvas.height, swMain.checked, tintedMask));
-
-  /* -- zmena farby -- */
-  function updateColor(hex) {
-    localStorage.setItem(COLOR_KEY, hex);
-    colMain.value = colModal.value = hex;
-    tintedMask = tintMask(mask, hex);
-    draw(ctx, canvas.width, canvas.height, swMain.checked, tintedMask);
-    if (modal.classList.contains("open"))
-      draw(mCtx, mCanvas.width, mCanvas.height, swModal.checked, tintedMask);
+    // Add toggle event
+    imageToggle.addEventListener('change', function() {
+      if (this.checked) {
+        originalImage.style.opacity = '0';
+        processedImage.style.opacity = '1';
+      } else {
+        originalImage.style.opacity = '1';
+        processedImage.style.opacity = '0';
+      }
+    });
   }
-  colMain.addEventListener("input", e => updateColor(e.target.value));
-  colModal.addEventListener("input", e => updateColor(e.target.value));
 
-  /* -- otvorenie modalu -- */
-  canvas.parentElement.addEventListener("click", () => {
-    modal.classList.add("open");
-    mCanvas.width  = baseImg.width;
-    mCanvas.height = baseImg.height;
-    draw(mCtx, mCanvas.width, mCanvas.height, swModal.checked, tintedMask);
-  });
+  // JSON Modal Functionality
+  if (showJsonBtn && jsonModal && closeJsonBtn && jsonContent) {
+    console.log("Setting up JSON modal functionality");
 
-  /* -- zatvorenie modalu (krížik) -- */
-  document.getElementById("modal-close")
-          .addEventListener("click", () => modal.classList.remove("open"));
+    // Function to apply syntax highlighting to the pre-rendered JSON
+    function highlightJSON() {
+      try {
+        // Only apply highlighting if not already applied
+        if (jsonContent.classList.contains('highlighted')) return;
 
-  /* -- klik mimo obrázka -- */
-  modal.addEventListener("click", e => {
-    if (e.target === modal) modal.classList.remove("open");
-  });
+        // Get the text content as it's already properly formatted JSON
+        const jsonText = jsonContent.textContent;
 
-  /* -- Esc zatvára modal -- */
-  document.addEventListener("keydown", e=>{
-    if (e.key === "Escape" && modal.classList.contains("open"))
-      modal.classList.remove("open");
-  });
+        // Apply simple syntax highlighting
+        const highlighted = jsonText.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            let cls = 'json-number';
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'json-key';
+              } else {
+                cls = 'json-string';
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'json-boolean';
+            } else if (/null/.test(match)) {
+              cls = 'json-null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+          }
+        );
 
-  /* -- prepnutie masky v modale -- */
-  swModal.addEventListener("change", () =>
-    draw(mCtx, mCanvas.width, mCanvas.height, swModal.checked, tintedMask));
+        jsonContent.innerHTML = highlighted;
+        jsonContent.classList.add('highlighted');
+      } catch (e) {
+        console.error("Error highlighting JSON:", e);
+        // On error, keep the original content
+      }
+    }
 
-  /* -- odkryť UI -- */
-  document.querySelector(".processed-image-container")
-          .classList.remove("hidden-js");
+    // Show modal on button click
+    showJsonBtn.addEventListener('click', function() {
+      console.log("JSON button clicked");
+      jsonModal.classList.remove('hidden');
+
+      // Apply syntax highlighting when showing the modal
+      highlightJSON();
+    });
+
+    // Close modal when clicking the X
+    closeJsonBtn.addEventListener('click', function() {
+      console.log("Close button clicked");
+      jsonModal.classList.add('hidden');
+    });
+
+    // Close when clicking outside modal
+    jsonModal.addEventListener('click', function(event) {
+      if (event.target === jsonModal) {
+        jsonModal.classList.add('hidden');
+      }
+    });
+
+    // Close with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && !jsonModal.classList.contains('hidden')) {
+        jsonModal.classList.add('hidden');
+      }
+    });
+  }
+
+  // Make container visible when everything is ready
+  if (container && container.classList.contains('hidden-js')) {
+    container.classList.remove('hidden-js');
+  }
 });
-
-/* ==================================================================== */
-/*  POMOCNÉ FUNKCIE                                                      */
-/* ==================================================================== */
-
-function fmtDate(str){
-  if(!str) return "-";
-  return new Date(str).toLocaleDateString("sk-SK",{
-    day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"
-  });
-}
-
-function loadImage(url){
-  return new Promise((res,rej)=>{
-    const i=new Image();
-    i.onload =()=>res(i);
-    i.onerror=()=>rej(new Error("Image load error"));
-    i.src=url;
-  });
-}
-
-function tintMask(srcCanvas, hex){
-  const c = document.createElement("canvas");
-  c.width  = srcCanvas.width;
-  c.height = srcCanvas.height;
-  const cx = c.getContext("2d");
-  cx.drawImage(srcCanvas,0,0);
-  cx.globalCompositeOperation="source-in";
-  cx.fillStyle = hex;
-  cx.fillRect(0,0,c.width,c.height);
-  return c;
-}
-
-async function decodeTifMask(url){
-  if(typeof UTIF==="undefined") throw new Error("UTIF.js missing");
-
-  const buf  = await fetch(url).then(r=>r.arrayBuffer());
-  const ifds = UTIF.decode(buf);
-  UTIF.decodeImage(buf, ifds[0]);
-
-  const rgba = UTIF.toRGBA8(ifds[0]);
-  const w    = Number(ifds[0].width);
-  const h    = Number(ifds[0].height);
-
-  const c  = document.createElement("canvas");
-  c.width  = w; c.height = h;
-  const cx = c.getContext("2d");
-  const img= cx.createImageData(w,h);
-
-  for(let i=0;i<w*h;i++){
-    img.data[i*4+3] = rgba[i*4] > 128 ? 255 : 0;   // alfa
-  }
-  cx.putImageData(img,0,0);
-  return c;
-}

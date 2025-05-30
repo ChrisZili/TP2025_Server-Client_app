@@ -336,9 +336,9 @@ document.addEventListener("DOMContentLoaded", () => {
             credentials: "include"
         });
         if (!response.ok) throw new Error("Chyba pri načítaní adminov.");
-        
+
         const admins = await response.json();
-        
+
         allAdminsData = admins;
 
         // Populate dropdown filters

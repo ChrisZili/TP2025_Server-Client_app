@@ -37,16 +37,14 @@
         </select>
       </div>
 
-      <!-- Dropdown for Hospital -->
+      <!-- Dropdown for Device Type -->
       <div class="filter-group">
-        <label for="filter-hospital">Nemocnica:</label>
+        <label for="filter-hospital">Typ zariadenia:</label>
         <select id="filter-hospital" class="form-input filter-input">
           <option value="">Všetky</option>
-          {% set unique_hospitals = [] %}
-          {% for photo in photos %}
-            {% if photo.hospital and photo.hospital != '-' and photo.hospital not in unique_hospitals %}
-              {% set _ = unique_hospitals.append(photo.hospital) %}
-              <option value="{{ photo.hospital }}">{{ photo.hospital }}</option>
+          {% for device_type in device_types %}
+            {% if device_type and device_type != '-' %}
+              <option value="{{ device_type }}">{{ device_type }}</option>
             {% endif %}
           {% endfor %}
         </select>
@@ -93,19 +91,19 @@
           <th class="sortable" data-column="eye">Oko</th>
           <th class="sortable" data-column="patient">Pacient</th>
           <th class="sortable" data-column="doctor">Doktor</th>
-          <th class="sortable" data-column="hospital">Nemocnica</th>
+          <th class="sortable" data-column="device_type">Typ zariadenia</th>
         </tr>
       </thead>
       <tbody id="photo-table-body">
         {% for photo in photos %}
-        <tr class="photo-row" 
-            data-detail-url="{{ url_for('photos.photo_detail', photo_id=photo.id) }}" 
+        <tr class="photo-row"
+            data-detail-url="{{ url_for('photos.photo_detail', photo_id=photo.id) }}"
             style="cursor:pointer;">
           <td>{{ photo.date|default('-', true) }}</td>
           <td>{{ photo.eye|default('-', true) }}</td>
           <td>{{ photo.patient|default('-', true) }}</td>
           <td>{{ photo.doctor|default('-', true) }}</td>
-          <td>{{ photo.hospital|default('-', true) }}</td>
+          <td>{{ photo.device_type|default('-', true) }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -116,7 +114,7 @@
   <div id="tab-search-photos-content">
     <div class="search-bar search-bar-fullwidth">
       <i class="fas fa-search search-icon"></i>
-      <input type="text" id="photo-search-input" placeholder="Názov fotky, pacient, doktor alebo nemocnica" />
+      <input type="text" id="photo-search-input" placeholder="Názov fotky, pacient, doktor alebo typ zariadenia" />
     </div>
     <div class="sort-options" id="photo-sort-options-search">
       <label for="photo-search-sort-select">
@@ -139,7 +137,7 @@
               <th>Oko</th>
               <th>Pacient</th>
               <th>Doktor</th>
-              <th>Nemocnica</th>
+              <th>Typ zariadenia</th>
             </tr>
           </thead>
           <tbody id="photo-search-results-list"></tbody>

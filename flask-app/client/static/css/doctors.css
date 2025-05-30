@@ -204,7 +204,7 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
-  max-width: 60vw; 
+  max-width: 60vw;
   width: 100%;
   font-size: 1.05rem;
   margin-right: auto;

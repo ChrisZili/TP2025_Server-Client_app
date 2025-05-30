@@ -149,32 +149,26 @@ document.addEventListener("DOMContentLoaded", () => {
         eye: row.children[1].textContent.trim(),
         patient: row.children[2].textContent.trim(),
         doctor: row.children[3].textContent.trim(),
-        hospital: row.children[4].textContent.trim(),
+        device_type: row.children[4].textContent.trim(),
         detailUrl: row.getAttribute('data-detail-url'),
         rowHtml: row.innerHTML
       }));
     }
-  
-    function parseDate(dateString) {
-      if (!dateString || dateString === '-') return new Date(0);
-      const [day, month, year] = dateString.split('.').map(Number);
-      return new Date(year, month - 1, day);
-    }
-  
+
     function filterAndSortPhotos(query) {
       let photos = getAllPhotosData();
       query = query.toLowerCase();
-      
+
       if (query) {
         photos = photos.filter(photo =>
           photo.date.toLowerCase().includes(query) ||
           photo.eye.toLowerCase().includes(query) ||
           photo.patient.toLowerCase().includes(query) ||
           photo.doctor.toLowerCase().includes(query) ||
-          photo.hospital.toLowerCase().includes(query)
+          photo.device_type.toLowerCase().includes(query)
         );
       }
-  
+
       // Sorting
       const sortVal = sortSelect.value;
       if (sortVal === "date-desc") {
@@ -188,31 +182,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return photos;
     }
-  
+
     function renderSearchResults() {
       // Only render if search tab is active
       if (currentTab !== "search") return;
-      
+
       const query = searchInput.value.trim();
-      
+
       // Always show table and header
       table.style.display = "table";
       tableHead.style.display = "table-header-group";
       resultsList.innerHTML = "";
-      
+
       if (!query) {
         // Show empty table body before search
         resultsList.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color:#666;">Zadajte text pre vyhľadávanie...</td></tr>';
         return;
       }
-      
+
       const photos = filterAndSortPhotos(query);
-      
+
       if (photos.length === 0) {
         resultsList.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color:#666;">Nenašli sa žiadne fotky.</td></tr>';
         return;
       }
-      
+
       photos.forEach(photo => {
         const tr = document.createElement('tr');
         tr.className = 'photo-row';
@@ -222,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <td>${photo.eye}</td>
           <td>${photo.patient}</td>
           <td>${photo.doctor}</td>
-          <td>${photo.hospital}</td>
+          <td>${photo.device_type}</td>
         `;
         if (photo.detailUrl) {
           tr.addEventListener('click', () => window.location.href = photo.detailUrl);
@@ -230,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resultsList.appendChild(tr);
       });
     }
-  
+
     // Debounce for search
     function debounce(func, delay) {
       let timeout;
@@ -242,14 +236,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const debouncedRender = debounce(renderSearchResults, 200);
     searchInput.addEventListener('input', debouncedRender);
     sortSelect.addEventListener('change', renderSearchResults);
-  
+
     // Initial render
     renderSearchResults();
   });
-  
+
   let sortColumn = null;
   let sortAscending = true;
-  
+
+  function parseDate(dateString) {
+    if (!dateString || dateString === '-') return new Date(0);
+    const [day, month, year] = dateString.split('.').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
   function toggleSort(column) {
     if (sortColumn === column) {
       sortAscending = !sortAscending; // Toggle the sort order
@@ -257,13 +257,13 @@ document.addEventListener("DOMContentLoaded", () => {
       sortColumn = column;
       sortAscending = true; // Default to ascending when switching columns
     }
-  
+
     const rows = Array.from(document.querySelectorAll('#photo-table-body tr'));
-  
+
     const sortedRows = rows.sort((a, b) => {
       const aValue = a.children[getColumnIndex(column)].textContent.trim();
       const bValue = b.children[getColumnIndex(column)].textContent.trim();
-  
+
       if (column === 'date') {
         // Parse dates for comparison
         const dateA = parseDate(aValue);
@@ -274,39 +274,39 @@ document.addEventListener("DOMContentLoaded", () => {
         return sortAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
       }
     });
-  
+
     const tbody = document.getElementById('photo-table-body');
     tbody.innerHTML = '';
     sortedRows.forEach(row => tbody.appendChild(row));
   }
-  
+
   function getColumnIndex(column) {
-    const columns = ['date', 'eye', 'patient', 'doctor', 'hospital'];
+    const columns = ['date', 'eye', 'patient', 'doctor', 'device_type'];
     return columns.indexOf(column);
   }
-  
+
   function applyFilters() {
     const eyeFilter = document.getElementById('filter-eye')?.value.toLowerCase() || '';
-    const hospitalFilter = document.getElementById('filter-hospital')?.value.toLowerCase() || '';
+    const deviceTypeFilter = document.getElementById('filter-hospital')?.value.toLowerCase() || '';
     const doctorFilter = document.getElementById('filter-doctor')?.value.toLowerCase() || '';
     const patientFilter = document.getElementById('filter-patient')?.value.toLowerCase() || '';
-  
+
     const rows = document.querySelectorAll('#photo-table-body tr');
-  
+
     rows.forEach(row => {
       // Get values from table cells
       const date = row.cells[0].textContent.trim().toLowerCase(); // Date is in column 1
       const eye = row.cells[1].textContent.trim().toLowerCase(); // Eye is in column 2
       const patient = row.cells[2].textContent.trim().toLowerCase(); // Patient is in column 3
       const doctor = row.cells[3].textContent.trim().toLowerCase(); // Doctor is in column 4
-      const hospital = row.cells[4].textContent.trim().toLowerCase(); // Hospital is in column 5
-  
+      const device_type = row.cells[4].textContent.trim().toLowerCase(); // Device type is in column 5
+
       const matchesEye = !eyeFilter || eye === eyeFilter;
       const matchesPatient = !patientFilter || patient === patientFilter;
-      const matchesHospital = !hospitalFilter || hospital === hospitalFilter;
+      const matchesDeviceType = !deviceTypeFilter || device_type === deviceTypeFilter;
       const matchesDoctor = !doctorFilter || doctor === doctorFilter;
-  
-      row.style.display = (matchesEye && matchesPatient && matchesHospital && matchesDoctor) ? '' : 'none';
+
+      row.style.display = (matchesEye && matchesPatient && matchesDeviceType && matchesDoctor) ? '' : 'none';
     });
   }
   

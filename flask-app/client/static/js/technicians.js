@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         credentials: "include"
       });
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      
+
       hospitalsData = await response.json();
 
       if (!Array.isArray(hospitalsData) || hospitalsData.length === 0) {
@@ -208,9 +208,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const email = technician.email?.toLowerCase() || "";
       const hospitalName = technician.hospital?.name?.toLowerCase() || "";
 
-      const matchesSearch = !searchQuery || 
-        fullName.includes(searchQuery) || 
-        email.includes(searchQuery) || 
+      const matchesSearch = !searchQuery ||
+        fullName.includes(searchQuery) ||
+        email.includes(searchQuery) ||
         hospitalName.includes(searchQuery);
 
       const matchesHospital = !selectedHospitalId || technician.hospital?.id === selectedHospitalId;

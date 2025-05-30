@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/message_details.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/message_details.css') }}">
+{% endblock %}
+
+{% block title %}
+eSpravy - Detail Správy
+{% endblock %}
+
+{% block header %}
+Detail Správy
+{% endblock %}
+
+{% block content %}
+<div class="message-details-container hidden-js">
+  <div class="message-info">
+    <div class="info-row">
+      <label>Odosielateľ:</label>
+      <span id="sender-email">Načítavam...</span>
+    </div>
+    <div class="info-row">
+      <label>Príjemca:</label>
+      <span id="recipient-email">Načítavam...</span>
+    </div>
+    <div class="info-row">
+      <label>Dátum a čas odoslania:</label>
+      <span id="timestamp">Načítavam...</span>
+    </div>
+  </div>
+
+  <div class="message-content">
+    <h3>Text správy:</h3>
+    <p id="message-content" class="message-text">Načítavam obsah správy...</p>
+  </div>
+
+  <div class="message-images" id="message-images">
+    <!-- Images will be inserted here via JS if any -->
+  </div>
+
+  <!-- Lightbox container -->
+  <div id="lightbox" class="lightbox hidden">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-img" src="" alt="Enlarged Image" />
+    <div class="lightbox-nav lightbox-prev">&#10094;</div>
+    <div class="lightbox-nav lightbox-next">&#10095;</div>
+  </div>
+  
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/message_details.js') }}" defer></script>
+{% endblock %}

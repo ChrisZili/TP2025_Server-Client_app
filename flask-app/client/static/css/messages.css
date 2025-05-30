@@ -5,14 +5,6 @@ html, body {
   flex-direction: column;
 }
 
-.hospitals-container {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
 /* == Tabs == */
 .tabs-wrapper {
   overflow-x: auto;
@@ -57,8 +49,16 @@ html, body {
   flex-direction: column;
 }
 
+
 .hidden {
   display: none !important;
+}
+
+.hidden-js {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in;
 }
 
 /* == Nadpis + tlačidlá == */
@@ -106,145 +106,25 @@ html, body {
   background-color: #ccc;
 }
 
-/* == Sort options (len pre KARTY) == */
+/* == Sort options == */
 .sort-options {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 1rem; /* Space between dropdowns */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  margin-bottom: 1rem; /* Add spacing below the dropdowns */
 }
 
 .sort-options label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.5rem; /* Space between icon and text */
   font-weight: bold;
   font-size: 1rem;
   color: #444;
 }
 
 .sort-options select {
-  padding: 8px 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background: #fff;
-}
-
-#sort-select-all,
-#sort-select-search {
-  min-width: 180px;
-  width: 100%;
-  max-width: 300px;
-  box-sizing: border-box;
-}
-
-/* On small screens, let sort dropdown and its label stack vertically */
-@media (max-width: 600px) {
-  #sort-select-all,
-  #sort-select-search {
-    min-width: 0;
-    max-width: 100%;
-    width: 100%;
-  }
-  /* Make the label above the dropdown */
-  .sort-options {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.2rem;
-  }
-  .sort-options label {
-    margin-bottom: 2px;
-  }
-  .sort-options select {
-    width: 100%;
-  }
-}
-
-/* Style for the city filter dropdown to match toggle buttons */
-.filter-options select {
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  color: #333;
-}
-
-.filter-options select:hover {
-  background-color: #ddd;
-}
-
-.filter-options select:focus {
-  outline: none;
-  background-color: #ccc;
-}
-
-.filter-options {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  gap: 10px; /* Add spacing between the label and the dropdown */
-}
-
-.filter-options label i {
-  font-size: 1.2rem;
-  color: #333;
-}
-
-/* Apply the same styling as the sort dropdown to the city filter dropdown */
-#city-filter {
-  padding: 8px 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background: #fff;
-  min-width: 180px; /* Same as #sort-select-all */
-  transition: background-color 0.2s;
-  color: #333;
-  cursor: pointer;
-}
-
-#city-filter:hover {
-  background-color: #f0f0f0;
-}
-
-#city-filter:focus {
-  outline: none;
-  background-color: #ddd;
-}
-
-/* Container for sort and city filter dropdowns */
-.sort-and-filter {
-  display: flex;
-  align-items: center;
-  gap: 20px; /* Space between the dropdowns */
-  margin-bottom: 15px; /* Add spacing below the container */
-}
-
-/* Container for dropdowns */
-.dropdowns-container {
-  display: flex;
-  gap: 1rem; /* Space between dropdowns */
-  align-items: center;
-  margin-bottom: 1rem; /* Add spacing below the dropdowns */
-}
-
-/* Dropdown styling */
-.dropdown {
-  display: flex;
-  align-items: center; /* Align label and dropdown inline */
-  gap: 0.5rem; /* Space between label and dropdown */
-}
-
-.dropdown label {
-  font-size: 1rem;
-  color: #333;
-}
-
-.dropdown select {
   padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -255,14 +135,41 @@ html, body {
   transition: border-color 0.2s ease-in-out;
 }
 
-.dropdown select:focus {
+.sort-options select:focus {
   border-color: #007bff;
 }
 
-/* Optional: Add consistent icon alignment */
-.dropdown label i {
-  font-size: 1.2rem;
-  color: #555;
+.filter-btn {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn.active {
+  background-color: #ccc;
+}
+
+/* Example CSS for dropdown styling */
+.sort-select {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  appearance: none; /* Remove default browser styling */
+}
+
+.sort-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
 }
 
 /* == Karty == */
@@ -285,7 +192,26 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   min-height: 160px;
- max-width: 60vw;
+  max-width: 100%; 
+  width: 100%;
+  font-size: 1.05rem;
+  margin-right: auto;
+}
+
+.card.unread {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #39B2D1, #27A9CB);
+  color: #000;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  max-width: 60vw; 
   width: 100%;
   font-size: 1.05rem;
   margin-right: auto;
@@ -300,6 +226,13 @@ html, body {
 .card p {
   margin: 4px 0;
   font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .card:hover {
@@ -322,7 +255,8 @@ html, body {
   border-radius: 4px;
 }
 
-.hospital-list-table {
+/*spravy v tabulkovej forme*/
+.messages-list-table {
   width: 100%;
   min-width: 1000px;
   border-collapse: collapse;
@@ -331,11 +265,11 @@ html, body {
   table-layout: fixed;
 }
 
-.hospital-list-table thead tr {
+.messages-list-table thead tr {
   background-color: #f7f7f7;
 }
 
-.hospital-list-table thead th {
+.messages-list-table thead th {
   text-align: left;
   padding: 14px 16px;
   font-weight: bold;
@@ -351,46 +285,64 @@ html, body {
   text-overflow: ellipsis;
 }
 
-.hospital-list-table thead th i {
+.messages-list-table thead th i {
   margin-left: 6px;
   color: #999;
   font-size: 0.85rem;
 }
 
-.hospital-list-table thead th.sort-asc i {
-  color: #1a7891;
+.messages-list-table thead th.sort-asc i {
+  color: #3a7bd5;
   transform: rotate(180deg);
 }
 
-.hospital-list-table thead th.sort-desc i {
-  color: #1a7891;
+.messages-list-table thead th.sort-desc i {
+  color: #3a7bd5;
   transform: rotate(0deg);
 }
 
-.hospital-list-table tbody {
+/* Sorting arrows for table headers */
+.messages-list-table th .arrow-up,
+.messages-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #3a7bd5;
+  vertical-align: middle;
+}
+
+.messages-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.messages-list-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
+.messages-list-table tbody {
   display: block;
   height: 100%;
   overflow-y: auto;
   width: 100%;
 }
 
-.hospital-list-table thead,
-.hospital-list-table tbody tr {
+.messages-list-table thead,
+.messages-list-table tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed;
 }
 
-.hospital-list-table tbody tr {
+.messages-list-table tbody tr {
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
 }
 
-.hospital-list-table tbody tr:hover {
+.messages-list-table tbody tr:hover {
   background-color: #fafafa;
 }
 
-.hospital-list-table tbody td {
+.messages-list-table tbody td {
   padding: 14px 16px;
   font-size: 1.05rem;
   color: #444;
@@ -398,6 +350,15 @@ html, body {
   word-wrap: break-word;
   white-space: normal;
   overflow-wrap: break-word;
+}
+
+.messages-list-table td.message-column {
+  max-width: 400px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  word-wrap: break-word;
+  font-family: monospace;
 }
 
 /* == Vyhľadávanie == */
@@ -425,11 +386,30 @@ html, body {
 }
 
 /* == Formuláre == */
+#tab-add-content {
+  padding-bottom: 40px;
+}
+#tab-assign-content {
+  padding-bottom: 40px;
+}
 #tab-add-content form {
   max-width: 600px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 20px auto; /* Add bottom margin */
   box-sizing: border-box;
+}
+#tab-assign-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 20px auto;
+  box-sizing: border-box;
+}
+.form-group {
+  display: flex; /* Default display for dropdowns */
+}
+
+.form-group.hidden {
+  display: none; /* Hide the dropdown */
 }
 
 .form-group {
@@ -452,8 +432,10 @@ html, body {
 .form-group input[type="email"],
 .form-group input[type="password"],
 .form-group input[type="tel"],
+.form-group input[type="date"],
 .form-group select {
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -473,7 +455,7 @@ html, body {
   color: #555;
   cursor: not-allowed;
 }
-/* Voliteľné: zväčšenie ikony */
+
 .form-title {
   text-align: center;
   font-size: 1.8rem;
@@ -482,37 +464,28 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #1a7891;
+  color: #3a7bd5;
 }
 
 .form-title i {
   font-size: 1.5rem;
-  color: #1a7891;
+  color: #3a7bd5;
 }
+
 /* == Hlásenia == */
-#add-hospital-message {
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 5px;
-  font-weight: bold;
-  text-align: center;
-}
-
-#add-hospital-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-#add-hospital-message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+#error-message {
+  font-size: 14px;
+  background-color: rgba(255, 0, 0, 0.1); /* light red with transparency */
+  color: #b00020; /* darker red for contrast */
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid rgba(255, 0, 0, 0.2);
 }
 
 /* == Tlačidlo == */
 .add-btn {
-  background: #1a7891;
+  background: #3a7bd5;
   color: #fff;
   padding: 12px 20px;
   border: none;
@@ -526,12 +499,48 @@ html, body {
 }
 
 .add-btn:hover {
-  background-color: #155e70;
+  background-color: #2a5ca0;
+}
+.assign-btn:hover {
+  background-color: #2a5ca0;
+}
+.add-btn i {
+  margin-right: 8px;
+}
+.assign-btn i {
+  margin-right: 8px;
 }
 
-/* == Responzívne == */
+
+.toggle-pw {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.toggle-pw i {
+  font-size: 1.2rem;
+  color: #666;
+  pointer-events: none;
+}
+
+.toggle-pw:hover i {
+  color: #333;
+}
+
+/* == Responzvne == */
 @media (max-width: 700px) {
-  .hospitals-container {
+  .patients-container {
     padding: 10px;
     height: auto;
   }
@@ -567,93 +576,89 @@ html, body {
     font-size: 0.9rem;
   }
 
-  .hospital-list-table thead th,
-  .hospital-list-table tbody td {
-    padding: 8px 10px;
-    font-size: 0.95rem;
-  }
-
-  .form-group input[type="text"],
-  .form-group select {
-    font-size: 0.95rem;
-    padding: 8px;
-  }
-
-  .add-btn {
-    font-size: 0.95rem;
-    padding: 10px 16px;
+  #sort-select {
+    min-width: 20px;
   }
   .card{
     min-width: 100%;
     max-width: 100%;
     width: 100%;
   }
+
+  .patients-list-table thead th,
+  .patients-list-table tbody td {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group input[type="tel"],
+  .form-group input[type="date"],
+  .form-group select {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .add-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+  .assign-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
 }
 
-.sort-arrow {
-  font-size: 1rem;
-  margin-left: 6px;
-  color: #1a7891;
-  font-weight: bold;
-  vertical-align: middle;
-  user-select: none;
-  transition: color 0.2s;
-}
-
-/* == Error messages under input fields == */
-.error-message {
-  color: #d32f2f;
-  font-size: 0.97rem;
-  margin-top: 4px;
-  margin-bottom: 0;
-  min-height: 18px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  padding-left: 2px;
-  transition: color 0.2s;
-}
-
-.form-group input.touched:invalid,
-.form-group select.touched:invalid {
-  border-color: #d32f2f;
-}
-
-/* == Filters and Dropdowns == */
-/* Default: dropdowns in a row */
-.filter-options,
-.sort-and-filter,
-.dropdowns-container {
+/* == Filters == */
+/* Default: filters in a row */
+.filters {
   display: flex;
   gap: 1rem;
   align-items: center;
   margin-bottom: 1rem;
 }
-.dropdown {
+.filters .form-group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-direction: row;
 }
 
-/* Responsive: Stack dropdowns vertically on small screens */
+/* Responsive: Stack filters vertically on small screens */
 @media (max-width: 600px) {
-  .filter-options,
-  .sort-and-filter,
-  .dropdowns-container {
+  .filters {
     flex-direction: column;
     align-items: stretch;
     gap: 0.5rem;
   }
-  .dropdown {
+  .filters .form-group {
     flex-direction: column !important;
     align-items: flex-start !important;
     width: 100%;
     gap: 0.2rem;
   }
-  .dropdown label {
+  .filters .form-group label {
     margin-bottom: 2px;
   }
-  .dropdown select {
+  .filters .form-group select {
     width: 100%;
   }
+}
+
+.toggle-read-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.toggle-read-btn:hover {
+  transform: scale(1.2);
 }
