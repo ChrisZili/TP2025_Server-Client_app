@@ -178,7 +178,7 @@
   display: inline;
 }
 
-/* --- Unified dropdown styling for filters and sorts (match processed_images.css) --- */
+/* --- Unified dropdown styling for filters and sorts (match all tab) --- */
 .filter-input,
 .sort-options select {
   width: 160px;
@@ -515,8 +515,22 @@
   background: #fff;
 }
 #photo-search-sort-select {
-  min-width: 180px;
+  width: 160px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+  max-width: 100%;
+  box-sizing: border-box;
 }
+#photo-search-sort-select:focus {
+  border-color: #66b2ff;
+}
+
 @media (max-width: 600px) {
   .cards {
     grid-template-columns: 1fr;
