@@ -363,6 +363,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         hospitalCodeGroup.style.display = "none";
       }
 
+      if (user.user_type === "super_admin") {
+        await loadHospitals();
+        populateHospitalDropdown();
+      }
+
       setTimeout(() => {
         document.querySelectorAll(".hidden-js").forEach(el => {
           el.style.visibility = "visible";
@@ -573,9 +578,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Initial setup
   showTab("all");
-  await loadAllTechnicians(); // Load technicians first
-  await loadHospitals(); // Load hospitals
-  populateHospitalDropdown(); // Populate dropdown with filtered hospitals
+  await loadAllTechnicians()
   checkUserTypeAndAdjustForm();
 
   const addBtn = document.getElementById("add-technician-btn");
