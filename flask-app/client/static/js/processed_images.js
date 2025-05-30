@@ -233,17 +233,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const sortedRows = rows.sort((a, b) => {
-      const aValue = a.children[getColumnIndex(column)].textContent.trim();
-      const bValue = b.children[getColumnIndex(column)].textContent.trim();
-
+      let aValue, bValue;
       if (column === 'created_at') {
-        return sortAscending ?
-          parseDate(aValue) - parseDate(bValue) :
-          parseDate(bValue) - parseDate(aValue);
+        // Use data-created-at attribute for sorting
+        aValue = a.getAttribute('data-created-at') || '';
+        bValue = b.getAttribute('data-created-at') || '';
+        return sortAscending
+          ? parseDate(aValue) - parseDate(bValue)
+          : parseDate(bValue) - parseDate(aValue);
       } else {
-        return sortAscending ?
-          aValue.localeCompare(bValue, 'sk') :
-          bValue.localeCompare(aValue, 'sk');
+        aValue = a.children[getColumnIndex(column)].textContent.trim();
+        bValue = b.children[getColumnIndex(column)].textContent.trim();
+        return sortAscending
+          ? aValue.localeCompare(bValue, 'sk')
+          : bValue.localeCompare(aValue, 'sk');
       }
     });
 
