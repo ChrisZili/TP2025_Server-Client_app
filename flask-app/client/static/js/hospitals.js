@@ -189,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
       card.classList.add("card");
       card.innerHTML = `
         <h3>${h.name || "-"}</h3>
-        <p>Vytvorenie: ${h.created_at || "-"}</p>
         <p>Mesto: ${h.city || "-"}</p>
         <p>Ulica: ${h.street || "-"}</p>
         <p>PSČ: ${h.postal_code || "-"}</p>
@@ -226,7 +225,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${h.name || "-"}</td>
-        <td>${h.created_at || "-"}</td>
         <td>${h.city || "-"}</td>
         <td>${h.street || "-"}</td>
         <td>${h.postal_code || "-"}</td>
@@ -365,12 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (allSortSelect.value === "alphabetical-desc") {
       allCurrentSortColumn = "name";
       allCurrentSortDirection = "desc";
-    } else if (allSortSelect.value === "newest") {
-      allCurrentSortColumn = "created_at";
-      allCurrentSortDirection = "desc";
-    } else if (allSortSelect.value === "creation") {
-      allCurrentSortColumn = "created_at";
-      allCurrentSortDirection = "asc";
     }
     updateSortIconsAll();
     performSearch();

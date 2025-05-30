@@ -52,7 +52,7 @@ Detaily Fotky
         <td class="photo-detail-td">{{ photo.name }}</td>
       </tr> -->
       <tr>
-        <th class="photo-detail-th">Dátum</th>
+        <th class="photo-detail-th">Dátum a čas</th>
         <td class="photo-detail-td">{{ photo.date }}</td>
       </tr>
       <tr>
@@ -124,40 +124,47 @@ Detaily Fotky
   </div>
 
   <!-- Processed Images Table -->
-  <div class="details-container" style="margin-top: 30px; max-width: 1100px; margin-left: auto; margin-right: auto;">
+  <div class="details-container" style="margin-top: 30px; max-width: 100%; margin-left: auto; margin-right: auto;">
     <h3>Spracované obrazy</h3>
-    <table class="photo-detail-table" id="processed-images-table">
-      <thead>
-        <tr>
-          <th class="photo-detail-th sortable" data-sort="method">
-            Metóda
-            <span class="sort-icon"></span>
-          </th>
-          <th class="photo-detail-th sortable" data-sort="status">
-            Stav
-            <span class="sort-icon"></span>
-          </th>
-          <th class="photo-detail-th sortable" data-sort="date">
-            Dátum
-            <span class="sort-icon"></span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for img in processed_images %}
-        <tr class="processed-image-row"
-            data-processed-image-id="{{ img.id }}"
-            {% if img.url %}data-url="{{ img.url }}" style="cursor:pointer;"{% endif %}>
-          <td class="photo-detail-td">{{ img.method|default('-', true) }}</td>
-          <td class="photo-detail-td">
-            <span class="status-dot" data-status="{{ img.status|default('-', true) }}"></span>
-            {{ img.status|default('-', true) }}
-          </td>
-          <td class="photo-detail-td">{{ img.created_at|default('-', true) }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-scroll-wrapper">
+      <table class="photo-detail-table" id="processed-images-table">
+        <thead>
+          <tr>
+            <th class="photo-detail-th sortable" data-sort="method">
+              Metóda
+              <span class="sort-icon"></span>
+            </th>
+            <th class="photo-detail-th sortable" data-sort="status">
+              Stav
+              <span class="sort-icon"></span>
+            </th>
+            <th class="photo-detail-th sortable" data-sort="date">
+              Dátum a čas vytvorenia
+              <span class="sort-icon"></span>
+            </th>
+            <th class="photo-detail-th sortable" data-sort="processed">
+              Dátum a čas spracovania
+              <span class="sort-icon"></span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for img in processed_images %}
+          <tr class="processed-image-row"
+              data-processed-image-id="{{ img.id }}"
+              {% if img.url %}data-url="{{ img.url }}" style="cursor:pointer;"{% endif %}>
+            <td class="photo-detail-td">{{ img.method|default('-', true) }}</td>
+            <td class="photo-detail-td">
+              <span class="status-dot" data-status="{{ img.status|default('-', true) }}"></span>
+              {{ img.status|default('-', true) }}
+            </td>
+            <td class="photo-detail-td text-nowrap">{{ img.created_at|default('-', true) }}</td>
+            <td class="photo-detail-td text-nowrap">{{ img.processed_at|default('-', true) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

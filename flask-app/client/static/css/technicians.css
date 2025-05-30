@@ -53,7 +53,6 @@ html, body {
   border-radius: 8px;
   min-height: 200px;
   max-height: 80vh;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -213,9 +212,13 @@ html, body {
 
 /* == Tabuľka (list) == */
 .table-scroll-wrapper {
-  flex: 1;
+  width: 100%;
   overflow-x: auto;
-  min-height: 0;
+  overflow-y: auto;
+  max-height: 70vh; /* Limit height to enable vertical scrolling */
+  margin: 0 0 20px 0;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  border-radius: 8px;
 }
 
 .table-scroll-wrapper::-webkit-scrollbar {
@@ -513,62 +516,60 @@ html, body {
   min-height: 18px;
 }
 
-/* Add this for dropdowns container */
+/* Make technicians filters look like patients filters */
+
+/* Style the container like .filters */
 .dropdowns-container {
   display: flex;
   gap: 1rem;
   align-items: center;
   margin-bottom: 1rem;
   flex-wrap: wrap;
-  width: 100%;
-  box-sizing: border-box;
-  justify-content: flex-start; /* Align dropdowns to the left */
 }
 
-/* Each dropdown stays inline until small screens */
+/* Style each dropdown like .form-group */
 .dropdown {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-width: 0;
-  max-width: 90vw;
-  margin-bottom: 0; /* Remove extra margin for inline look */
-  /* Remove flex: 1 1 0; to prevent stretching */
-}
-
-/* Dropdown styling for .dropdowns-container */
-.dropdown label {
-  font-size: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-weight: bold;
-}
-
-.dropdown select {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
+  flex-direction: row;
+  margin-bottom: 0;
+  width: auto;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.dropdown label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown select {
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: auto;
+  min-width: 180px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .dropdown select:focus {
-  border-color: #007bff;
+  border-color: #66b2ff;
 }
 
-/* Responsive: stack vertically only on small screens */
+/* Responsive: stack vertically on small screens */
 @media (max-width: 600px) {
   .dropdowns-container {
     flex-direction: column;

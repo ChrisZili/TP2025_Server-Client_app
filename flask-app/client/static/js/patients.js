@@ -670,10 +670,6 @@ assignBirthNumberInput.addEventListener("input", () => {
         return;
     }
 
-    // Ensure the cards container is visible
-    allCardsContainer?.classList.remove("hidden");
-    allListContainer?.classList.add("hidden");
-
 
     // Clear the container before rendering
     allPatientsList.innerHTML = "";

@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
       { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
-      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
       { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
       { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
       { icon: "fa fa-sign-out", label: "Odhlásiť",    link: "/logout", isLogout: true },

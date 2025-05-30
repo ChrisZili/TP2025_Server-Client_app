@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function getColumnIndex(column) {
-    const columns = ['method', 'status', 'date'];
+    const columns = ['method', 'status', 'date', 'processed'];
     return columns.indexOf(column);
   }
 
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const methodCheckboxes = document.querySelectorAll('input[name="methods"]:not([disabled])');
   const processingLoader = document.getElementById('processing-loader');
   const processingMessage = document.getElementById('processing-message');
-  
+
   // Function to refresh the processed images table
   function refreshProcessedImagesTable() {
     const tableBody = document.querySelector('#processed-images-table tbody');
@@ -179,9 +179,15 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(data => {
         // Clear existing rows
         tableBody.innerHTML = '';
-        
+
         // Add new rows
         data.forEach(img => {
+          // Ensure all fields exist
+          const method = img.method || '-';
+          const status = img.status || '-';
+          const createdAt = img.created_at || '-';
+          const processedAt = img.processed_at || '-';
+
           const row = document.createElement('tr');
           row.className = 'processed-image-row';
           row.dataset.processedImageId = img.id;
@@ -189,14 +195,15 @@ document.addEventListener('DOMContentLoaded', function() {
             row.dataset.url = img.url;
             row.style.cursor = 'pointer';
           }
-          
+
           row.innerHTML = `
-            <td class="photo-detail-td">${img.method || '-'}</td>
+            <td class="photo-detail-td">${method}</td>
             <td class="photo-detail-td">
-              <span class="status-dot" data-status="${img.status || '-'}"></span>
-              ${img.status || '-'}
+              <span class="status-dot" data-status="${status}"></span>
+              ${status}
             </td>
-            <td class="photo-detail-td">${img.created_at || '-'}</td>
+            <td class="photo-detail-td text-nowrap">${createdAt}</td>
+            <td class="photo-detail-td text-nowrap">${processedAt}</td>
           `;
           
           // Add click handler for the new row

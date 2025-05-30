@@ -84,30 +84,32 @@
     </div>
 
     <!-- Table to display photos -->
-    <table class="photo-table">
-      <thead>
-        <tr>
-          <th class="sortable" data-column="date">Dátum</th>
-          <th class="sortable" data-column="eye">Oko</th>
-          <th class="sortable" data-column="patient">Pacient</th>
-          <th class="sortable" data-column="doctor">Doktor</th>
-          <th class="sortable" data-column="device_type">Typ zariadenia</th>
-        </tr>
-      </thead>
-      <tbody id="photo-table-body">
-        {% for photo in photos %}
-        <tr class="photo-row"
-            data-detail-url="{{ url_for('photos.photo_detail', photo_id=photo.id) }}"
-            style="cursor:pointer;">
-          <td>{{ photo.date|default('-', true) }}</td>
-          <td>{{ photo.eye|default('-', true) }}</td>
-          <td>{{ photo.patient|default('-', true) }}</td>
-          <td>{{ photo.doctor|default('-', true) }}</td>
-          <td>{{ photo.device_type|default('-', true) }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-scroll-wrapper">
+      <table class="photo-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-column="date">Dátum a čas</th>
+            <th class="sortable" data-column="eye">Oko</th>
+            <th class="sortable" data-column="patient">Pacient</th>
+            <th class="sortable" data-column="doctor">Doktor</th>
+            <th class="sortable" data-column="device_type">Typ zariadenia</th>
+          </tr>
+        </thead>
+        <tbody id="photo-table-body">
+          {% for photo in photos %}
+          <tr class="photo-row"
+              data-detail-url="{{ url_for('photos.photo_detail', photo_id=photo.id) }}"
+              style="cursor:pointer;">
+            <td>{{ photo.date|default('-', true) }}</td>
+            <td>{{ photo.eye|default('-', true) }}</td>
+            <td>{{ photo.patient|default('-', true) }}</td>
+            <td>{{ photo.doctor|default('-', true) }}</td>
+            <td>{{ photo.device_type|default('-', true) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Search Tab Content -->
@@ -133,7 +135,7 @@
           <thead>
             <tr>
               <!-- <th>Názov Fotky</th> -->
-              <th>Dátum</th>
+              <th>Dátum a čas</th>
               <th>Oko</th>
               <th>Pacient</th>
               <th>Doktor</th>

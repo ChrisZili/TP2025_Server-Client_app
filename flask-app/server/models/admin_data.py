@@ -21,12 +21,17 @@ class AdminData(User):
         "Hospital", back_populates="admins", lazy="select"
     )
 
-    def get_info_pat(self):
+    def get_info(self):
         info = {}
         try:
             info = super().get_info()
         except AttributeError:
             pass
+
+        info.update({
+            "first_name": self.first_name if self.first_name else None,
+            "last_name": self.last_name if self.last_name else None,
+        })
         info.update({"street":self.hospital.street})
         return info
 

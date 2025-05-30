@@ -8,12 +8,18 @@ class SuperAdminData(User):
     __mapper_args__ = {
         "polymorphic_identity": "super_admin"
     }
-    def get_info_pat(self):
+
+    def get_info(self):
         info = {}
         try:
             info = super().get_info()
         except AttributeError:
             pass
+
+        info.update({
+            "first_name": "Super",
+            "last_name": "Admin",
+        })
         return info
 
     def get_full_name(self):
