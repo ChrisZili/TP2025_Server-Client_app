@@ -189,7 +189,8 @@ document.addEventListener("DOMContentLoaded", () => {
       'method': 1,
       'status': 2,
       'answer': 3,
-      'created_at': 4
+      'created_at': 4,
+      'date': 4 // Add this line to allow sorting by both 'created_at' and 'date'
     };
     return columnMap[column] || 0;
   }
@@ -234,8 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const sortedRows = rows.sort((a, b) => {
       let aValue, bValue;
-      if (column === 'created_at') {
-        // Use data-created-at attribute for sorting
+      // Allow sorting by both 'created_at' and 'date' columns
+      if (column === 'created_at' || column === 'date') {
         aValue = a.getAttribute('data-created-at') || '';
         bValue = b.getAttribute('data-created-at') || '';
         return sortAscending
