@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+{% block stylesheet %}
+{{ super() }}
+    <link rel="preload" href="{{ url_for('static', filename='css/messages.css') }}" as="style">
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css')}}">
+{% endblock %}
+
+{% block title %}
+eVýsledky - Spravy
+{% endblock %}
+
+{% block header %}
+Spravy
+{% endblock %}
+
+
+{% block content %}
+<div class="patients-container">
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs">
+      <div class="tab active" id="tab-all">Zobraziť správy</div>
+      <div class="tab" id="tab-add">Nová správa</div>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- Tab ALL (Zobraziť správy) -->
+  <!-- ========================== -->
+  <div class="tab-content" id="tab-messages-content">
+    <!-- Header with title and view toggle buttons -->
+    <div class="all-header">
+      <h2>Zoznam správ</h2>
+      <div class="header-buttons">
+        <button id="view-cards" class="view-toggle active" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search bar for filtering messages by sender/recipient/content -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Hľadať správu podľa odosielateľa, príjemcu alebo obsahu" />
+    </div>
+
+    {% if not detail_view %}
+      <div class="filters" id="message-filters">
+        <button id="filter-received" class="filter-btn active" data-filter="received">Prijaté</button>
+        <button id="filter-sent" class="filter-btn" data-filter="sent">Odoslané</button>
+      </div>
+    {% endif %}
+
+    <!-- Filters - you can add later -->
+    <div class="filters">
+      <!-- Placeholder for future filters like date, sender, recipient -->
+    </div>
+
+    <!-- Cards container -->
+    <div id="messages-cards-container">
+      <div class="cards" id="messages-list-cards"></div>
+    </div>
+
+    <!-- Table (list) container -->
+    <div id="messages-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+        <table class="messages-list-table">
+          <thead>
+            <tr>
+              <th data-column="sender">
+                Odosielateľ
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="recipient">
+                Príjemca
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="content">
+                Správa
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th data-column="sent_at">
+                Dátum odoslania
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="messages-list-body">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- =================== -->
+  <!-- Tab ADD (formulár) -->
+  <!-- =================== -->
+  <div class="tab-content hidden hidden-js" id="tab-add-content">
+    <h2 class="form-title">
+      <i class="fas fa-user-plus"></i> Nová správa
+    </h2>
+
+    <form id="send-message-form">
+      <!-- Príjemca -->
+      <div class="form-group">
+        <label for="message-recipient">Príjemca</label>
+        <input type="text" id="message-recipient" name="recipient" placeholder="Zadajte Email príjemcu" required />
+        <div class="field-error" id="message-recipient-error"></div>
+      </div>
+
+      <!-- Text správy -->
+      <div class="form-group">
+        <label for="message-text">Správa</label>
+        <textarea id="message-text" name="message" rows="10" style="resize: vertical; overflow-y: auto; width: 100%; font-size: 1rem; padding: 0.5rem;" required></textarea>
+        <div class="field-error" id="message-text-error"></div>
+      </div>
+
+      <!-- Priložený obrázok -->
+      <div class="form-group">
+        <label for="message-image">Priložiť obrázky (max 10)</label>
+        <input type="file" id="message-image" name="images" accept="image/*" multiple />
+        <div class="field-info" id="message-image-name"></div>
+      </div>
+
+      <div id="send-message-feedback" class="hidden"></div>
+
+      <!-- Tlačidlo na odoslanie správy -->
+      <button id="send-message-btn" class="add-btn" type="button" disabled>Odoslať správu</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/messages.js') }}" defer></script>
+{% endblock %}
+
+<script>
+  window.onpageshow = function(event) {
+    if (event.persisted) {
+      window.location.reload(); // Forces reload from server when returning via back button
+    }
+  };
+</script>

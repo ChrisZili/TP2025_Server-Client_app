@@ -320,15 +320,12 @@ document.addEventListener("DOMContentLoaded", () => {
       gender: form.gender.value,
       email: form.email.value.trim(),
       birth_date: form.birth_date.value,
-      password: form.password.value.trim()
+      password: form.password.value.trim(),
+      doctor_id: form.doctor_id.value.trim()
     };
 
     if (form.birth_number && form.birth_number.value) {
       data.birth_number = form.birth_number.value.trim();
-    }
-
-    if (form.doctor_id && form.doctor_id.value) {
-      data.doctor_id = form.doctor_id.value.trim();
     }
 
     try {

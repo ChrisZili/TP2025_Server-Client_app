@@ -92,8 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Helper function to get full name
   function getFullName(doctor) {
-    return `${doctor.first_name || ""} ${doctor.last_name || ""}`.trim().toLowerCase();
-  }
+  return `${doctor.first_name || ""} ${doctor.last_name || ""}`.trim();
+}
 
   // Populate hospital dropdown
   function populateHospitalDropdown(doctors) {
@@ -111,32 +111,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Perform search and render results
   function performSearch(shouldRender = true) {
-    const query = searchInput?.value.trim().toLowerCase();
-    const selectedHospital = hospitalFilter?.value || "";
+  const query = searchInput?.value.trim().toLowerCase();
+  const selectedHospital = hospitalFilter?.value || "";
 
-    const filtered = allDoctorsData.filter((doctor) => {
-      const hospitalName = doctor.hospital?.name?.toLowerCase() || "";
-      const fullName = getFullName(doctor);
+  const filtered = allDoctorsData.filter((doctor) => {
+    const hospitalName = doctor.hospital?.name || "";
+    const fullName = getFullName(doctor);
 
-      const matchesQuery =
-        fullName.includes(query) ||
-        doctor.email?.toLowerCase().includes(query) ||
-        doctor.phone_number?.includes(query) ||
-        hospitalName.includes(query);
+    const matchesQuery =
+      fullName.toLowerCase().includes(query) ||
+      doctor.email?.toLowerCase().includes(query) ||
+      doctor.phone_number?.toLowerCase().includes(query) ||
+      hospitalName.toLowerCase().includes(query);
 
-      const matchesHospital = !selectedHospital || hospitalName === selectedHospital.toLowerCase();
+    const matchesHospital = !selectedHospital || hospitalName.toLowerCase() === selectedHospital.toLowerCase();
 
-      return matchesQuery && matchesHospital;
-    });
+    return matchesQuery && matchesHospital;
+  });
 
-    if (shouldRender) {
-      const sortedDoctors = sortDoctors(filtered);
-      renderAllListTable(sortedDoctors);
-      renderDoctors(sortedDoctors);
-    }
-
-    return filtered; // Return filtered data for further processing
+  if (shouldRender) {
+    const sortedDoctors = sortDoctors(filtered);
+    renderAllListTable(sortedDoctors);
+    renderDoctors(sortedDoctors);
   }
+
+  return filtered; // Return filtered data for further processing
+}
 
   // Sort doctors based on the current column and direction
   function sortDoctors(doctors) {

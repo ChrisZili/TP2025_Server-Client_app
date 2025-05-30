@@ -243,6 +243,9 @@ class DoctorsService:
             else:
                 logger.warning("Neexistujúca rola s nazvom '%s'", doctor_role)
                 return {"error": "Neexistujúca rola"}, 404
+            if (len(new_doctor.validate_password(password)) > 0):
+                logger.error("Registrácia doktora zlyhala: %s", new_doctor.validate_password(password))
+                return {"error": new_doctor.validate_password(password)}, 400
             new_doctor.set_password(password)
             db.session.add(new_doctor)
             db.session.commit()
@@ -285,7 +288,10 @@ class DoctorsService:
 
             password = data.get("password", "")
             if password != "":
-                User.query.get(doctor_id).set_password(password)
+                if (len(doctor.validate_password(password)) > 0):
+                    logger.error("Uprava doktora zlyhala: %s", doctor.validate_password(password))
+                    return {"error": doctor.validate_password(password)}, 400
+                doctor.set_password(password)
 
             if user.is_super_admin():
                 hospital_code = data.get("hospital_code")

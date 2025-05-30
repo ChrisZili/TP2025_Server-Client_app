@@ -1,3 +1,4 @@
+import re
 from server.database import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -51,31 +52,36 @@ class User(db.Model):
         :param password: Heslo používateľa, ktoré bude hashované.
         :return: None
         """
-        if not self.validate_password(password):
-            raise ValueError("Heslo nespĺňa požadované kritériá (min. 8 znakov, aspoň jedno veľké písmeno a číslica).")
         self.password_hash = generate_password_hash(password)
 
+    import re
+
     @staticmethod
-    def validate_password(password: str) -> bool:
+    def validate_password(password: str) -> list:
         """
-        Validuje heslo na základe minimálnych kritérií:
+        Validuje heslo na základe kritérií:
         - Minimálne 8 znakov.
         - Aspoň jedno veľké písmeno.
+        - Aspoň jedno malé písmeno.
         - Aspoň jedna číslica.
+        - Aspoň jeden špeciálny znak.
 
         :param password: Heslo, ktoré sa má validovať.
-        :return: True, ak heslo spĺňa kritériá, inak False.
-        :rtype: bool
+        :return: Zoznam chýbajúcich kritérií. Prázdny zoznam znamená, že heslo je platné.
+        :rtype: list
         """
-        """
-            if len(password) < 8:
-                return False
-            if not re.search(r'[A-Z]', password):
-                return False
-            if not re.search(r'\d', password):
-                return False
-        """
-        return True
+        errors = []
+        if len(password) < 8:
+            errors.append("Heslo musí mať aspoň 8 znakov.")
+        if not re.search(r'[A-Z]', password):
+            errors.append("Heslo musí obsahovať aspoň jedno veľké písmeno.")
+        if not re.search(r'[a-z]', password):
+            errors.append("Heslo musí obsahovať aspoň jedno malé písmeno.")
+        if not re.search(r'\d', password):
+            errors.append("Heslo musí obsahovať aspoň jednu číslicu.")
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            errors.append("Heslo musí obsahovať aspoň jeden špeciálny znak (!@#$%^&* atď.).")
+        return errors
 
     def check_password(self, password: str) -> bool:
         """

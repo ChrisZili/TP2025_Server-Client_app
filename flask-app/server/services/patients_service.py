@@ -35,6 +35,9 @@ class PatientsService:
                 birth_number=birth_number,
                 gender=gender,
             )
+            if (len(new_patient.validate_password(password)) > 0):
+                logger.error("Registrácia pacienta zlyhala: %s", new_patient.validate_password(password))
+                return {"error": new_patient.validate_password(password)}, 400
             new_patient.set_password(password)
             db.session.add(new_patient)
             db.session.commit()
@@ -170,6 +173,9 @@ class PatientsService:
                 gender=gender,
                 doctor_id=doctor_id
             )
+            if (len(new_patient.validate_password(password)) > 0):
+                logger.error("Registrácia pacienta zlyhala: %s", new_patient.validate_password(password))
+                return {"error": new_patient.validate_password(password)}, 400
             new_patient.set_password(password)
             db.session.add(new_patient)
             db.session.commit()
@@ -252,6 +258,12 @@ class PatientsService:
             patient.phone_number = data.get("phone_number", patient.phone_number)
             patient.gender = data.get("gender", patient.gender)
             patient.birth_date = data.get("birth_date", patient.birth_date)
+            password = data.get("password", "")
+            if password != "":
+                if (len(patient.validate_password(password)) > 0):
+                    logger.error("Uprava pacienta zlyhala: %s", patient.validate_password(password))
+                    return {"error": patient.validate_password(password)}, 400
+                patient.set_password(password)
             if user.user_type != 'technician':
                 patient.birth_number = data.get("birth_number", patient.birth_number)
 
