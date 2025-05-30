@@ -1,0 +1,21 @@
+# Databáza
+DATABASE_URL=postgresql://admin:admin@localhost:5432/app
+# Hlavné tajomstvo pre Flask
+SECRET_KEY=mysecretkey
+
+# Tajomstvo pre JWT
+JWT_SECRET_KEY=myjwtsecret
+
+# Konfigurácia JWT v cookies
+JWT_COOKIE_SECURE=true# V produkcii by malo byť nastavené na true (vyžaduje HTTPS)
+JWT_COOKIE_CSRF_PROTECT=true# Odporúča sa povoliť CSRF ochranu
+JWT_COOKIE_SAMESITE=Lax# Hodnota 'Lax' alebo 'Strict' na obmedzenie prenosu cookie
+
+# Administrátorské údaje
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=password_example
+# ADMIN_FIRST_NAME=FEI
+# ADMIN_LAST_NAME=Admin
+
+# Limity prihlásenia (ak chcete upraviť)
+LOGIN_RATE_LIMIT=3 per 10 minutes
