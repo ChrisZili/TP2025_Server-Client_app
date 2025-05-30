@@ -19,7 +19,6 @@ Správa metód
   <div class="tabs-wrapper">
     <div class="tabs" id="tabs">
       <div class="tab active" id="tab-all">Všetky metódy</div>
-      <div class="tab" id="tab-search">Vyhľadať metódu</div>
       <div class="tab" id="tab-add">Pridať metódu</div>
     </div>
   </div>
@@ -28,7 +27,6 @@ Správa metód
   <!-- Tab ALL (Všetky metódy) -->
   <!-- ========================== -->
   <div class="tab-content" id="tab-all-content">
-    <!-- Riadok: nadpis + tlačidlá vpravo -->
     <div class="all-header">
       <h2>Zoznam metód</h2>
       <div class="header-buttons">
@@ -41,7 +39,13 @@ Správa metód
       </div>
     </div>
 
-    <!-- Select na triedenie pre KARTY -->
+    <!-- Only one search bar here -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Názov alebo popis metódy" />
+    </div>
+
+    <!-- Only one sort filter here -->
     <div class="sort-options" id="sort-options-all">
       <label for="sort-select">
         <i class="fas fa-sort-alpha-down"></i> Zoradiť:
@@ -65,9 +69,21 @@ Správa metód
         <table class="methods-list-table">
           <thead>
             <tr>
-              <th data-column="name">Názov <i class="fas fa-sort"></i></th>
-              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-              <th data-column="description">Popis <i class="fas fa-sort"></i></th>
+              <th class="sortable" data-column="name">
+                Názov
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th class="sortable" data-column="created_at">
+                Dátum vytvorenia
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
+              <th class="sortable" data-column="description">
+                Popis
+                <span class="arrow-up">&#9650;</span>
+                <span class="arrow-down">&#9660;</span>
+              </th>
               <th data-column="actions">Akcie</th>
             </tr>
           </thead>
@@ -75,66 +91,6 @@ Správa metód
             <!-- Generované v JS -->
           </tbody>
         </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================== -->
-  <!-- Tab SEARCH (Vyhľadávanie)   -->
-  <!-- =========================== -->
-  <div class="tab-content hidden" id="tab-search-content">
-    <div class="search-header">
-      <h2>Vyhľadávanie metód</h2>
-      <div class="header-buttons">
-        <button id="search-view-cards" class="view-toggle" title="Karty">
-          <i class="fas fa-th-large"></i>
-        </button>
-        <button id="search-view-list" class="view-toggle" title="Zoznam">
-          <i class="fas fa-list"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Tu je vstup pre hľadanie -->
-    <div class="search-bar">
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" id="search-input" placeholder="Názov alebo popis metódy" />
-    </div>
-
-    <!-- Select na triedenie pre KARTY -->
-    <div class="sort-options" id="sort-options-search">
-      <label for="search-sort-select">
-        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
-      </label>
-      <select id="search-sort-select">
-        <option value="creation" selected>Od starších po novších</option>
-        <option value="newest">Od novších po starších</option>
-        <option value="alphabetical-asc">Abecedne A → Z</option>
-        <option value="alphabetical-desc">Abecedne Z → A</option>
-      </select>
-    </div>
-
-    <!-- Karty -->
-    <div id="search-cards-container">
-      <div class="cards" id="search-results-cards"></div>
-    </div>
-
-    <!-- Tabuľka (list) -->
-    <div id="search-list-container" class="hidden">
-      <div class="table-scroll-wrapper">
-          <table class="methods-list-table">
-            <thead>
-              <tr>
-                <th data-column="name">Názov <i class="fas fa-sort"></i></th>
-                <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
-                <th data-column="description">Popis <i class="fas fa-sort"></i></th>
-                <th data-column="actions">Akcie</th>
-              </tr>
-            </thead>
-            <tbody id="search-list-body">
-              <!-- Generované v JS -->
-            </tbody>
-          </table>
       </div>
     </div>
   </div>

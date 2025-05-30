@@ -243,6 +243,24 @@ html, body {
   transform: rotate(0deg);
 }
 
+/* Sorting arrows like technicians/photos */
+.methods-list-table th .arrow-up,
+.methods-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #1a7891;
+  vertical-align: middle;
+}
+
+.methods-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.methods-list-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
 .methods-list-table tbody {
   display: block;
   height: 100%;

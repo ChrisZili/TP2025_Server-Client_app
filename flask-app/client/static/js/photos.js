@@ -244,12 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let sortColumn = null;
   let sortAscending = true;
 
-  function parseDate(dateString) {
-    if (!dateString || dateString === '-') return new Date(0);
-    const [day, month, year] = dateString.split('.').map(Number);
-    return new Date(year, month - 1, day);
-  }
-
   function toggleSort(column) {
     if (sortColumn === column) {
       sortAscending = !sortAscending; // Toggle the sort order
@@ -257,6 +251,16 @@ document.addEventListener("DOMContentLoaded", () => {
       sortColumn = column;
       sortAscending = true; // Default to ascending when switching columns
     }
+
+    // Update arrow classes on table headers (like in technicians)
+    const headers = document.querySelectorAll('.photo-table th.sortable');
+    headers.forEach(th => {
+      const col = th.getAttribute('data-column');
+      th.classList.remove('sort-asc', 'sort-desc');
+      if (col === sortColumn) {
+        th.classList.add(sortAscending ? 'sort-asc' : 'sort-desc');
+      }
+    });
 
     const rows = Array.from(document.querySelectorAll('#photo-table-body tr'));
 
@@ -313,3 +317,23 @@ document.addEventListener("DOMContentLoaded", () => {
   function navigateToPhotoDetail(photoName) {
     window.location.href = `/photos/detail/${encodeURIComponent(photoName)}`;
   }
+
+  function parseDate(dateStr) {
+    // Accepts "DD.MM.YYYY" or ISO format
+    if (!dateStr) return 0;
+    // Try ISO first
+    const iso = Date.parse(dateStr);
+    if (!isNaN(iso)) return iso;
+    // Try DD.MM.YYYY
+    const parts = dateStr.split(".");
+    if (parts.length === 3) {
+      const [day, month, year] = parts.map(Number);
+      return new Date(year, month - 1, day).getTime();
+    }
+    return 0;
+  }
+
+
+  sortColumn = "date";
+  sortAscending = true; // Default to ascending for initial sort
+  toggleSort("date");
