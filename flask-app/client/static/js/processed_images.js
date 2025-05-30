@@ -256,17 +256,89 @@ document.addEventListener("DOMContentLoaded", () => {
     sortedRows.forEach(row => tbody.appendChild(row));
   }
 
-  // Add sort handlers
-  document.querySelectorAll('.sortable').forEach(header => {
-    header.addEventListener('click', () => {
-      const column = header.getAttribute('data-column');
-      toggleSort(column);
+  // --- New sorting algorithm modeled after admins.js ---
+
+  let currentSortColumn = "created_at"; // Default sort column
+  let currentSortDirection = "desc";    // Default direction (newest first)
+
+  function getCellValue(row, column) {
+    if (column === "created_at" || column === "date") {
+      // Use data attribute for date
+      return row.getAttribute('data-created-at') || "";
+    }
+    // Use cell text for other columns
+    const idx = getColumnIndex(column);
+    return row.children[idx]?.textContent.trim().toLowerCase() || "";
+  }
+
+  function sortTableRows(rows, column, direction) {
+    return [...rows].sort((a, b) => {
+      let valA = getCellValue(a, column);
+      let valB = getCellValue(b, column);
+
+      if (column === "created_at" || column === "date") {
+        // Parse as date
+        valA = parseDate(valA);
+        valB = parseDate(valB);
+        return direction === "asc" ? valA - valB : valB - valA;
+      }
+
+      if (valA < valB) return direction === "asc" ? -1 : 1;
+      if (valA > valB) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function updateSortIcons(headerCells, column, direction) {
+    headerCells.forEach(th => {
+      const col = th.getAttribute("data-column");
+      th.classList.remove("sort-asc", "sort-desc");
+      // Remove old arrow if present
+      const oldArrow = th.querySelector('.sort-arrow');
+      if (oldArrow) th.removeChild(oldArrow);
+
+      if (col === column) {
+        th.classList.add(direction === "asc" ? "sort-asc" : "sort-desc");
+        // Add arrow
+        const arrow = document.createElement("span");
+        arrow.className = "sort-arrow";
+        arrow.textContent = direction === "asc" ? " ▲" : " ▼";
+        th.appendChild(arrow);
+      }
+    });
+  }
+
+  // Main: Add event listeners to headers
+  const headerCells = table.querySelectorAll("thead th[data-column]");
+  const tbody = table.querySelector("tbody");
+
+  headerCells.forEach(th => {
+    th.addEventListener("click", () => {
+      const col = th.getAttribute("data-column");
+      if (!col) return;
+
+      if (currentSortColumn === col) {
+        currentSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
+      } else {
+        currentSortColumn = col;
+        currentSortDirection = "asc";
+      }
+
+      updateSortIcons(headerCells, currentSortColumn, currentSortDirection);
+
+      // Sort and re-render rows
+      const sortedRows = sortTableRows(rows, currentSortColumn, currentSortDirection);
+      tbody.innerHTML = "";
+      sortedRows.forEach(row => tbody.appendChild(row));
     });
   });
 
+  // Initial sort icons update and initial sort
+  updateSortIcons(headerCells, currentSortColumn, currentSortDirection);
+  const sortedRows = sortTableRows(rows, currentSortColumn, currentSortDirection);
+  tbody.innerHTML = "";
+  sortedRows.forEach(row => tbody.appendChild(row));
+
   // Show all photos tab by default
   allPhotosBtn.click();
-
-  // Preset sorting: newest to oldest by date
-  toggleSort('created_at');
 });
