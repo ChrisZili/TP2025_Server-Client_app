@@ -2,8 +2,9 @@ from server.database import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-import re
+import logging
 
+logger = logging.getLogger(__name__)
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -13,6 +14,8 @@ class User(db.Model):
     password_hash: Mapped[str] = mapped_column(db.String(1024), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    #id_creator: Mapped[int] = mapped_column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
     # Typ používateľa
     created_images: Mapped[list["OriginalImageData"]] = relationship(
         "OriginalImageData", back_populates="creator", lazy="select"
@@ -25,6 +28,9 @@ class User(db.Model):
 
     def has_role(self, role: str) -> bool:
         return self.user_type == role
+
+    def is_super_admin(self) -> bool:
+        return self.has_role('super_admin')
 
     def is_admin(self) -> bool:
         return self.has_role("admin")
@@ -99,3 +105,38 @@ class User(db.Model):
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
         return info
+
+    @staticmethod
+    def check_user_type_required(user_id, user_type):
+        """
+        Overí, či je aktuálny používateľ admin.
+
+        Vstup: Funkcia get_jwt_identity() vráti len user_id (napr. "123").
+
+        Výstup: Vracia True, ak používateľ existuje a jeho user_type je "admin", inak False.
+        """
+        if not user_id:
+            error_message = f"{user_type}_required: Žiadne user_id"
+            logger.error(error_message)
+            return {"error": error_message}, 400
+
+        try:
+            user = User.query.get(int(user_id))
+        except Exception as e:
+            error_message = f"{user_type}_required: Chyba pri získavaní používateľa s id {user_id}: {e}"
+            logger.error(error_message)
+            return {"error": error_message}, 400
+
+        if not user:
+            error_message = f"{user_type}_required: Používateľ s id {user_id} nenájdený."
+            logger.error(error_message)
+            return {"error": error_message}, 400
+
+        if not user.has_role(str(user_type)):
+            error_message = f"{user_type}_required: Používateľ s id {user_id} nie je {user_type} (user_type={user.user_type})"
+            logger.error(error_message)
+            return {"error": error_message}, 400
+
+        message = f"{user_type}_required: Používateľ s id {user_id} je {user_type}"
+        logger.debug(message)
+        return {"message": message}, 200

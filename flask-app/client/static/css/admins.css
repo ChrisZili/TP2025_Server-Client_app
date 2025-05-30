@@ -1,0 +1,699 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admins-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* == Tabs == */
+.tabs-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  margin: 0 auto;
+}
+
+.tab {
+  padding: 10px 15px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background-color 0.2s;
+  font-weight: bold;
+}
+
+.tab:hover {
+  background-color: #ddd;
+}
+
+.tab.active {
+  background-color: #ccc;
+}
+
+/* == Tab content == */
+.tab-content {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 200px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.hidden-js {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in;
+}
+
+/* == Nadpis + tlačidlá == */
+.all-header,
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.all-header h2,
+.search-header h2 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Prepínače karty/zoznam */
+.view-toggle {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.view-toggle:hover {
+  background-color: #ddd;
+}
+
+.view-toggle i {
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.view-toggle.active {
+  background-color: #ccc;
+}
+
+/* == Sort options == */
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between dropdowns */
+  margin-bottom: 15px;
+}
+
+.sort-options label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #444;
+}
+
+.sort-options select {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+}
+
+#sort-select {
+  min-width: 180px;
+}
+
+/* Container for dropdowns */
+.dropdowns-container {
+  display: flex;
+  gap: 1rem; /* Space between dropdowns */
+  align-items: center;
+  margin-bottom: 1rem; /* Add spacing below the dropdowns */
+}
+
+/* Dropdown styling */
+.dropdown {
+  display: flex;
+  align-items: center; /* Align label and dropdown inline */
+  gap: 0.5rem; /* Space between label and dropdown */
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 90vw;
+}
+
+.dropdown label {
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center; /* Align icon and text inline */
+  gap: 0.3rem; /* Space between icon and text */
+}
+
+.dropdown select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown select:focus {
+  border-color: #007bff;
+}
+
+/* Optional: Add consistent icon alignment */
+.dropdown label i {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Responsive dropdowns in .dropdowns-container */
+@media (max-width: 600px) {
+  .dropdowns-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .dropdown {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 80vw;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .dropdown label {
+    margin-bottom: 2px;
+  }
+  .dropdown select {
+    width: auto;
+    max-width: 80vw;
+  }
+}
+
+/* == Karty == */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #2193b0, #4b8c9f);
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  max-width: 60vw;
+  width: 100%;
+  font-size: 1.05rem;
+  margin-right: auto;
+}
+
+.card h3 {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.card:hover {
+  opacity: 0.9;
+}
+
+/* == Tabuľka (list) == */
+.table-scroll-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  min-height: 0;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.admins-list-table {
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  table-layout: fixed;
+}
+
+.admins-list-table thead tr {
+  background-color: #f7f7f7;
+}
+
+.admins-list-table thead th {
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+  z-index: 2;
+  white-space: nowrap;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admins-list-table thead th i {
+  margin-left: 6px;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.admins-list-table thead th.sort-asc i {
+  color: #1a7891;
+  transform: rotate(180deg);
+}
+
+.admins-list-table thead th.sort-desc i {
+  color: #1a7891;
+  transform: rotate(0deg);
+}
+
+/* Sort arrow styling for table headers */
+.sort-arrow {
+  font-size: 1rem;
+  margin-left: 6px;
+  color: #1a7891;
+  font-weight: bold;
+  vertical-align: middle;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.admins-list-table thead th.sort-asc .sort-arrow,
+.admins-list-table thead th.sort-desc .sort-arrow {
+  color: #1a7891;
+}
+
+/* Optional: highlight header background on sort */
+.admins-list-table thead th.sort-asc,
+.admins-list-table thead th.sort-desc {
+  background-color: #eaf6fa;
+}
+
+.admins-list-table tbody {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.admins-list-table thead,
+.admins-list-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.admins-list-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.admins-list-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.admins-list-table tbody td {
+  padding: 14px 16px;
+  font-size: 1.05rem;
+  color: #444;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+/* == Vyhľadávanie == */
+.search-bar {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #888;
+  pointer-events: none;
+}
+
+/* == Formuláre == */
+#tab-add-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"],
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #66b2ff;
+}
+
+.form-group input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed;
+}
+
+/* Voliteľné: zväčšenie ikony */
+.form-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #1a7891;
+}
+
+.form-title i {
+  font-size: 1.5rem;
+  color: #1a7891;
+}
+
+/* == Hlásenia == */
+/* Inline error message styling (same as other sites) */
+.error-message {
+  color: #d9534f;
+  font-weight: 500;
+  margin-top: 6px;
+  font-size: 0.97rem;
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  line-height: 1.4;
+}
+
+.error-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+  margin-top: 8px;
+}
+
+/* Main form error/success message */
+#add-admin-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+#add-admin-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+#add-admin-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  color: #d9534f;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* == Tlačidlo == */
+.add-btn {
+  background: #1a7891;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.add-btn:hover {
+  background-color: #155e70;
+}
+
+.gdpr-group {
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+
+.gdpr-group label {
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+/* Password toggle button */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 50px;
+  box-sizing: border-box;
+}
+
+.toggle-pw {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.toggle-pw i {
+  font-size: 1.2rem;
+  color: #666;
+  pointer-events: none;
+}
+
+.toggle-pw:hover i {
+  color: #333;
+}
+
+/* == Responzívne == */
+@media (max-width: 700px) {
+  .admins-container {
+    padding: 10px;
+    height: auto;
+  }
+
+  .tabs {
+    gap: 10px;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .all-header h2,
+  .search-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .header-buttons {
+    gap: 6px;
+  }
+
+  .view-toggle {
+    padding: 6px 8px;
+  }
+
+  .view-toggle i {
+    font-size: 1rem;
+  }
+
+  .sort-options label,
+  .sort-options select {
+    font-size: 0.9rem;
+  }
+
+  #sort-select {
+    min-width: 20px;
+  }
+
+  .admins-list-table thead th,
+  .admins-list-table tbody td {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group input[type="tel"],
+  .form-group select {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .add-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Filter options styling */
+.filter-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-options label {
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+
+/* Make filter select always fit viewport, never overflow due to long text */
+.filter-options select {
+  width: 100%;
+  max-width: 10vw; /* or any reasonable max width */
+  min-width: 0;
+  box-sizing: border-box;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Prevent select from expanding due to long text */
+}
+
+/* On small screens, make it fit the viewport */
+@media (max-width: 600px) {
+  .filter-options select {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}

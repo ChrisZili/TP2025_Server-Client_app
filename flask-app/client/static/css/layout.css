@@ -5,6 +5,9 @@
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
+.hidden-js {
+  display: none !important;
+}
 
 /* SIDEBAR – stavy ovládané v JS: .expanded / .collapsed / .hidden */
 .sidebar {
@@ -12,7 +15,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  background: linear-gradient(180deg, #1a7891, #4ebfdc);
+  background: linear-gradient(180deg, #056887, #097293);
   color: white;
   overflow: hidden;
   transition: width 0.3s ease;
@@ -50,19 +53,40 @@
 .sidebar ul {
   list-style: none;
 }
+
+/* Vlastnosti li (ak generuješ len <li> bez <a>) */
 .sidebar ul li {
   padding: 15px;
   white-space: nowrap;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 .sidebar ul li:hover {
-  background: linear-gradient(90deg, #4ebfdc, #0c3039);
+  background: linear-gradient(90deg, #10779c, #4ebfdc);
 }
-.sidebar ul li i {
+
+/* -- Ak používaš <a> v li (anchor-based menu) -- */
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.sidebar ul li a i {
+  color: inherit;
   margin-right: 10px;
 }
 
-/* .sidebar-text => text sidebara; pri collapsed je skrytý */
+/* visited a hover */
+.sidebar ul li a:visited {
+  color: #fff;
+}
+
+.sidebar ul li a:hover {
+  color: #fff;
+}
 
 /* HLAVNÝ BLOK (celá pravá časť) */
 .main {
@@ -107,28 +131,8 @@
   flex: 1; /* aby vyplnil zvyšok priestoru v .main */
 }
 
-/* Karty */
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-.card {
-  flex: 1 1 200px;
-  padding: 15px;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-}
-.card.blue {
-  background: linear-gradient(90deg, #2193b0, #6dd5ed);
-}
-.card.purple {
-  background: linear-gradient(90deg, #cc2b5e, #753a88);
-}
-.card.red {
-  background: linear-gradient(90deg, #e52d27, #b31217);
-}
-.card:hover {
-  opacity: 0.9;
+/* Označenie aktuálnej položky v sidebare */
+.sidebar ul li.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
 }

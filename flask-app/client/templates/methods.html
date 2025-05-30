@@ -1,0 +1,236 @@
+{% extends "layout.html" %}
+
+{% block title %}
+eVýsledky - Správa metód
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="preload" href="{{ url_for('static', filename='css/methods.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/methods.css') }}">
+{% endblock %}
+
+{% block header %}
+Správa metód
+{% endblock %}
+
+{% block content %}
+<div class="methods-container">
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs">
+      <div class="tab active" id="tab-all">Všetky metódy</div>
+      <div class="tab" id="tab-search">Vyhľadať metódu</div>
+      <div class="tab" id="tab-add">Pridať metódu</div>
+    </div>
+  </div>
+
+  <!-- ========================== -->
+  <!-- Tab ALL (Všetky metódy) -->
+  <!-- ========================== -->
+  <div class="tab-content" id="tab-all-content">
+    <!-- Riadok: nadpis + tlačidlá vpravo -->
+    <div class="all-header">
+      <h2>Zoznam metód</h2>
+      <div class="header-buttons">
+        <button id="view-cards" class="view-toggle" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Select na triedenie pre KARTY -->
+    <div class="sort-options" id="sort-options-all">
+      <label for="sort-select">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="sort-select">
+        <option value="creation" selected>Od starších po novších</option>
+        <option value="newest">Od novších po starších</option>
+        <option value="alphabetical-asc">Abecedne A → Z</option>
+        <option value="alphabetical-desc">Abecedne Z → A</option>
+      </select>
+    </div>
+
+    <!-- Karty -->
+    <div id="all-cards-container">
+      <div class="cards" id="all-methods-list"></div>
+    </div>
+    
+    <!-- Tabuľka (list) -->
+    <div id="all-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+        <table class="methods-list-table">
+          <thead>
+            <tr>
+              <th data-column="name">Názov <i class="fas fa-sort"></i></th>
+              <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
+              <th data-column="description">Popis <i class="fas fa-sort"></i></th>
+              <th data-column="actions">Akcie</th>
+            </tr>
+          </thead>
+          <tbody id="all-list-body">
+            <!-- Generované v JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================== -->
+  <!-- Tab SEARCH (Vyhľadávanie)   -->
+  <!-- =========================== -->
+  <div class="tab-content hidden" id="tab-search-content">
+    <div class="search-header">
+      <h2>Vyhľadávanie metód</h2>
+      <div class="header-buttons">
+        <button id="search-view-cards" class="view-toggle" title="Karty">
+          <i class="fas fa-th-large"></i>
+        </button>
+        <button id="search-view-list" class="view-toggle" title="Zoznam">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tu je vstup pre hľadanie -->
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Názov alebo popis metódy" />
+    </div>
+
+    <!-- Select na triedenie pre KARTY -->
+    <div class="sort-options" id="sort-options-search">
+      <label for="search-sort-select">
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="search-sort-select">
+        <option value="creation" selected>Od starších po novších</option>
+        <option value="newest">Od novších po starších</option>
+        <option value="alphabetical-asc">Abecedne A → Z</option>
+        <option value="alphabetical-desc">Abecedne Z → A</option>
+      </select>
+    </div>
+
+    <!-- Karty -->
+    <div id="search-cards-container">
+      <div class="cards" id="search-results-cards"></div>
+    </div>
+
+    <!-- Tabuľka (list) -->
+    <div id="search-list-container" class="hidden">
+      <div class="table-scroll-wrapper">
+          <table class="methods-list-table">
+            <thead>
+              <tr>
+                <th data-column="name">Názov <i class="fas fa-sort"></i></th>
+                <th data-column="created_at">Dátum vytvorenia <i class="fas fa-sort"></i></th>
+                <th data-column="description">Popis <i class="fas fa-sort"></i></th>
+                <th data-column="actions">Akcie</th>
+              </tr>
+            </thead>
+            <tbody id="search-list-body">
+              <!-- Generované v JS -->
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== -->
+  <!-- Tab ADD (formulár) -->
+  <!-- =================== -->
+  <div class="tab-content hidden hidden-js" id="tab-add-content">
+    <h2 class="form-title">
+      <i class="fas fa-plus-circle"></i> Pridať novú metódu
+    </h2>
+
+    <form id="add-method-form">
+      <!-- Name -->
+      <div class="form-group">
+        <label for="method-name">Názov</label>
+        <input type="text" id="method-name" name="name" required />
+        <div class="field-error" id="method-name-error"></div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="method-description">Popis</label>
+        <textarea id="method-description" name="description" rows="4"></textarea>
+        <div class="field-error" id="method-description-error"></div>
+      </div>
+
+      <!-- Parameters (JSON) -->
+      <div class="form-group">
+        <label for="method-parameters">Parametre (JSON)</label>
+        <textarea id="method-parameters" name="parameters" rows="8" placeholder='{"param1": "value1", "param2": "value2"}'></textarea>
+        <div class="field-error" id="method-parameters-error"></div>
+      </div>
+
+      <div id="add-method-message" class="form-message"></div>
+      
+      <!-- Submit button -->
+      <button type="button" id="add-method-btn" class="add-btn">Pridať metódu</button>
+    </form>
+  </div>
+
+  <!-- Edit Method Modal -->
+  <div id="edit-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Upraviť metódu</h2>
+      <form id="edit-method-form">
+        <input type="hidden" id="edit-method-id">
+        
+        <!-- Name -->
+        <div class="form-group">
+          <label for="edit-method-name">Názov</label>
+          <input type="text" id="edit-method-name" name="name" required />
+          <div class="field-error" id="edit-method-name-error"></div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="edit-method-description">Popis</label>
+          <textarea id="edit-method-description" name="description" rows="4"></textarea>
+          <div class="field-error" id="edit-method-description-error"></div>
+        </div>
+
+        <!-- Parameters (JSON) -->
+        <div class="form-group">
+          <label for="edit-method-parameters">Parametre (JSON)</label>
+          <textarea id="edit-method-parameters" name="parameters" rows="8"></textarea>
+          <div class="field-error" id="edit-method-parameters-error"></div>
+        </div>
+
+        <div id="edit-method-message" class="form-message"></div>
+        
+        <!-- Submit button -->
+        <button type="button" id="update-method-btn" class="add-btn">Aktualizovať</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Potvrdiť odstránenie</h2>
+      <p>Naozaj chcete odstrániť túto metódu? Táto akcia sa nedá vrátiť.</p>
+      <input type="hidden" id="delete-method-id">
+      <div class="modal-buttons">
+        <button type="button" id="cancel-delete-btn" class="btn cancel">Zrušiť</button>
+        <button type="button" id="confirm-delete-btn" class="btn confirm">Odstrániť</button>
+      </div>
+      <div id="delete-method-message" class="form-message"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/methods.js') }}"></script>
+{% endblock %}

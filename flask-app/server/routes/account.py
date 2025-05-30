@@ -6,7 +6,7 @@ from server.services.account_service import AccountService
 from server.database import db
 from server.extensions import limiter
 
-bp = Blueprint('account', __name__, url_prefix='/account')
+bp = Blueprint('settings', __name__, url_prefix='/settings')
 account_service = AccountService()
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def account_info():
             return jsonify({'error': 'Neplatné údaje tokenu'}), 400
         else:
             flash("Neplatné údaje tokenu", "error")
-            return render_template("error.html"), 400
+            return render_template("error_400.html"), 400
 
     # Získanie údajov o účte pomocou service vrstvy
     response, status = AccountService.get_account_info(user_id_int)
@@ -60,14 +60,14 @@ def edit_current_account_post():
                 return jsonify({'error': 'Chýba povinné pole'}), 400
             else:
                 flash("Chýba povinné pole", "error")
-                return render_template("error.html"), 400
+                return render_template("error_400.html"), 400
     else:
         data = request.form
         # Príklad validácie pre formuláre
         if not data or 'some_required_field' not in data:
             logger.error("Chýba povinné pole vo formulárových dátach")
             flash("Chýba povinné pole", "error")
-            return render_template("error.html"), 400
+            return render_template("error_400.html"), 400
 
     # Tu by nasledovala logika pre aktualizáciu účtu (napr. account_service.update_account(data))
     # Pre ukážku zavoláme len account_info(), aby sme vrátili aktuálne údaje
@@ -83,13 +83,13 @@ def _get_current_user():
     except (ValueError, TypeError):
         logger.error("Neplatný user_id pre získanie aktuálneho používateľa: %s", user_id)
         flash('Neplatný používateľ', 'error')
-        return render_template('error.html'), 400
+        return render_template('error_400.html'), 400
 
     user = db.session.get(User, user_id_int)
     if not user:
         logger.error("Používateľ s id %s nebol nájdený", user_id_int)
         flash('User not found', 'error')
-        return render_template('error.html'), 404
+        return render_template('error_404.html'), 404
 
     logger.info("Používateľ %s úspešne načítaný", user_id_int)
     return render_template("account.html", user=user)

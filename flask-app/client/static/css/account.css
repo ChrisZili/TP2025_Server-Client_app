@@ -1,0 +1,87 @@
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 1.1rem
+}
+
+.two-columns {
+  display: flex;
+  gap: 30px;
+}
+
+/* Pre malé obrazovky (napr. do 768px) zobrazíme jeden stĺpec */
+@media (max-width: 600px) {
+  .two-columns {
+    flex-direction: column;
+    gap: 15px; /* menšia medzera, ak chceš */
+  }
+}
+
+/* Každý stĺpec */
+.column {
+  flex: 1;
+}
+.left-col, .right-col {
+  background: #fff;
+  padding: 10px;
+}
+
+/* form-group pre inputy */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* label nad inputom */
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+/* input */
+.form-group input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-size: 1.1rem;
+}
+.form-group input[type="text"]:focus {
+  border-color: #66b2ff;
+}
+
+/* Odfarbi readonly polia do siva */
+.form-group input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed; /* aby bolo jasné, že to nejde upravovať */
+}
+
+
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+}
+.checkbox-group label {
+  margin-left: 5px;
+  font-weight: normal;
+}
+
+/* Save button */
+.save-btn {
+  background: #1a7891;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.save-btn:hover {
+  opacity: 0.9;
+}

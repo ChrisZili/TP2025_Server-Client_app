@@ -1,7 +1,6 @@
 from server.database import db
 from server.models.user import User
 
-
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import date
 
@@ -12,9 +11,9 @@ class PatientData(User):
     # Osobné údaje pacienta
     first_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    phone_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
+    phone_number: Mapped[str] = mapped_column(db.String(20), unique=False, nullable=False)
     birth_date: Mapped[date] = mapped_column(db.Date, nullable=False)
-    birth_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
+    birth_number: Mapped[str] = mapped_column(db.String(20), unique=False, nullable=False)
     gender: Mapped[str] = mapped_column(db.String(10), nullable=False)
     doctor_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("doctors.id"), nullable=True)
 
@@ -34,7 +33,7 @@ class PatientData(User):
         "OriginalImageData", back_populates="patient", cascade="all, delete-orphan", lazy="select"
     )
 
-    def get_name(self):
+    def get_full_name(self):
         parts = []
         if self.first_name:
             parts.append(self.first_name.strip())
@@ -62,4 +61,3 @@ class PatientData(User):
             "diagnosis_left_eye": self.diagnosis_left_eye
         })
         return info
-

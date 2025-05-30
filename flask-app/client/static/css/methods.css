@@ -1,0 +1,684 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.methods-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* == Tabs == */
+.tabs-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  margin: 0 auto;
+}
+
+.tab {
+  padding: 10px 15px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background-color 0.2s;
+  font-weight: bold;
+}
+
+.tab:hover {
+  background-color: #ddd;
+}
+
+.tab.active {
+  background-color: #ccc;
+}
+
+/* Tab content */
+.tab-content {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 200px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.hidden-js {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in;
+}
+
+/* == Nadpis + tlačidlá == */
+.all-header,
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.all-header h2,
+.search-header h2 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Prepínače karty/zoznam */
+.view-toggle {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.view-toggle:hover {
+  background-color: #ddd;
+}
+
+.view-toggle i {
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.view-toggle.active {
+  background-color: #ccc;
+}
+
+/* == Sort options == */
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.sort-options label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #444;
+}
+
+.sort-options select {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+}
+
+#sort-select {
+  min-width: 180px;
+}
+
+/* == Karty == */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #2193b0, #4b8c9f);
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  max-width: 100%;
+  font-size: 1.05rem;
+}
+
+.card h3 {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.card:hover {
+  opacity: 0.9;
+}
+
+/* == Tabuľka (list) == */
+.table-scroll-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  min-height: 0;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.methods-list-table {
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  table-layout: fixed;
+}
+
+.methods-list-table thead tr {
+  background-color: #f7f7f7;
+}
+
+.methods-list-table thead th {
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+  z-index: 2;
+  white-space: nowrap;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.methods-list-table thead th i {
+  margin-left: 6px;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.methods-list-table thead th.sort-asc i {
+  color: #1a7891;
+  transform: rotate(180deg);
+}
+
+.methods-list-table thead th.sort-desc i {
+  color: #1a7891;
+  transform: rotate(0deg);
+}
+
+.methods-list-table tbody {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.methods-list-table thead,
+.methods-list-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.methods-list-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.methods-list-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.methods-list-table tbody td {
+  padding: 14px 16px;
+  font-size: 1.05rem;
+  color: #444;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.description-truncate {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* == Vyhľadávanie == */
+.search-bar {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #888;
+  pointer-events: none;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.card-info p {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.card-info p strong {
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.85);
+  margin-right: 5px;
+}
+
+.empty-list-message {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin: 40px 0;
+  font-style: italic;
+}
+
+.card .card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: flex-end;
+}
+
+.card-actions button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.card-actions button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.table-actions button {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.table-actions .edit-btn {
+  color: #1a7891;
+}
+
+.table-actions .delete-btn {
+  color: #dc3545;
+}
+
+.table-actions button:hover {
+  background: #f0f0f0;
+}
+
+/* == Formuláre == */
+#tab-add-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  border-radius: 12px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #66b2ff;
+}
+
+.field-error {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* Voliteľné: zväčšenie ikony */
+.form-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #1a7891;
+}
+
+.form-title i {
+  font-size: 1.5rem;
+  color: #1a7891;
+}
+
+/* == Hlásenia == */
+.form-message {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.form-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.form-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* == Tlačidlo == */
+.add-btn {
+  background: #1a7891;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bold;
+}
+
+.add-btn:hover {
+  background-color: #155e70;
+}
+
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.primary-btn {
+  background-color: #1a7891;
+  color: white;
+}
+
+.primary-btn:hover {
+  background-color: #155e70;
+}
+
+.secondary-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.secondary-btn:hover {
+  background-color: #5a6268;
+}
+
+.danger-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.danger-btn:hover {
+  background-color: #c82333;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  min-width: 100px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.modal-buttons .confirm {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-buttons .confirm:hover {
+  background-color: #c82333;
+}
+
+.modal-buttons .cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-buttons .cancel:hover {
+  background-color: #5a6268;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  min-width: 300px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.close-modal:hover {
+  color: #333;
+}
+
+/* == Responzívne == */
+@media (max-width: 600px) {
+  .methods-container {
+    padding: 10px;
+    height: auto;
+  }
+
+  .tabs {
+    gap: 10px;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .all-header h2,
+  .search-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .header-buttons {
+    gap: 6px;
+  }
+
+  .view-toggle {
+    padding: 6px 8px;
+  }
+
+  .view-toggle i {
+    font-size: 1rem;
+  }
+
+  .sort-options label,
+  .sort-options select {
+    font-size: 0.9rem;
+  }
+
+  #sort-select {
+    min-width: 20px;
+  }
+
+  .methods-list-table thead th,
+  .methods-list-table tbody td {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .add-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+
+  .modal-content {
+    padding: 15px;
+    width: 95%;
+  }
+}

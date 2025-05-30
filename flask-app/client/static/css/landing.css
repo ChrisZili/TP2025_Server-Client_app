@@ -1,0 +1,139 @@
+/* === RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === ZÁKLADY TYPOGRAFIE === */
+html {
+  font-size: 16px; /* 1rem = 16px */
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #fff;
+  background-color: #000; /* fallback farba pod pozadím */
+}
+
+/* Headings */
+h1, h2, h3 {
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+/* === LANDING LAYOUT === */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+
+  background: url("../images/doctor-wide.jpg") center center no-repeat;
+  background-size: cover;
+  background-position: 20% 50%;
+}
+
+/* Overlay pre stmavenie pozadia */
+.landing-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 0;
+}
+
+/* === NAVIGÁCIA HORE === */
+.top-nav {
+  flex: 0 0 auto;
+  z-index: 1;
+  padding: 15px 30px;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Tlačidlá (login/register) – override base.css a podpora button aj <a> */
+.top-nav .btn {
+  all: unset;
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 4px;
+  background-color: #3498db;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+.top-nav .btn:hover {
+  background-color: #2980b9;
+}
+
+/* === HLAVNÝ OBSAH === */
+.center-content {
+  flex: 1 0 auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+  color: #fff;
+}
+
+.center-content .landing-title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.center-content .landing-description {
+  font-size: 1.2rem;
+  max-width: 800px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+/* === FOOTER === */
+.bottom-text {
+  flex: 0 0 auto;
+  z-index: 1;
+  background: rgba(0,0,0,0.7);
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  font-size: 1rem;
+}
+.bottom-text .copyright {
+  margin: 0;
+}
+
+/* === RESPONSIVITA === */
+@media (max-width: 600px) {
+  .center-content .landing-title {
+    font-size: 2rem;
+  }
+
+  .center-content .landing-description {
+    font-size: 1.05rem;
+  }
+
+  .top-nav {
+    padding: 10px 20px;
+    gap: 10px;
+  }
+
+  .top-nav .btn {
+    padding: 8px 15px;
+    font-size: 1rem;
+  }
+
+  .bottom-text {
+    font-size: 0.95rem;
+    padding: 12px 10px;
+  }
+}

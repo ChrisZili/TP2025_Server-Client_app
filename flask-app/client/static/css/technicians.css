@@ -1,0 +1,663 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.technicians-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* == Tabs == */
+.tabs-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  margin: 0 auto;
+}
+
+.tab {
+  padding: 10px 15px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background-color 0.2s;
+  font-weight: bold;
+}
+
+.tab:hover {
+  background-color: #ddd;
+}
+
+.tab.active {
+  background-color: #ccc;
+}
+
+/* Tab content */
+.tab-content {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 200px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.hidden-js {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in;
+}
+
+/* == Nadpis + tlačidlá == */
+.all-header,
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.all-header h2,
+.search-header h2 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Prepínače karty/zoznam */
+.view-toggle {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.view-toggle:hover {
+  background-color: #ddd;
+}
+
+.view-toggle i {
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.view-toggle.active {
+  background-color: #ccc;
+}
+
+/* == Sort options == */
+.sort-options {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sort-options label {
+  margin-right: 0.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.sort-options select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.sort-options select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Make sort dropdown responsive and label above on small screens */
+#sort-select {
+  min-width: 180px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  #sort-select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+  .sort-options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.2rem;
+  }
+  .sort-options label {
+    margin-bottom: 2px;
+  }
+  .sort-options select {
+    width: 100%;
+  }
+}
+
+/* == Karty == */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+
+}
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #2193b0, #4b8c9f);
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+ max-width: 60vw;
+  width: 100%;
+  font-size: 1.05rem;
+  margin-right: auto;
+}
+
+.card h3 {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.card:hover {
+  opacity: 0.9;
+}
+
+/* == Tabuľka (list) == */
+.table-scroll-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  min-height: 0;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.technicians-list-table {
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  table-layout: fixed;
+}
+
+.technicians-list-table thead tr {
+  background-color: #f7f7f7;
+}
+
+.technicians-list-table thead th {
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+  z-index: 2;
+  white-space: nowrap;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.technicians-list-table thead th i {
+  margin-left: 6px;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.technicians-list-table thead th.sort-asc i {
+  color: #1a7891;
+  transform: rotate(180deg);
+}
+
+.technicians-list-table thead th.sort-desc i {
+  color: #1a7891;
+  transform: rotate(0deg);
+}
+
+/* Sorting arrows for table headers */
+.technicians-list-table th .arrow-up,
+.technicians-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #1a7891;
+  vertical-align: middle;
+}
+
+.technicians-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.technicians-list-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
+.technicians-list-table tbody {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.technicians-list-table thead,
+.technicians-list-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.technicians-list-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.technicians-list-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.technicians-list-table tbody td {
+  padding: 14px 16px;
+  font-size: 1.05rem;
+  color: #444;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+/* == Vyhľadávanie == */
+.search-bar {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #888;
+  pointer-events: none;
+}
+
+/* == Formuláre == */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #66b2ff;
+}
+
+.form-group input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #1a7891;
+}
+
+.form-title i {
+  font-size: 1.5rem;
+  color: #1a7891;
+}
+
+#add-technician-message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#add-technician-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+#add-technician-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.add-btn {
+  background: #1a7891;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.add-btn:hover {
+  background-color: #155e70;
+}
+
+.add-btn i {
+  margin-right: 8px;
+}
+
+.gdpr-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.gdpr-group label {
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+#tab-add-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 50px;
+  box-sizing: border-box;
+}
+
+.toggle-pw {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.toggle-pw i {
+  font-size: 1.2rem;
+  color: #666;
+  pointer-events: none;
+}
+
+.toggle-pw:hover i {
+  color: #333;
+}
+
+/* Error message styling */
+.field-error {
+  color: #d32f2f;
+  font-size: 0.95em;
+  margin-top: 2px;
+  min-height: 18px;
+}
+
+/* Add this for dropdowns container */
+.dropdowns-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start; /* Align dropdowns to the left */
+}
+
+/* Each dropdown stays inline until small screens */
+.dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 90vw;
+  margin-bottom: 0; /* Remove extra margin for inline look */
+  /* Remove flex: 1 1 0; to prevent stretching */
+}
+
+/* Dropdown styling for .dropdowns-container */
+.dropdown label {
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: bold;
+}
+
+.dropdown select {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown select:focus {
+  border-color: #007bff;
+}
+
+/* Responsive: stack vertically only on small screens */
+@media (max-width: 600px) {
+  .dropdowns-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .dropdown {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .dropdown label {
+    margin-bottom: 2px;
+  }
+  .dropdown select {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Responsívne */
+@media (max-width: 700px) {
+  .technicians-container {
+    padding: 10px;
+    height: auto;
+  }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .tabs {
+    gap: 10px;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .all-header h2,
+  .search-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .header-buttons {
+    gap: 6px;
+  }
+
+  .view-toggle {
+    padding: 6px 8px;
+  }
+
+  .view-toggle i {
+    font-size: 1rem;
+  }
+
+  .sort-options label,
+  .sort-options select {
+    font-size: 0.9rem;
+  }
+
+  #sort-select {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .technicians-list-table thead th,
+  .technicians-list-table tbody td {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group select {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .add-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+}

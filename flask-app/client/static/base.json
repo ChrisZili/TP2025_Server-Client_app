@@ -1,0 +1,8 @@
+{
+  "name": "Elektronicke Vysledky",
+  "short_name": "eVysledky",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a202c"
+}

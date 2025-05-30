@@ -9,13 +9,15 @@ class DoctorData(User):
     id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     first_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
     last_name: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    phone_number: Mapped[str] = mapped_column(db.String(20), unique=True, nullable=False)
-    gender: Mapped[str] = mapped_column(db.String(10), nullable=False)
+    phone_number: Mapped[str] = mapped_column(db.String(20), unique=False, nullable=True)
+    gender: Mapped[str] = mapped_column(db.String(10), nullable=True)
 
     # Titul
     title: Mapped[str] = mapped_column(db.String(50), nullable=True, default="")
     suffix: Mapped[str] = mapped_column(db.String(50), nullable=True, default="")
 
+    # Super doktor
+    super_doctor: Mapped[bool] = mapped_column(db.Boolean, nullable=False, default=False)
     __mapper_args__ = {
         "polymorphic_identity": "doctor"
     }
@@ -64,3 +66,10 @@ class DoctorData(User):
             "gender": self.gender if self.gender else None,
         })
         return info
+
+    def get_full_name(self):
+        full_name = f"{self.title + ' ' if self.title else ''}{self.first_name} {self.last_name}{' ' + self.suffix if self.suffix else ''}"
+        return full_name
+
+    def set_super_doctor(self, super_doctor):
+        self.super_doctor = super_doctor

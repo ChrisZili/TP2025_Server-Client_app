@@ -1,0 +1,664 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* == Tabs == */
+.tabs-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  margin: 0 auto;
+}
+
+.tab {
+  padding: 10px 15px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition: background-color 0.2s;
+  font-weight: bold;
+}
+
+.tab:hover {
+  background-color: #ddd;
+}
+
+.tab.active {
+  background-color: #ccc;
+}
+
+/* Tab content */
+.tab-content {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 200px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+.hidden-js {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in;
+}
+
+/* == Nadpis + tlačidlá == */
+.all-header,
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.all-header h2,
+.search-header h2 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Prepínače karty/zoznam */
+.view-toggle {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.view-toggle:hover {
+  background-color: #ddd;
+}
+
+.view-toggle i {
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.view-toggle.active {
+  background-color: #ccc;
+}
+
+/* == Sort options == */
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Space between dropdowns */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  margin-bottom: 1rem; /* Add spacing below the dropdowns */
+}
+
+.sort-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between icon and text */
+  font-weight: bold;
+  font-size: 1rem;
+  color: #444;
+}
+
+.sort-options select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.sort-options select:focus {
+  border-color: #007bff;
+}
+
+.filter-btn {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn.active {
+  background-color: #ccc;
+}
+
+/* Example CSS for dropdown styling */
+.sort-select {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  appearance: none; /* Remove default browser styling */
+}
+
+.sort-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+}
+
+/* == Karty == */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #2193b0, #4b8c9f);
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  max-width: 100%; 
+  width: 100%;
+  font-size: 1.05rem;
+  margin-right: auto;
+}
+
+.card.unread {
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #39B2D1, #27A9CB);
+  color: #000;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  max-width: 60vw; 
+  width: 100%;
+  font-size: 1.05rem;
+  margin-right: auto;
+}
+
+.card h3 {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.card:hover {
+  opacity: 0.9;
+}
+
+/* == Tabuľka (list) == */
+.table-scroll-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  min-height: 0;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+/*spravy v tabulkovej forme*/
+.messages-list-table {
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  table-layout: fixed;
+}
+
+.messages-list-table thead tr {
+  background-color: #f7f7f7;
+}
+
+.messages-list-table thead th {
+  text-align: left;
+  padding: 14px 16px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  position: sticky;
+  top: 0;
+  background-color: #f7f7f7;
+  z-index: 2;
+  white-space: nowrap;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.messages-list-table thead th i {
+  margin-left: 6px;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.messages-list-table thead th.sort-asc i {
+  color: #3a7bd5;
+  transform: rotate(180deg);
+}
+
+.messages-list-table thead th.sort-desc i {
+  color: #3a7bd5;
+  transform: rotate(0deg);
+}
+
+/* Sorting arrows for table headers */
+.messages-list-table th .arrow-up,
+.messages-list-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #3a7bd5;
+  vertical-align: middle;
+}
+
+.messages-list-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.messages-list-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
+.messages-list-table tbody {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.messages-list-table thead,
+.messages-list-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.messages-list-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.messages-list-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.messages-list-table tbody td {
+  padding: 14px 16px;
+  font-size: 1.05rem;
+  color: #444;
+  vertical-align: middle;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.messages-list-table td.message-column {
+  max-width: 400px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  word-wrap: break-word;
+  font-family: monospace;
+}
+
+/* == Vyhľadávanie == */
+.search-bar {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #888;
+  pointer-events: none;
+}
+
+/* == Formuláre == */
+#tab-add-content {
+  padding-bottom: 40px;
+}
+#tab-assign-content {
+  padding-bottom: 40px;
+}
+#tab-add-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 20px auto; /* Add bottom margin */
+  box-sizing: border-box;
+}
+#tab-assign-content form {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 20px auto;
+  box-sizing: border-box;
+}
+.form-group {
+  display: flex; /* Default display for dropdowns */
+}
+
+.form-group.hidden {
+  display: none; /* Hide the dropdown */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #66b2ff;
+}
+
+.form-group input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #3a7bd5;
+}
+
+.form-title i {
+  font-size: 1.5rem;
+  color: #3a7bd5;
+}
+
+/* == Hlásenia == */
+#error-message {
+  font-size: 14px;
+  background-color: rgba(255, 0, 0, 0.1); /* light red with transparency */
+  color: #b00020; /* darker red for contrast */
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+/* == Tlačidlo == */
+.add-btn {
+  background: #3a7bd5;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.add-btn:hover {
+  background-color: #2a5ca0;
+}
+.assign-btn:hover {
+  background-color: #2a5ca0;
+}
+.add-btn i {
+  margin-right: 8px;
+}
+.assign-btn i {
+  margin-right: 8px;
+}
+
+
+.toggle-pw {
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.toggle-pw i {
+  font-size: 1.2rem;
+  color: #666;
+  pointer-events: none;
+}
+
+.toggle-pw:hover i {
+  color: #333;
+}
+
+/* == Responzvne == */
+@media (max-width: 700px) {
+  .patients-container {
+    padding: 10px;
+    height: auto;
+  }
+
+  .tabs {
+    gap: 10px;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .all-header h2,
+  .search-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .header-buttons {
+    gap: 6px;
+  }
+
+  .view-toggle {
+    padding: 6px 8px;
+  }
+
+  .view-toggle i {
+    font-size: 1rem;
+  }
+
+  .sort-options label,
+  .sort-options select {
+    font-size: 0.9rem;
+  }
+
+  #sort-select {
+    min-width: 20px;
+  }
+  .card{
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .patients-list-table thead th,
+  .patients-list-table tbody td {
+    padding: 8px 10px;
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group input[type="tel"],
+  .form-group input[type="date"],
+  .form-group select {
+    font-size: 0.95rem;
+    padding: 8px;
+  }
+
+  .add-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+  .assign-btn {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 10px 16px;
+  }
+}
+
+/* == Filters == */
+/* Default: filters in a row */
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.filters .form-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-direction: row;
+}
+
+/* Responsive: Stack filters vertically on small screens */
+@media (max-width: 600px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .filters .form-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+    gap: 0.2rem;
+  }
+  .filters .form-group label {
+    margin-bottom: 2px;
+  }
+  .filters .form-group select {
+    width: 100%;
+  }
+}
+
+.toggle-read-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.toggle-read-btn:hover {
+  transform: scale(1.2);
+}

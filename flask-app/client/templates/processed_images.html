@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+{% block title %}
+eVýsledky - Spracované fotky
+{% endblock %}
+
+{% block header %}
+Spracované fotky
+{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/processed_images.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="processed-images-list-container" class="photos-container">
+  <!-- Tabs Bar -->
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <div class="search-button active" id="all-photos">Všetky fotky</div>
+      <div class="search-button" id="search-photo">Vyhľadať fotku</div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div id="filters" class="filters-container">
+    <div class="filter-group">
+      <label for="filter-patient">Pacient:</label>
+      <select id="filter-patient" class="filter-input">
+        <option value="">Všetci</option>
+        {% set unique_patients = [] %}
+        {% for img in processed_images %}
+          {% if img.patient_name and img.patient_name != '-' and img.patient_name not in unique_patients %}
+            {% set _ = unique_patients.append(img.patient_name) %}
+            <option value="{{ img.patient_name }}">{{ img.patient_name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filter-method">Metóda:</label>
+      <select id="filter-method" class="filter-input">
+        <option value="">Všetky</option>
+        {% set unique_methods = [] %}
+        {% for img in processed_images %}
+          {% if img.method and img.method != '-' and img.method not in unique_methods %}
+            {% set _ = unique_methods.append(img.method) %}
+            <option value="{{ img.method }}">{{ img.method }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filter-status">Stav:</label>
+      <select id="filter-status" class="filter-input">
+        <option value="">Všetky</option>
+        {% set unique_statuses = [] %}
+        {% for img in processed_images %}
+          {% if img.status and img.status != '-' and img.status not in unique_statuses %}
+            {% set _ = unique_statuses.append(img.status) %}
+            <option value="{{ img.status }}">{{ img.status }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filter-answer">Výsledok:</label>
+      <select id="filter-answer" class="filter-input">
+        <option value="">Všetky</option>
+        {% set unique_answers = [] %}
+        {% for img in processed_images %}
+          {% if img.answer and img.answer != '-' and img.answer|string not in unique_answers and unique_answers|length < 15 %}
+            {% set truncated_answer = img.answer|string|truncate(30, true, '...') %}
+            {% set _ = unique_answers.append(img.answer|string) %}
+            <option value="{{ img.answer }}">{{ truncated_answer }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <!-- Search container -->
+  <div class="search-container">
+    <div class="search-bar-fullwidth">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="search-input" placeholder="Pacient, metóda, stav alebo výsledok" />
+    </div>
+    <div class="sort-options">
+      <label>
+        <i class="fas fa-sort-alpha-down"></i> Zoradiť:
+      </label>
+      <select id="search-sort-select">
+        <option value="date-desc">Od novších po starších</option>
+        <option value="date-asc">Od starších po novších</option>
+        <option value="name-asc">Pacient A → Z</option>
+        <option value="name-desc">Pacient Z → A</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- <h2 class="section-header">Zoznam spracovaných obrázkov</h2> -->
+
+  <div class="table-scroll-wrapper">
+    <table class="photo-table" id="processed-images-table">
+      <thead>
+        <tr>
+          <!-- <th class="sortable" data-column="name">Názov<span class="sort-icon"></span></th> -->
+          <th class="sortable" data-column="patient_name">Pacient<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="method">Metóda<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="status">Stav<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="answer">Výsledok<span class="sort-icon"></span></th>
+          <th class="sortable" data-column="created_at">Dátum<span class="sort-icon"></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for img in processed_images %}
+        <tr class="processed-image-row"
+            data-detail-url="{{ url_for('photos.processed_image_detail', processed_image_id=img.id) }}"
+            data-name="{{ img.name|urlencode }}"
+            data-patient-name="{{ img.patient_name }}"
+            data-method="{{ img.method }}"
+            data-status="{{ img.status }}"
+            data-answer="{{ img.answer }}"
+            data-created-at="{{ img.created_at }}">
+          <!-- <td>{{ img.name|default('-', true) }}</td> -->
+          <td>{{ img.patient_name|default('-', true) }}</td>
+          <td>{{ img.method|default('-', true) }}</td>
+          <td>{{ img.status|default('-', true) }}</td>
+          <td>{{ img.answer|default('-', true) }}</td>
+          <td>{{ img.created_at|default('-', true) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/processed_images.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,167 @@
+@keyframes blink-fancy{
+    0%, 25%, 28.33%, 45%, 48.33%, 51.67%, 93.33%, 96.67%{transform: scaleY(1);}
+    26.67%, 46.67%, 50%, 95% {transform: scaleY(0.1);}
+}
+
+@keyframes flame-flicker-1{
+    25% {transform: scale3d(1,1.1,1);}
+    40% {transform: scale3d(1,0.8,1);}
+    50% {transform: scale3d(1,1.05,1);}
+    65% {transform: scale3d(1,0.75,1);}
+    75% {transform: scale3d(1,1,1);}
+    90% {transform: scale3d(1,1.15,1);}
+    100% {transform: scale3d(1,1,1);}
+}
+
+@keyframes flame-flicker-2{
+    15% {transform: scale3d(0.9,0.8,1);}
+    33% {transform: scale3d(1.2, 0.5,1);}
+    47% {transform: scale3d(0.7, 0.7,1);}
+    63% {transform: scale3d(0.72, 1.1,1);}
+    70% {transform: scale3d(0.65, 1,1);}
+    77% {transform: scale3d(1, 0.8,1);}
+    85% {transform: scale3d(0.7, 0.95,1)}
+    100% {transform: scale3d(1,1,1);}
+}
+
+@keyframes flame-ember{
+    0% {transform: translate(0, 0) rotate(0deg);}
+    25% {transform: translate(10px, -25px) rotate(-45deg);}
+    50% {transform: translate(0, -50px) rotate(0);}
+    75% {transform: translate(-10px, -75px) rotate(45deg);}
+    100% {transform: translate(0, -100px) rotate(0);}
+}
+
+@keyframes flame-ember-alt{
+    0% {transform: translate(0, 0) rotate(0deg);}
+    25% {transform: translate(-15px, -25px) rotate(45deg);}
+    50% {transform: translate(0, -50px) rotate(0);}
+    75% {transform: translate(10px, -75px) rotate(-45deg);}
+    100% {transform: translate(0, -100px) rotate(0);}
+}
+
+@keyframes flame-ember-opacity{
+    45% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+@keyframes scale-pulse {
+    0% {transform: scale(0.8,0.8);}
+    50% {transform: scale(1.1, 1.1);}
+    100% {transform: scale(0.8,0.8);}
+}
+
+@keyframes opacity-pulse{
+    0% {opacity: 0.2;}
+    50% {opacity: 0.5;}
+    100% {opacity: 0.2;}
+}
+
+.flame-front{
+transform-origin: center bottom;
+animation: flame-flicker-1 1s ease-in-out infinite;
+}
+
+.flame-inner{
+    transform-origin: center bottom;
+    animation: flame-flicker-2 .8s ease-in-out infinite;
+}
+
+#flame-inner-right{animation-duration: 1s; animation-delay: -1s;}
+
+#flame-back{animation-direction: reverse; animation-delay: 0.5s; animation-duration: 1.6s;}
+
+#flame-front-right{animation-duration: 1.3s; animation-delay: 0.2s}
+
+.emitted-ember{
+    transform-origin: center center;
+    -moz-transform-origin: 485.125px 51.33px;
+    animation: flame-ember 2s linear infinite, flame-ember-opacity 2s ease-out infinite;
+}
+
+.emitted-ember-alt{
+    animation: flame-ember-alt 1.7s linear infinite, flame-ember-opacity 1.7s ease-out infinite;
+}
+
+.smoke{transform-origin: center center; animation: scale-pulse .7s ease-in-out infinite;}
+
+#smoke-float-1 {animation-delay: 0.4s;}
+#smoke-float-2 {animation-delay: 0.2s;}
+#smoke-float-3 {animation-delay: 0s;}
+#smoke-float-4 {animation-delay: -0.2s;}
+#smoke-float-5 {animation-delay: -0.4s;}
+
+.glow{
+    transform-origin: center center;
+    -moz-transform-origin: 378.729px 109.75px;
+    animation: opacity-pulse 4s ease-in-out infinite 0.1s, scale-pulse 4s ease-in-out alternate infinite;
+}
+
+#glow-outer-1{animation-delay: -0.1s;}
+#glow-inner {animation-delay: -0.3s;}
+
+#eyes-left, #eyes-right{
+    animation: blink-fancy 6s linear infinite;
+}
+
+.bill-highlight{animation: opacity-pulse 4s ease-in-out infinite;}
+#smokes {
+  fill: #D5DADB;
+}
+
+/* Animation delay helpers */
+.delay-05 { animation-delay: -0.5s; }
+.delay-07 { animation-delay: -0.7s; }
+.delay-1  { animation-delay: -1s; }
+.delay-02 { animation-delay: -0.2s; }
+.delay-01 { animation-delay: -0.1s; }
+
+/* Opacity helpers */
+.opacity-03 { fill-opacity: 0.3; }
+.opacity-06 { fill-opacity: 0.6; }
+.opacity-08 { fill-opacity: 0.8; }
+
+/* Transform origins (can be used with animation libraries) */
+.origin-464-78 { transform-origin: 464.3px 78.4px; }
+.origin-492-83 { transform-origin: 492.9px 83.8px; }
+.origin-480-70 { transform-origin: 480px 70.4px; }
+.origin-464-53 { transform-origin: 464.9px 53.3px; }
+.origin-469-62 { transform-origin: 469.4px 62.3px; }
+.origin-471-47 { transform-origin: 471.1px 47.9px; }
+.origin-470-28 { transform-origin: 470.4px 28.2px; }
+.origin-467-36 { transform-origin: 467.2px 36.3px; }
+.origin-470-93 { transform-origin: 470.729px 93px; }
+.origin-462-93 { transform-origin: 462.55px 93px; }
+.origin-479-93 { transform-origin: 479.162px 93px; }
+.origin-461-97 { transform-origin: 461.677px 97px; }
+.origin-476-97 { transform-origin: 476.268px 97px; }
+
+/* Optional: Base styles if needed */
+.emitted-ember, .smoke, .flame-front, .flame-inner {
+  animation-name: floatUp;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+/* Example animation keyframes (customize as needed) */
+@keyframes floatUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+.eye-group {
+  fill: #263D52;
+}
+
+.origin-228-126 {
+  transform-origin: 228.391px 126.333px;
+}
+
+.origin-266-126 {
+  transform-origin: 266.289px 126.333px;
+}
+
+/* Optional base class for both eyes if you animate them */
+.eye {
+  transition: transform 0.3s ease;
+}

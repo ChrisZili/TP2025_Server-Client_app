@@ -1,134 +1,161 @@
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-/* SIDEBAR – stavy ovládané v JS: .expanded / .collapsed / .hidden */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  background: linear-gradient(180deg, #1a7891, #4ebfdc);
-  color: white;
-  overflow: hidden;
-  transition: width 0.3s ease;
-  z-index: 1000;
-  width: 240px; /* predvolený stav, premení sa hneď v JS */
-}
-
-.sidebar.expanded {
-  width: 240px; /* ikony + text */
-}
-
-.sidebar.collapsed {
-  width: 50px; /* len ikony, text skrytý */
-}
-.sidebar.collapsed .sidebar-text {
-  display: none;
-}
-
-.sidebar.hidden {
-  width: 0;
-}
-
-/* Obsah sidebaru: user info + zoznam */
-.user-info {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid rgba(255,255,255,0.3);
-}
-.user-info i {
-  font-size: 1.5rem;
-  margin-right: 10px;
-}
-
-.sidebar ul {
-  list-style: none;
-}
-.sidebar ul li {
-  padding: 15px;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.sidebar ul li:hover {
-  background: linear-gradient(90deg, #4ebfdc, #0c3039);
-}
-.sidebar ul li i {
-  margin-right: 10px;
-}
-
-/* .sidebar-text => text sidebara; pri collapsed je skrytý */
-
-/* HLAVNÝ BLOK (celá pravá časť) */
-.main {
-  position: relative;
-  margin-left: 240px; /* predpoklad: expanded sidebar */
-  transition: margin-left 0.3s ease;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column; /* top-bar hore, content pod ním */
-}
-
-/* Horný panel: hamburger + H2 vedľa seba */
-.top-bar {
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  background: #eee;
-  box-shadow: 0 0 3px rgba(0,0,0,0.2);
-}
-
-/* Hamburger (3 čiarky) v top-bare */
-.hamburger {
-  width: 40px;
-  height: 40px;
-  background: #ddd;
-  color: #333;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
-  margin-right: 15px;
-}
-.top-bar h2 {
-  font-size: 1.5rem;
-}
-
-/* Content = zvyšok pod top-bare */
-.content {
-  padding: 20px;
-  flex: 1; /* aby vyplnil zvyšok priestoru v .main */
-}
-
 /* Karty */
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 .card {
-  flex: 1 1 200px;
-  padding: 15px;
-  border-radius: 10px;
-  color: white;
+  background: #fff;
+  color: #333;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
   cursor: pointer;
+  min-height: 160px;
 }
-.card.blue {
-  background: linear-gradient(90deg, #2193b0, #6dd5ed);
+
+.card:hover {
+  transform: translateY(-5px);
 }
-.card.purple {
-  background: linear-gradient(90deg, #cc2b5e, #753a88);
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-weight: bold;
+  color: white;
+  font-size: 1rem;
 }
-.card.red {
-  background: linear-gradient(90deg, #e52d27, #b31217);
+
+.card-body {
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.card-body .highlight {
+  display: block;
+  font-weight: bold;
+  color: #0066cc;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+/* Základ pre všetky karty - rovnaká modrá paleta, rôzne smery gradientu */
+
+.card.hospitalSky .card-header {
+  background: linear-gradient(to right, #1976d2, #2196f3);
+}
+
+.card.adminSteel .card-header {
+  background: linear-gradient(to left, #1976d2, #2196f3);
+}
+
+.card.doctorOcean .card-header {
+  background: linear-gradient(to top right, #1976d2, #2196f3);
+}
+
+.card.techNavy .card-header {
+  background: linear-gradient(to bottom right, #1976d2, #2196f3);
+}
+
+.card.patientSoft .card-header {
+  background: linear-gradient(to top left, #1976d2, #2196f3);
+}
+
+.card.photoSky .card-header {
+  background: linear-gradient(to bottom left, #1976d2, #2196f3);
+}
+
+.card.listBlue .card-header {
+  background: linear-gradient(to right, #1976d2, #2196f3);
+}
+
+.card.resultsIce .card-header {
+  background: linear-gradient(to left, #1976d2, #2196f3);
+}
+
+.card.messageCool .card-header {
+  background: linear-gradient(to bottom, #1976d2, #2196f3);
+}
+
+.card.addPhoto .card-header {
+  background: linear-gradient(to top, #1976d2, #2196f3);
+}
+
+.card.newPatient .card-header {
+  background: linear-gradient(135deg, #1976d2, #2196f3);
+}
+
+
+
+
+
+
+
+/*
+.card.hospitalSky .card-header {
+  background: linear-gradient(to right, #00B4DB, #0083B0);
+}
+
+.card.adminShield .card-header {
+  background: linear-gradient(to right, #F7971E, #FFD200);
+}
+
+.card.doctorOcean .card-header {
+  background: linear-gradient(to right, #1FA2FF, #12D8FA);
+}
+
+.card.patientCare .card-header {
+  background: linear-gradient(to right, #A770EF, #FDB99B);
+}
+
+.card.techGear .card-header {
+  background: linear-gradient(to right, #11998E, #38EF7D);
+}
+
+.card.photoFlow .card-header {
+  background: linear-gradient(to right, #f7971e, #ffd200);
+}
+
+.card.listView .card-header {
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+}
+
+.card.resultsGlow .card-header {
+  background: linear-gradient(to right, #43cea2, #185a9d);
+}
+
+.card.messagePulse .card-header {
+  background: linear-gradient(to right, #fc6076, #ff9a44);
+}
+.card.addPhoto .card-header {
+  background: linear-gradient(to right, #ff9966, #ff5e62);
+}
+
+.card.newPatient .card-header {
+  background: linear-gradient(to right, #56ab2f, #a8e063);
+}
+*/
+
+
+
+#dashboard-content {
+  margin-top: 30px
 }
 .card:hover {
   opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .cards {
+    flex-direction: column;
+  }
+  .card {
+    max-width: 600px;
+    flex: 1 1 100%;
+  }
 }

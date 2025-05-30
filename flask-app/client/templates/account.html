@@ -1,24 +1,28 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
+{% block stylesheet %}
+{{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
+{% endblock %}
 
-{% block head %}
-  {{ super() }}
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}" />
-  <link rel="manifest" href="{{ url_for('static', filename='icons/site.webmanifest') }}" />
+{% block title %}
+eVýsledky - Profil
+{% endblock %}
+
+{% block header %}
+Môj profil
 {% endblock %}
 
 {% block content %}
-  <div class="container">
-    <h1>Účet používateľa</h1>
-    <div class="user-info" id="user-info">
-      <p>Načítavam informácie o používateľovi...</p>
-    </div>
-    <button id="logout-btn">Logout</button>
-  </div>
+<div class="profile-container">
+  <!-- Sem JavaScript vygeneruje formulár (polia) podľa roly -->
+  <div id="dynamic-profile-form"></div>
+
+  <!-- Tlačidlo na uloženie -->
+  <button id="save-profile-btn" class="save-btn">Uložiť zmeny</button>
+</div>
 {% endblock %}
 
 {% block scripts %}
-  <script src="{{ url_for('static', filename='js/account.js') }}"></script>
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/account.js') }}" defer></script>
 {% endblock %}

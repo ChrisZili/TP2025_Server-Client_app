@@ -1,105 +1,153 @@
+// TODO: vycitat zakladne info o uzivatelovi user_type, full_name a nahradit permanentne posielanie a vycitavanie user
+
 document.addEventListener("DOMContentLoaded", () => {
-  // ------------------------------
-  // 1. Logika responzívneho sidebaru
-  // ------------------------------
+  // ===========================
+  // 1) Responzívny sidebar (expanded / collapsed / hidden)
+  // ===========================
+  const dashboardCards = document.getElementById("dashboard-cards"); // <ul id="sidebar-menu">
+  const menuConfig = {
+    patient: [
+      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings"},
+      { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
+    ],
+    technician: [
+      { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
+      { icon: "fa fa-sign-out", label: "Odhlásiť",    link: "/logout", isLogout: true },
+    ],
+    doctor: [
+      { icon: "fa fa-home",    label: "Domov",         link: "/dashboard" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians", countTemplate: "${data.technician_count} Všetkých technikov" },
+      { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-list",    label: "Spracované fotky", link: "/photos/processed_images" , countTemplate: "${data.processed_image_count} Všetkých záznamov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie",    link: "/settings" },
+      { icon: "fa fa-sign-out",label: "Odhlásiť",      link: "/logout", isLogout: true },
+    ],
+    admin: [
+      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard" },
+      { icon: "fa fa-user-md", label: "Doktori", link: "/doctors", countTemplate: "${data.doctor_count} Všetkých doktorov" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians", countTemplate: "${data.technician_count} Všetkých technikov" },
+      { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-list",    label: "Spracované fotky", link: "/photos/processed_images" , countTemplate: "${data.processed_image_count} Všetkých záznamov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
+      { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
+    ],
+    super_admin: [
+      { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
+      { icon: "fa fa-hospital", label: "Nemocnice", link: "/hospitals", countTemplate: "${data.hospital_count} Všetkých nemocníc" },
+      { icon: "fa fa-user-shield", label: "Admini", link: "/admins", countTemplate: "${data.admin_count} Všetkých adminov" },
+      { icon: "fa fa-user-md", label: "Doktori", link: "/doctors", countTemplate: "${data.doctor_count} Všetkých doktorov" },
+      { icon: "fa fa-user-gear", label: "Technici", link: "/technicians", countTemplate: "${data.technician_count} Všetkých technikov" },
+      { icon: "fa fa-users", label: "Pacienti", link: "/patients", countTemplate: "${data.patient_count} Všetkých pacientov" },
+      { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
+      { icon: "fa fa-list",    label: "Spracované fotky", link: "/photos/processed_images" , countTemplate: "${data.processed_image_count} Všetkých záznamov" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings" },
+      { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
+    ],
+  };
 
-  const sidebar = document.getElementById("sidebar");
-  const main = document.getElementById("main"); // Obsah (top-bar + .content) presúvame
-  const hamburger = document.getElementById("hamburger");
+  function updateCards(data) {
+    if (!dashboardCards) return;
+    const userType = data.user_type;
+    console.log(data)
+    const items = menuConfig[userType].filter(item =>
+      !item.isLogout && !["Domov", "Profil", "Nastavenie"].includes(item.label)
+    );
 
-  function getBreakpoint() {
-    const w = window.innerWidth;
-    if (w >= 900) return "large";
-    if (w >= 600) return "medium";
-    return "small";
+    const labelToColorClass = {
+      "Nemocnice": "hospitalSky",
+      "Admini": "adminSteel",
+      "Doktor": "doctorOcean",
+      "Doktori": "doctorOcean",
+      "Technici": "techNavy",
+      "Pacienti": "patientSoft",
+      "Fotky": "photoSky",
+      "Výsledky": "photoSky",
+      "Zoznam": "listBlue",
+      "Spracované fotky": "resultsIce",
+      "Správy": "messageCool",
+      "Pridať fotku": "addPhoto",
+      "Vytvoriť pacienta": "newPatient",
+    };
+    /*const labelToColorClass = {
+      "Nemocnice": "hospitalSky",
+      "Admini": "adminShield",
+      "Doktori": "doctorOcean",
+      "Pacienti": "patientCare",
+      "Technici": "techGear",
+      "Fotky": "photoFlow",
+      "Zoznam": "listView",
+      "Výsledky": "resultsGlow",
+      "Správy": "messagePulse",
+    };*/
+
+
+
+    dashboardCards.innerHTML = "";
+
+    const container = document.createElement("div");
+    container.classList.add("cards");
+
+    items.forEach((item) => {
+      const colorClass = labelToColorClass[item.label] || "defaultCard";
+      const countText = item.countTemplate
+      ? item.countTemplate.replace(/\${data\.(\w+)}/g, (_, key) => data[key] || 0)
+      : "0";
+      const card = document.createElement("div");
+      card.classList.add("card", colorClass);
+      card.dataset.link = item.link;
+
+      // HLAVIČKA – farebný pás s názvom a ikonou
+      const header = document.createElement("div");
+      header.classList.add("card-header");
+      header.innerHTML = `
+        <span><i class="${item.icon}"></i> ${item.label}</span>
+        <i class="fa fa-arrow-right"></i>
+      `;
+
+      // TELO – biela časť s popisom
+      const body = document.createElement("div");
+      body.classList.add("card-body");
+      body.innerHTML = `
+        <span>Popis pre položku <strong>${item.label}</strong></span>
+        <span class="highlight">${countText}</span>
+      `;
+
+      card.appendChild(header);
+      card.appendChild(body);
+      container.appendChild(card);
+    });
+
+    dashboardCards.appendChild(container);
+
+    // Kliknutie presmeruje na danú URL
+    container.addEventListener("click", (e) => {
+      const card = e.target.closest(".card");
+      if (card && card.dataset.link) {
+        window.location.href = card.dataset.link;
+      }
+    });
   }
 
-  // Nastaví default stav sidebaru a .main margin-left podľa breakpointu
-  function setDefaultState() {
-    sidebar.classList.remove("expanded", "collapsed", "hidden");
-    let bp = getBreakpoint();
-
-    if (bp === "large") {
-      sidebar.classList.add("expanded");  // 240px
-      main.style.marginLeft = "240px";
-    } else if (bp === "medium") {
-      sidebar.classList.add("collapsed"); // 50px
-      main.style.marginLeft = "50px";
-    } else {
-      sidebar.classList.add("hidden");    // 0px
-      main.style.marginLeft = "0";
-    }
-  }
-
-  // Kliknutie na hamburger => toggle stavy
-  // large => expanded <-> collapsed
-  // medium => collapsed <-> expanded
-  // small => hidden <-> expanded
-  function toggleSidebar() {
-    let bp = getBreakpoint();
-
-    if (bp === "large") {
-      if (sidebar.classList.contains("expanded")) {
-        // expanded -> collapsed
-        sidebar.classList.remove("expanded");
-        sidebar.classList.add("collapsed");
-        main.style.marginLeft = "50px";
-      } else {
-        // collapsed -> expanded
-        sidebar.classList.remove("collapsed");
-        sidebar.classList.add("expanded");
-        main.style.marginLeft = "240px";
-      }
-    }
-    else if (bp === "medium") {
-      if (sidebar.classList.contains("collapsed")) {
-        // collapsed -> expanded
-        sidebar.classList.remove("collapsed");
-        sidebar.classList.add("expanded");
-        main.style.marginLeft = "240px";
-      } else {
-        // expanded -> collapsed
-        sidebar.classList.remove("expanded");
-        sidebar.classList.add("collapsed");
-        main.style.marginLeft = "50px";
-      }
-    }
-    else {
-      // small => hidden <-> expanded
-      if (sidebar.classList.contains("hidden")) {
-        sidebar.classList.remove("hidden");
-        sidebar.classList.add("expanded");
-        main.style.marginLeft = "240px";
-      } else {
-        sidebar.classList.remove("expanded");
-        sidebar.classList.add("hidden");
-        main.style.marginLeft = "0";
-      }
-    }
-  }
-
-  // Nastavíme default pri načítaní aj pri zmene veľkosti
-  window.addEventListener("resize", setDefaultState);
-  setDefaultState();
-
-  // Event na hamburger
-  hamburger.addEventListener("click", toggleSidebar);
 
 
-  // ------------------------------
-  // 2. Logika dashboardu (fetch, load, roly)
-  // ------------------------------
 
-  // Elementy, kam niečo vkladáme (ak existujú)
-  const usernameSpan = document.getElementById("username-span"); // v sidebare
-  const logoutBtn = document.getElementById("logout-btn");       // pre odhlásenie
-  const dashboardContent = document.getElementById("dashboard-content"); // kam vkladáme info
 
   // fetch s cookies
   function fetchWithAuth(url, options = {}) {
     return fetch(url, {
       ...options,
-      credentials: 'include', // posiela cookies
+      credentials: 'include',
       headers: {
         ...(options.headers || {}),
         'Accept': 'application/json'
@@ -107,114 +155,77 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Po načítaní user-a: generujeme menu, zobrazíme rolu
   async function loadDashboard() {
     try {
-      const response = await fetchWithAuth('/account/info');
+      const response = await fetchWithAuth('/dashboard/info');
+      console.log(response)
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa (token?).');
       }
+      const data = await response.json();
 
-      const user = await response.json();
-
-      // Vložíme meno do sidebara (ak existuje usernameSpan a user má first_name, last_name)
-      if (usernameSpan && user.first_name && user.last_name) {
-        usernameSpan.textContent = `${user.first_name} ${user.last_name}`;
-      }
-
-      // Rozhodneme, akú rolu má user
-      // Napr. user.role = "doctor" / "patient" / "technician"
-      if (user.user_type === "doctor") {
-        loadDoctorDashboard(user);
-      } else if (user.user_type === "patient") {
-        loadPatientDashboard(user);
-      } else if (user.user_type === "technician") {
-        loadTechnicianDashboard(user);
+      updateCards(data);
+      // Zobrazíme príslušný obsah (doctor, patient, atď.)
+      if (data.user_type === "doctor") {
+        loadDoctorDashboard();
+      } else if (data.user_type === "patient") {
+        loadPatientDashboard();
+      } else if (data.user_type === "technician") {
+        loadTechnicianDashboard();
+      } else if (data.user_type === "admin") {
+        loadAdminDashboard();
+      } else if (data.user_type === "super_admin") {
+        loadSuperAdminDashboard();
       } else {
-        // Neznáma rola, zobraz niečo neutrálne
-        if (dashboardContent) {
-          dashboardContent.innerHTML = "<p>Vitajte v systéme!</p>";
+        const dc = document.getElementById("dashboard-content");
+        if (dc) {
+          dc.innerHTML = "<p>Vitajte v systéme (neznáma rola)</p>";
         }
       }
-    } catch (error) {
-      console.error('Chyba pri načítaní dashboardu:', error);
-      if (dashboardContent) {
-        dashboardContent.innerHTML = `
-          <p>Chyba pri načítaní obsahu: ${error.message}</p>
+    } catch (err) {
+      console.error("Chyba pri načítaní usera:", err);
+      const dc = document.getElementById("dashboard-content");
+      if (dc) {
+        dc.innerHTML = `
+          <p>Chyba pri načítaní obsahu: ${err.message}</p>
           <p><a href="/login">Prihláste sa znova</a></p>
         `;
       }
     }
   }
 
-  async function loadDoctorDashboard(user) {
-    try {
-      const response = await fetchWithAuth('/doctor/patients');
-      if (!response.ok) {
-        throw new Error('Nepodarilo sa načítať zoznam pacientov');
-      }
-      const patients = await response.json();
-      let html = `<h2>Vaši pacienti</h2>`;
-      if (patients.length === 0) {
-        html += '<p>Nemáte priradených žiadnych pacientov.</p>';
-      } else {
-        html += '<ul>';
-        patients.forEach(patient => {
-          html += `<li data-id="${patient.id}">${patient.name}</li>`;
-        });
-        html += '</ul>';
-      }
-      html += `
-        <div class="doctor-actions">
-          <h3>Možnosti</h3>
-          <button id="change-hospital-btn">Zmeniť nemocnicu</button>
-        </div>
-      `;
-      if (dashboardContent) {
-        dashboardContent.innerHTML = html;
-      }
-
-      const changeHospitalBtn = document.getElementById("change-hospital-btn");
-      if (changeHospitalBtn) {
-        changeHospitalBtn.addEventListener("click", showChangeHospitalForm);
-      }
-
-    } catch (error) {
-      console.error("Chyba pri načítaní pacientov:", error);
-      if (dashboardContent) {
-        dashboardContent.innerHTML = "<p>Chyba pri načítaní pacientov.</p>";
-      }
+  function loadDoctorDashboard() {
+    const dc = document.getElementById("dashboard-content");
+    if (dc) {
+      dc.innerHTML = "<h2>Doktor Dashboard</h2><p>Zoznam pacientov atď.</p>";
+    }
+  }
+  function loadPatientDashboard() {
+    const dc = document.getElementById("dashboard-content");
+    if (dc) {
+      dc.innerHTML = "<h2>Pacient Dashboard</h2><p>Zdravotná dokumentácia atď.</p>";
+    }
+  }
+  function loadTechnicianDashboard() {
+    const dc = document.getElementById("dashboard-content");
+    if (dc) {
+      dc.innerHTML = "<h2>Technik Dashboard</h2><p>Fotky, nahrávanie a pod.</p>";
+    }
+  }
+  function loadAdminDashboard() {
+    const dc = document.getElementById("dashboard-content");
+    if (dc) {
+      dc.innerHTML = "<h2>Admin Dashboard</h2><p>Správa systému, nemocnice, atď.</p>";
+    }
+  }
+  function loadSuperAdminDashboard() {
+    const dc = document.getElementById("dashboard-content");
+    if (dc) {
+      dc.innerHTML = "<h2>Super Admin Dashboard</h2><p>Správa systému, atď.</p>";
     }
   }
 
-  async function loadPatientDashboard(user) {
-    if (dashboardContent) {
-      dashboardContent.innerHTML = `
-        <h2>Zdravotná dokumentácia</h2>
-        <p>Vaše zdravotné údaje budú zobrazené tu.</p>
-      `;
-    }
-  }
-
-  async function loadTechnicianDashboard(user) {
-    if (dashboardContent) {
-      dashboardContent.innerHTML = `
-        <h2>Technické údaje</h2>
-        <p>Dashboard technika bude čoskoro dostupný.</p>
-      `;
-    }
-  }
-
-  function showChangeHospitalForm() {
-    alert("Formulár na zmenu nemocnice ešte nie je implementovaný.");
-  }
-
-  // Odhlásenie
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      window.location.href = "/logout";
-    });
-  }
-
-  // Spustíme načítanie dashboardu (napr. s krátkym oneskorením)
-  setTimeout(loadDashboard, 100);
+  // Spustíme
+  loadDashboard();
 });

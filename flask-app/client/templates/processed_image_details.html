@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}eVýsledky – Detaily spracovanej fotky{% endblock %}
+{% block header %}Detaily spracovanej fotky{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/processed_image_details.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="processed-image-container hidden-js">
+  <div class="image-section">
+    <div class="image-wrapper">
+      <div class="image-container">
+        <img id="original-image"
+             src="{{ url_for('photos.serve_photo', filepath=processed_image.original_image_path) }}"
+             alt="Original Image">
+        <img id="processed-image"
+             src="{{ url_for('photos.serve_photo', filepath=processed_image.processed_image_path) }}"
+             alt="Processed Image">
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="switch-wrapper">
+        <span class="switch-label">Originál</span>
+        <label class="switch">
+          <input type="checkbox" id="image-toggle">
+          <span class="slider"></span>
+        </label>
+        <span class="switch-label">Spracovaný</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="details-container">
+    <h3>Detaily spracovanej fotky</h3>
+    <table class="photo-detail-table">
+      <tr><th>Pacient</th>  <td id="detail-patient">{{ processed_image.patient_name }}</td></tr>
+      <tr><th>Metóda</th>   <td id="detail-method">{{ processed_image.method }}</td></tr>
+      <tr><th>Stav</th>     <td id="detail-status">{{ processed_image.status }}</td></tr>
+      <tr><th>Dátum</th>    <td id="detail-date">{{ processed_image.created_at }}</td></tr>
+      <tr><th>Výsledok</th> <td id="detail-answer">{{ processed_image.answer }}</td></tr>
+    </table>
+
+    <div class="button-container">
+      <a href="{{ url_for('photos.processed_images_list') }}"
+         class="action-button">Späť</a>
+      <a href="{{ url_for('photos.photo_detail', photo_id=processed_image.original_photo_id) }}"
+         class="action-button">Zobraziť pôvodnú fotku</a>
+      <button id="show-json-btn" class="action-button">Zobraziť JSON dáta</button>
+    </div>
+  </div>
+</div>
+
+<!-- JSON Data Popup -->
+<div id="json-modal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>JSON Dáta</h2>
+    <pre id="json-content">{% set filtered_data = {
+      'answer': processed_image.answer,
+      'created_at': processed_image.created_at,
+      'id': processed_image.id,
+      'method': processed_image.method,
+      'status': processed_image.status,
+      'patient_name': processed_image.patient_name,
+      'original_photo_id': processed_image.original_photo_id
+    } %}{{ filtered_data|tojson(indent=4) }}</pre>
+  </div>
+</div>
+
+<!-- Hidden div with JSON data -->
+<div id="processed-image-data" style="display: none;">{% set filtered_data = {
+  'answer': processed_image.answer,
+  'created_at': processed_image.created_at,
+  'id': processed_image.id,
+  'method': processed_image.method,
+  'status': processed_image.status,
+  'patient_name': processed_image.patient_name,
+  'original_photo_id': processed_image.original_photo_id
+} %}{{ filtered_data|tojson() }}</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/processed_image_details.js') }}"></script>
+{% endblock %}

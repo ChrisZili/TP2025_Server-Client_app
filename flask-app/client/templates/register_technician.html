@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}
+Technician Registration
+{% endblock %}
+
+{% block stylesheet %}
+  {{ super() }}
+  <!-- Link na vlastný CSS súbor (register_technician.css) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register_technician.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="registration-container">
+  <!-- Nadpis + Ikona (môžeš použiť napr. fa-tools) -->
+  <h1><i class="fas fa-tools"></i> Technician Registration</h1>
+
+  <!-- Flash správy (success/error) -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- form_data (ak pri chybe posielame naspäť) -->
+  <form id="registration-form" method="POST" action="/register/technician">
+      <!-- First Name -->
+      <div class="form-group">
+        <label for="first_name">First Name:</label>
+        <input
+          type="text"
+          id="first_name"
+          name="first_name"
+          required
+          value="{{ form_data.get('first_name', '') if form_data else '' }}"
+        >
+        <div class="field-error" id="first_name_error"></div>
+      </div>
+
+      <!-- Last Name -->
+      <div class="form-group">
+        <label for="last_name">Last Name:</label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          required
+          value="{{ form_data.get('last_name', '') if form_data else '' }}"
+        >
+        <div class="field-error" id="last_name_error"></div>
+      </div>
+
+      <!-- Hospital Code (zobraziť), ale name = technician_code -->
+      <div class="form-group">
+        <label for="technician_code">Hospital Code:</label>
+        <input
+          type="text"
+          id="technician_code"
+          name="technician_code"
+          required
+          value="{{ form_data.get('technician_code', '') if form_data else '' }}"
+        >
+        <div class="field-error" id="technician_code_error"></div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          value="{{ form_data.get('email', '') if form_data else '' }}"
+        >
+        <div class="field-error" id="email_error"></div>
+      </div>
+
+      <!-- Password & Confirm Password -->
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+        >
+        <div class="field-error" id="password_error"></div>
+      </div>
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password:</label>
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          required
+        >
+        <div class="field-error" id="confirm_password_error"></div>
+      </div>
+
+      <!-- GDPR Checkbox -->
+      <div class="form-group gdpr-group">
+        <input
+          type="checkbox"
+          id="gdpr"
+          name="gdpr"
+          {% if form_data and form_data.get('gdpr') %}
+            checked
+          {% endif %}
+        >
+        <label for="gdpr">
+          I agree to the processing of my personal data according to GDPR.
+          <a href="#">(Read GDPR)</a>
+        </label>
+      </div>
+      <div class="field-error" id="gdpr_error"></div>
+
+      <!-- Submit Button -->
+      <button type="submit" id="register-btn" disabled>Register</button>
+  </form>
+
+  <!-- Link pre prípad, že už existuje účet -->
+  <div class="already-account">
+    <p>Already have an account?
+      <a href="{{ url_for('auth.login_get') }}">Login here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <!-- Link na externý JS súbor pre validáciu -->
+  <script src="{{ url_for('static', filename='js/register_technician.js') }}" defer></script>
+{% endblock %}
