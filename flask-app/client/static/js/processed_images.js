@@ -189,8 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
       'method': 1,
       'status': 2,
       'answer': 3,
-      'created_at': 4,
-      'processed_at': 5
+      'created_at': 4
     };
     return columnMap[column] || 0;
   }
@@ -263,4 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show all photos tab by default
   allPhotosBtn.click();
+
+  // Preset sorting: newest to oldest by date
+  toggleSort('created_at');
 });

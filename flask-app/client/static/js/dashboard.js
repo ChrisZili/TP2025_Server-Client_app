@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateCards(data) {
     if (!dashboardCards) return;
     const userType = data.user_type;
-    console.log(data)
     const items = menuConfig[userType].filter(item =>
       !item.isLogout && !["Domov", "Profil", "Nastavenie"].includes(item.label)
     );
@@ -158,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadDashboard() {
     try {
       const response = await fetchWithAuth('/dashboard/info');
-      console.log(response)
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa (token?).');
       }
