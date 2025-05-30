@@ -701,3 +701,17 @@ def get_processed_images(photo_id):
     except Exception as e:
         logger.exception("Error getting processed images: %s", str(e))
         return jsonify({"error": str(e)}), 500
+
+
+@bp.route('/check_server_health', methods=['GET'])
+@jwt_required(optional=True)
+def check_server_health():
+    """Check if the processing server is available and return status"""
+    logger.info("==== Checking processing server health ====")
+    
+    server_available, message = photo_service.check_processing_server_availability()
+    
+    return jsonify({
+        "available": server_available,
+        "message": message
+    }), 200 if server_available else 503

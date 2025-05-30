@@ -87,14 +87,15 @@ h3 {
 
 /* Details Container */
 .details-container {
-  padding: 20px;
+  padding: 10px;
   background-color: #ffffff;
   border-radius: 5px;
   box-shadow: none;
   border: none;
   width: 100%;
-  max-width: 1100px;
-  margin: 20px auto;
+  max-width: 100%;
+  margin: 10px auto;
+  overflow-x: auto; /* Allow horizontal scrolling */
 }
 
 .photo-detail-table {
@@ -438,4 +439,125 @@ h3 {
 .nav-button.disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Processed Images Table */
+#processed-images-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 14px;
+  border-radius: 0;
+  table-layout: auto; /* Allow table to adjust to content */
+  overflow: visible;
+  box-shadow: none;
+  min-width: 400px; /* Ensure minimum width for mobile */
+}
+
+#processed-images-table thead {
+  background-color: #f4f4f4;
+}
+
+#processed-images-table th {
+  font-weight: bold;
+  text-align: left;
+  padding: 8px 10px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* Prevent wrapping of header text */
+}
+
+#processed-images-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  color: #444;
+}
+
+#processed-images-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+#processed-images-table tbody tr:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.processed-image-row {
+  transition: all 0.2s ease;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.status-dot[data-status="Čaká na spracovanie"] {
+  background-color: #ffa500; /* orange */
+}
+
+.status-dot[data-status="Spracované"] {
+  background-color: #2ecc71; /* green */
+}
+
+.status-dot[data-status="Chyba spracovania"] {
+  background-color: #f44336; /* red */
+}
+
+/* Sort icons for table headers */
+.sortable {
+  cursor: pointer;
+  position: relative;
+  padding-right: 15px; /* Make room for sort icon */
+}
+
+.sortable .sort-icon {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sortable.asc .sort-icon::after {
+  content: '↑';
+  position: absolute;
+  color: #666;
+}
+
+.sortable.desc .sort-icon::after {
+  content: '↓';
+  position: absolute;
+  color: #666;
+}
+
+/* Table wrapper with vertical scrolling for mobile */
+.table-scroll-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Media queries for mobile responsiveness */
+@media (max-width: 768px) {
+  .details-container {
+    padding: 5px;
+    margin: 5px auto;
+  }
+  
+  #processed-images-table th,
+  #processed-images-table td {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  
+  .table-scroll-wrapper {
+    max-height: 250px;
+  }
 }

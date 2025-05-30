@@ -187,16 +187,20 @@
 .table-scroll-wrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 100vh;
     margin-top: 20px;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
 }
 
 .photo-table {
     width: 100%;
-    min-width: 1000px;
+    min-width: 800px;
     border-collapse: collapse;
     background: #fff;
     border-radius: 8px;
-    table-layout: fixed;
+    table-layout: auto;
     box-shadow: none;
     margin: 0 auto;
 }
@@ -206,10 +210,10 @@
 }
 
 .photo-table thead th {
-    text-align: left;
-    padding: 14px 16px;
+    text-align: center;
+    padding: 12px 14px;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     position: sticky;
     top: 0;
@@ -219,18 +223,11 @@
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 .photo-table tbody {
-    display: block;
     width: 100%;
-}
-
-.photo-table thead,
-.photo-table tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
 }
 
 .photo-table tbody tr {
@@ -244,13 +241,12 @@
 }
 
 .photo-table td {
-    padding: 14px 16px;
-    font-size: 1.05rem;
+    padding: 10px 14px;
+    font-size: 0.95rem;
     color: #444;
     vertical-align: middle;
-    word-wrap: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    text-align: center;
 }
 
 /* Hide table body when search is empty */

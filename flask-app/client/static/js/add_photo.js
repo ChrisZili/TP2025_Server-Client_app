@@ -8,6 +8,55 @@ document.addEventListener("DOMContentLoaded", () => {
     const anonymousCheckbox = document.getElementById("anonymous");
     const patientSelect = document.getElementById("patient");
   
+    // Function to check server health
+    function checkServerHealth() {
+      return fetch('/photos/check_server_health', {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.available) {
+          // Show server unavailable message if server is not available
+          showServerUnavailableMessage(data.message);
+          return false;
+        }
+        return true;
+      })
+      .catch(error => {
+        console.error('Error checking server health:', error);
+        showServerUnavailableMessage('Cannot connect to the processing server');
+        return false;
+      });
+    }
+  
+    // Function to show server unavailable message
+    function showServerUnavailableMessage(message) {
+      // Remove any existing error notifications first
+      const existingNotifications = document.querySelectorAll('.server-unavailable-notification');
+      existingNotifications.forEach(notification => {
+        notification.remove();
+      });
+      
+      // Create new notification
+      const notification = document.createElement('div');
+      notification.className = 'upload-notification error server-unavailable-notification';
+      notification.style.position = 'relative';
+      notification.style.margin = '20px auto';
+      notification.style.textAlign = 'center';
+      notification.style.maxWidth = '80%';
+      notification.style.left = '0';
+      notification.style.right = '0';
+      notification.textContent = `Server nedostupný: ${message}`;
+      
+      const container = document.getElementById('add-photo-container');
+      if (container) {
+        container.insertBefore(notification, container.firstChild);
+      }
+    }
+  
     // Handle anonymous checkbox interaction
     if (anonymousCheckbox && patientSelect) {
       anonymousCheckbox.addEventListener("change", (event) => {
@@ -113,6 +162,18 @@ document.addEventListener("DOMContentLoaded", () => {
           
           if (missingFields) {
             throw new Error('Please fill in all required fields');
+          }
+          
+          // Check server health before proceeding
+          submitButton.textContent = "Kontrola servera...";
+          submitButton.disabled = true;
+          
+          const serverIsAvailable = await checkServerHealth();
+          if (!serverIsAvailable) {
+            // The error message is already shown by checkServerHealth
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+            return;
           }
   
           // Create FormData object
