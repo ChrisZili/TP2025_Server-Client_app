@@ -147,58 +147,55 @@ html, body {
 /* Container for dropdowns */
 .dropdowns-container {
   display: flex;
-  gap: 1rem; /* Space between dropdowns */
+  gap: 1rem;
   align-items: center;
-  margin-bottom: 1rem; /* Add spacing below the dropdowns */
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 /* Dropdown styling */
 .dropdown {
   display: flex;
-  align-items: center; /* Align label and dropdown inline */
-  gap: 0.5rem; /* Space between label and dropdown */
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: 90vw;
-}
-
-.dropdown label {
-  font-size: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center; /* Align icon and text inline */
-  gap: 0.3rem; /* Space between icon and text */
-}
-
-.dropdown select {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s ease-in-out;
-  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  flex-direction: row;
+  margin-bottom: 0;
+  width: auto;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+.dropdown label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown select {
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: auto;
+  min-width: 180px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .dropdown select:focus {
-  border-color: #007bff;
+  border-color: #66b2ff;
 }
 
-/* Optional: Add consistent icon alignment */
-.dropdown label i {
-  font-size: 1.2rem;
-  color: #555;
-}
-
-/* Responsive dropdowns in .dropdowns-container */
+/* Responsive: stack vertically on small screens */
 @media (max-width: 600px) {
   .dropdowns-container {
     flex-direction: column;
@@ -208,7 +205,7 @@ html, body {
   .dropdown {
     flex-direction: column !important;
     align-items: flex-start !important;
-    width: 80vw;
+    width: 100%;
     gap: 0.2rem;
     margin-bottom: 0.5rem;
   }
@@ -216,8 +213,8 @@ html, body {
     margin-bottom: 2px;
   }
   .dropdown select {
-    width: auto;
-    max-width: 80vw;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
