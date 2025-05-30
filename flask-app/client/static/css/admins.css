@@ -53,6 +53,7 @@ html, body {
   border-radius: 8px;
   min-height: 200px;
   max-height: 80vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -261,13 +262,9 @@ html, body {
 
 /* == Tabuľka (list) == */
 .table-scroll-wrapper {
-  width: 100%;
+  flex: 1;
   overflow-x: auto;
-  overflow-y: auto;
-  max-height: 70vh; /* Limit height to enable vertical scrolling */
-  margin: 0 0 20px 0;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  border-radius: 8px;
+  min-height: 0;
 }
 
 .table-scroll-wrapper::-webkit-scrollbar {
