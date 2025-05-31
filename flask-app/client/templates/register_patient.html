@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Patient Registration
+eVýsledky - Patient Registration
 {% endblock %}
 {% block header %}
 Patient Registration
@@ -11,17 +11,14 @@ Patient Registration
 {% endblock %}
 {% block stylesheet %}
   {{ super() }}
-  <!-- Link na vlastný CSS súbor -->
   <link rel="preload" href="{{ url_for('static', filename='css/register_patient.css') }}" as="style">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/register_patient.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="registration-container">
-  <!-- Ikona + Text "Patient Registration" -->
   <h1><i class="fas fa-user-plus"></i> Patient Registration</h1>
 
-  <!-- Blok pre flash správy (napr. success/error) -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="flash-messages">
@@ -32,17 +29,10 @@ Patient Registration
     {% endif %}
   {% endwith %}
 
-  <!--
-    V metóde register_post, ak je chyba, posielaj:
-      render_template('register_patient.html', form_data=data_dict)
-    Kde data_dict = dict(data), s vyhodeným passwordom.
-
-    Tu potom pre každé pole čítame form_data[<key>], ak existuje.
-   -->
   <form id="registration-form" method="POST" action="/register">
       <!-- First Name -->
       <div class="form-group">
-          <label for="first_name">First Name:</label>
+          <label for="first_name">First Name</label>
           <input
             type="text"
             id="first_name"
@@ -55,7 +45,7 @@ Patient Registration
 
       <!-- Last Name -->
       <div class="form-group">
-          <label for="last_name">Last Name:</label>
+          <label for="last_name">Last Name</label>
           <input
             type="text"
             id="last_name"
@@ -66,85 +56,37 @@ Patient Registration
           <div class="field-error" id="last_name_error"></div>
       </div>
 
-      <!-- Phone Number (+421 s vlajkou SR) -->
+      <!-- Phone Number -->
       <div class="form-group">
-          <label for="phone_number">Phone Number:</label>
-          <div class="phone-group">
-              <span class="phone-prefix">
-                <img src="{{ url_for('static', filename='images/sk.svg') }}"
-                     alt="Slovakia Flag" class="flag-icon" />
-                +421
-              </span>
-              <input
-                type="text"
-                id="phone_number"
-                name="phone_number"
-                placeholder="Enter phone number"
-                required
-                value="{{ form_data.get('phone_number', '') if form_data else '' }}"
-              >
-          </div>
+          <label for="phone_number">Phone Number</label>
+          <input
+            type="tel"
+            id="phone_number"
+            name="phone_number"
+            required
+            value="{{ form_data.get('phone_number', '') if form_data else '' }}"
+          >
           <div class="field-error" id="phone_number_error"></div>
       </div>
 
-      <!-- Birth Date -->
+      <!-- Birth Number (Rodné číslo, 6 digits) -->
       <div class="form-group">
-          <label for="birth_date">Birth Date:</label>
-          <input
-            type="date"
-            id="birth_date"
-            name="birth_date"
-            required
-            value="{{ form_data.get('birth_date', '') if form_data else '' }}"
-          >
-          <div class="field-error" id="birth_date_error"></div>
-      </div>
-
-      <!-- Birth Number (Rodné číslo) -->
-      <div class="form-group">
-          <label for="birth_number">Birth Number:</label>
+          <label for="birth_number">Birth Number</label>
           <input
             type="text"
             id="birth_number"
             name="birth_number"
-            placeholder="Enter 10 digits"
-            maxlength="11"
+            placeholder="######"
+            maxlength="6"
             required
             value="{{ form_data.get('birth_number', '') if form_data else '' }}"
           >
           <div class="field-error" id="birth_number_error"></div>
       </div>
 
-      <!-- Gender -->
-      <div class="form-group">
-          <label for="gender">Gender:</label>
-          <select id="gender" name="gender" required>
-              <option value="">Select gender</option>
-              <option
-                value="Male"
-                {% if form_data and form_data.get('gender') == 'Male' %}
-                  selected
-                {% endif %}
-              >Male</option>
-              <option
-                value="Female"
-                {% if form_data and form_data.get('gender') == 'Female' %}
-                  selected
-                {% endif %}
-              >Female</option>
-              <option
-                value="Other"
-                {% if form_data and form_data.get('gender') == 'Other' %}
-                  selected
-                {% endif %}
-              >Other</option>
-          </select>
-          <div class="field-error" id="gender_error"></div>
-      </div>
-
       <!-- Email -->
       <div class="form-group">
-          <label for="email">Email:</label>
+          <label for="email">Email</label>
           <input
             type="email"
             id="email"
@@ -155,30 +97,42 @@ Patient Registration
           <div class="field-error" id="email_error"></div>
       </div>
 
-      <!-- Password & Confirm Password -->
+      <!-- Password -->
       <div class="form-group">
-          <label for="password">Password:</label>
-          <!-- heslo z bezpečnostných dôvodov NEpredvyplňujeme -->
+        <label for="password">Password</label>
+        <div class="input-wrapper password-wrapper">
           <input
             type="password"
             id="password"
             name="password"
+            autocomplete="new-password"
             required
           >
-          <div class="field-error" id="password_error"></div>
+          <button type="button" class="toggle-pw" id="toggle-password" aria-label="Show or hide password" tabindex="-1">
+            <i class="fas fa-eye-slash" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="field-error" id="password_error"></div>
       </div>
+
+      <!-- Confirm Password -->
       <div class="form-group">
-          <label for="confirm_password">Confirm Password:</label>
+        <label for="confirm_password">Confirm Password</label>
+        <div class="input-wrapper password-wrapper">
           <input
             type="password"
             id="confirm_password"
             name="confirm_password"
             required
           >
-          <div class="field-error" id="confirm_password_error"></div>
+          <button type="button" class="toggle-pw" id="toggle-password-confirm" aria-label="Show or hide password" tabindex="-1">
+            <i class="fas fa-eye-slash" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="field-error" id="confirm_password_error"></div>
       </div>
 
-      <!-- GDPR Checkbox s linkom -->
+      <!-- GDPR Checkbox -->
       <div class="form-group gdpr-group">
           <input
             type="checkbox"
@@ -187,19 +141,19 @@ Patient Registration
             {% if form_data and form_data.get('gdpr') %}
               checked
             {% endif %}
+            required
           >
           <label for="gdpr">
             I agree to the processing of my personal data according to GDPR.
             <a href="#">(Read GDPR)</a>
           </label>
+          <div class="field-error" id="gdpr_error"></div>
       </div>
-      <div class="field-error" id="gdpr_error"></div>
 
       <!-- Submit Button -->
-      <button type="submit" id="register-btn" disabled>Register</button>
+      <button type="submit" id="register-btn" class="add-btn" disabled>Register</button>
   </form>
 
-  <!-- Link pre prípad, že už existuje účet -->
   <div class="already-account">
     <p>Already have an account?
       <a href="{{ url_for('auth.login_get') }}">Login here</a>
@@ -210,6 +164,5 @@ Patient Registration
 
 {% block scripts %}
   {{ super() }}
-  <!-- Link na externý JS súbor -->
   <script src="{{ url_for('static', filename='js/register_patient.js') }}" defer></script>
 {% endblock %}

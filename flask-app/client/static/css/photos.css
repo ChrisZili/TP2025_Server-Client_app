@@ -83,13 +83,6 @@
   background-color: #e9e9e9;
 }
 
-.sortable::after {
-  content: '↕';
-  position: absolute;
-  right: 8px;
-  color: #999;
-  font-size: 12px;
-}
 
 /* Actions column */
 .actions-column {
@@ -167,6 +160,80 @@
 .filter-input:focus {
   border-color: #1a7891;
   outline: none;
+}
+
+/* Sorting arrows like technicians */
+.photo-table th .arrow-up,
+.photo-table th .arrow-down {
+  display: none;
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #1a7891;
+  vertical-align: middle;
+}
+
+.photo-table th.sort-asc .arrow-up {
+  display: inline;
+}
+
+.photo-table th.sort-desc .arrow-down {
+  display: inline;
+}
+
+/* --- Unified dropdown styling for filters and sorts (match all tab) --- */
+.filter-input,
+.sort-options select {
+  width: 160px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-input:focus,
+.sort-options select:focus {
+  border-color: #66b2ff;
+}
+
+/* Responsive dropdowns */
+@media (max-width: 768px) {
+  .filter-input,
+  .sort-options select {
+    width: 120px;
+    font-size: 0.95rem;
+    padding: 7px 8px;
+  }
+}
+
+/* --- Sort icon for sortable headers (match processed_images.css) --- */
+.sortable .sort-icon {
+  font-size: 1rem;
+  margin-left: 6px;
+  color: #1a7891;
+  font-weight: bold;
+  vertical-align: middle;
+  user-select: none;
+  transition: color 0.2s;
+  display: inline;
+  position: static;
+}
+
+.sortable .sort-icon::after {
+  content: '';
+}
+
+.sortable.sort-asc .sort-icon::after {
+  content: " ▲";
+}
+
+.sortable.sort-desc .sort-icon::after {
+  content: " ▼";
 }
 
 /* Responsive design */
@@ -443,8 +510,22 @@
   background: #fff;
 }
 #photo-search-sort-select {
-  min-width: 180px;
+  width: 160px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+  max-width: 100%;
+  box-sizing: border-box;
 }
+#photo-search-sort-select:focus {
+  border-color: #66b2ff;
+}
+
 @media (max-width: 600px) {
   .cards {
     grid-template-columns: 1fr;

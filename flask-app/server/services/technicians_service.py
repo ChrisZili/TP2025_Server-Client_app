@@ -48,6 +48,9 @@ class TechniciansService:
                 last_name=last_name,
                 hospital_id=hospital.id
             )
+            if (len(new_technician.validate_password(password)) > 0):
+                logger.error("Registrácia technika zlyhala: %s", new_technician.validate_password(password))
+                return {"error": new_technician.validate_password(password)}, 400
             new_technician.set_password(password)
 
             db.session.add(new_technician)
@@ -81,7 +84,10 @@ class TechniciansService:
             User.query.get(technician_id).email = data.get("email", User.query.get(technician_id).email)
             password = data.get("password", "")
             if password != "":
-                User.query.get(technician_id).set_password(password)
+                if (len(technician.validate_password(password)) > 0):
+                    logger.error("Uprava technika zlyhala: %s", technician.validate_password(password))
+                    return {"error": technician.validate_password(password)}, 400
+                technician.set_password(password)
 
             if user.is_super_admin():
                 new_code = data.get("hospital_code")

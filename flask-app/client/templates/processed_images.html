@@ -122,7 +122,9 @@ Spracované fotky
             data-status="{{ img.status }}"
             data-answer="{{ img.answer }}"
             data-created-at="{{ img.created_at }}"
-            data-processed-at="{{ img.processed_at }}">
+
+    data-processed-at="{{ img.processed_at }}">
+
           <!-- <td>{{ img.name|default('-', true) }}</td> -->
           <td>{{ img.patient_name|default('-', true) }}</td>
           <td>{{ img.method|default('-', true) }}</td>

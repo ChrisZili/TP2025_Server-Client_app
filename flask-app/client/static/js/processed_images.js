@@ -263,4 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show all photos tab by default
   allPhotosBtn.click();
+
+  // Preset sorting: newest to oldest by date
+  toggleSort('created_at');
 });

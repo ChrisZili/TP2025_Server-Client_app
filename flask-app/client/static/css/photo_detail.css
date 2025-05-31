@@ -588,28 +588,12 @@ h3 {
     padding: 5px;
     margin: 5px auto;
   }
-  
-  #processed-images-table th,
-  #processed-images-table td {
-    padding: 6px 8px;
-    font-size: 13px;
-  }
-  
-  .table-scroll-wrapper {
-    max-height: 250px;
-  }
-}
 
-/* Utility class to prevent text wrapping */
-.text-nowrap {
-  white-space: nowrap !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* Minimum width for the entire table to prevent cramping */
 #processed-images-table {
-  min-width: 650px; 
+  min-width: 650px;
+
 }
 
 /* Ensure date columns have enough space and don't wrap */

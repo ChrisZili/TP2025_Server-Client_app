@@ -44,6 +44,9 @@ class AdminsService:
                 gender=gender,
                 hospital_id=hospital.id
             )
+            if (len(new_admin.validate_password(password)) > 0):
+                logger.error("Registrácia admin zlyhala: %s", new_admin.validate_password(password))
+                return {"error": new_admin.validate_password(password)}, 400
             new_admin.set_password(password)
             db.session.add(new_admin)
             db.session.commit()
@@ -74,7 +77,10 @@ class AdminsService:
 
             password = data.get("password", "")
             if password != "":
-                User.query.get(admin_id).set_password(password)
+                if (len(admin.validate_password(password)) > 0):
+                    logger.error("Uprava admina zlyhala: %s", admin.validate_password(password))
+                    return {"error": admin.validate_password(password)}, 400
+                admin.set_password(password)
 
             hospital_code = data.get("hospital_code")
             if hospital_code:

@@ -8,14 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuConfig = {
     patient: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
-      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých neprečítaných správ" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings"},
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
     technician: [
       { icon: "fa fa-home",    label: "Domov",        link: "/dashboard" },
       { icon: "fa fa-images", label: "Fotky", link: "/photos/list", countTemplate: "${data.original_image_count} Všetkých fotiek" },
-      { icon: "fa fa-user-plus", label: "Vytvoriť pacienta", link: "/patients" },
       { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
       { icon: "fa fa-cog",      label: "Nastavenie",  link: "/settings" },
       { icon: "fa fa-sign-out", label: "Odhlásiť",    link: "/logout", isLogout: true },
@@ -59,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateCards(data) {
     if (!dashboardCards) return;
     const userType = data.user_type;
-    console.log(data)
     const items = menuConfig[userType].filter(item =>
       !item.isLogout && !["Domov", "Profil", "Nastavenie"].includes(item.label)
     );
@@ -159,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadDashboard() {
     try {
       const response = await fetchWithAuth('/dashboard/info');
-      console.log(response)
       if (!response.ok) {
         throw new Error('Nepodarilo sa načítať údaje používateľa (token?).');
       }

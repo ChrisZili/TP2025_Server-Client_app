@@ -220,6 +220,7 @@ def photo_detail(photo_id):
             processed_url = url_for('photos.serve_photo',
                                     filepath=os.path.relpath(img.processed_image_path, Config.UPLOAD_FOLDER))
             
+
             # Extract processing timestamp from filename if possible
             processed_at = ""
             try:
@@ -239,10 +240,22 @@ def photo_detail(photo_id):
             except:
                 # If any error occurs in parsing, just leave processed_at empty
                 pass
+
+
+        else:
+            processed_url = ""
+            processed_at = ""
+
+        # Ensure created_at is always present and formatted
+        created_at = ""
+        if img.created_at:
+            created_at = img.created_at.strftime("%d.%m.%Y %H:%M:%S")
+
                 
         else:
             processed_url = ""
             processed_at = ""
+
 
         # Ensure created_at is always present and formatted
         created_at = ""
@@ -315,9 +328,12 @@ def add_photo_post():
 
         # Log the received data
         logger.info(f"Received form data: patient_id={patient_id}, eye={eye_side}, quality={quality}, "
-                  f"device_name={device_name}, device_type={device_type}")
+         f"device_name={device_name}, device_type={device_type}")
         logger.info(f"Methods to process: {methods_to_process}")
+
+
         
+
         # Save photo first
         photo_data, status, message = photo_service.save_photo(
             photo_file=photo_file,
@@ -333,18 +349,18 @@ def add_photo_post():
             raise Exception(message)
             
         photo_id = int(photo_data.id)
-        
+
         # If no methods, just save and redirect
         if not methods_to_process:
             flash('Photo uploaded successfully!', 'success')
             return redirect(url_for('photos.photos_list'))
-            
+
         # If methods, check processing server
         server_available, server_message = photo_service.check_processing_server_availability()
         if not server_available:
             flash('Photo uploaded successfully but processing server is unavailable: ' + server_message, 'warning')
             return redirect(url_for('photos.photo_detail', photo_id=photo_id))
-            
+
         # Server is available, process the methods
         logger.info(f"Processing server is available, processing {len(methods_to_process)} methods")
         results = []
@@ -367,15 +383,19 @@ def add_photo_post():
                 success_count += 1
             else:
                 logger.warning(f"Failed to process method {method.name}: {message}")
-                
+
         # Show appropriate success/partial success message
         if success_count == len(method_objects):
             flash('Photo uploaded and all methods sent for processing successfully!', 'success')
         elif success_count > 0:
-            flash(f'Photo uploaded but only {success_count} of {len(method_objects)} methods were processed successfully.', 'warning')
+
+            flash(
+                f'Photo uploaded but only {success_count} of {len(method_objects)} methods were processed successfully.',
+                'warning')
         else:
             flash('Photo uploaded but no methods could be processed.', 'warning')
-            
+
+
         return redirect(url_for('photos.photo_detail', photo_id=photo_id))
 
     except Exception as e:
@@ -596,7 +616,7 @@ def processed_image_detail(processed_image_id):
             logger.info(f"Processed image path: {processed_path}")
             logger.info(f"Relative path: {rel_path}")
             logger.info(f"Processed URL: {processed_url}")
-            
+
             # Extract processing timestamp from filename if possible
             try:
                 # Get filename and split it
@@ -615,7 +635,7 @@ def processed_image_detail(processed_image_id):
             except:
                 # If any error occurs in parsing, just leave processed_at empty
                 pass
-                
+
         except Exception as e:
             logger.error(f"Error creating URL for processed image: {e}")
             flash("Error loading processed image", "error")
@@ -676,7 +696,7 @@ def processed_images_list():
             doctor_name = original.creator.get_full_name()
         else:
             doctor_name = str(original.creator_id) if original and hasattr(original, 'creator_id') else "-"
-            
+
         # Extract processing timestamp from filename if possible
         processed_at = ""
         if img.processed_image_path:
@@ -697,7 +717,7 @@ def processed_images_list():
             except:
                 # If any error occurs in parsing, just leave processed_at empty
                 pass
-                
+
         table_data.append({
             "id": img.id,
             "name": os.path.basename(img.processed_image_path) if img.processed_image_path else "",
@@ -758,7 +778,7 @@ def get_processed_images(photo_id):
         for img in photo.processed_images:
             # Format created_at timestamp
             created_at = img.created_at.strftime("%d.%m.%Y %H:%M:%S") if img.created_at else '-'
-            
+
             # Extract processed_at from filename if it exists
             processed_at = "-"
             if img.processed_image_path:
@@ -776,12 +796,14 @@ def get_processed_images(photo_id):
                 except:
                     # If any error in parsing, leave processed_at as default
                     pass
-            
+
+
             processed_url = ""
             if img.processed_image_path and os.path.exists(img.processed_image_path):
-                processed_url = url_for('photos.serve_photo', 
-                                      filepath=os.path.relpath(img.processed_image_path, Config.UPLOAD_FOLDER))
-            
+                processed_url = url_for('photos.serve_photo',
+                                        filepath=os.path.relpath(img.processed_image_path, Config.UPLOAD_FOLDER))
+
+
             processed_images.append({
                 "id": img.id,
                 "method": img.process_type,
@@ -803,10 +825,12 @@ def get_processed_images(photo_id):
 def check_server_health():
     """Check if the processing server is available and return status"""
     logger.info("==== Checking processing server health ====")
-    
+
+
     try:
         server_available, message = photo_service.check_processing_server_availability()
-        
+
+
         # Always return 200 HTTP status to avoid client-side errors
         # The "available" field in the response indicates whether the processing server is up
         return jsonify({

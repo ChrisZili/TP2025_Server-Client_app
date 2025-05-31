@@ -60,5 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
         messageBox.classList.add("error");
       }
     });
+    [emailInput, passwordInput].forEach(input => {
+      if (input) {
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault(); // Zabraň štandardnému submitu ak by bol formulár
+            loginBtn.click(); // Simuluj kliknutie na tlačidlo
+          }
+        });
+      }
+    });
   }
 });
