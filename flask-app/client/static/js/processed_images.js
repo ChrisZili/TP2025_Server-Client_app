@@ -189,7 +189,8 @@ document.addEventListener("DOMContentLoaded", () => {
       'method': 1,
       'status': 2,
       'answer': 3,
-      'created_at': 4
+      'created_at': 4,
+      'processed_at': 5
     };
     return columnMap[column] || 0;
   }

@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return false;
       });
     }
-
     // Function to show server unavailable message
     function showServerUnavailableMessage(message) {
       // Remove any existing error notifications first
@@ -56,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
         container.insertBefore(notification, container.firstChild);
       }
     }
-
     // Handle anonymous checkbox interaction
     if (anonymousCheckbox && patientSelect) {
       anonymousCheckbox.addEventListener("change", (event) => {

@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function parseDate(dateString) {
     if (!dateString || dateString === '-') return new Date(0);
 
+
     // Split the dateString to separate date and time
     const parts = dateString.split(' ');
     const datePart = parts[0];
@@ -256,14 +257,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Create a date with just the date components
     const date = new Date(year, month - 1, day);
-
     // If time part exists (HH:MM:SS), add it to the date
     if (parts.length > 1) {
       const timePart = parts[1];
       const [hours, minutes, seconds] = timePart.split(':').map(Number);
       date.setHours(hours, minutes, seconds);
     }
-
     return date;
   }
 

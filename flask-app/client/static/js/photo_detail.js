@@ -187,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
           const status = img.status || '-';
           const createdAt = img.created_at || '-';
           const processedAt = img.processed_at || '-';
-
           const row = document.createElement('tr');
           row.className = 'processed-image-row';
           row.dataset.processedImageId = img.id;

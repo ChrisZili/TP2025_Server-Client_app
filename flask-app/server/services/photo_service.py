@@ -50,6 +50,7 @@ class PhotoService:
         # Get sequence number for this patient
         seq_num = self._get_image_sequence_number(patient_id)
 
+
         # Normalize eye_side to L/R
         eye_code = "P" if eye_side.lower() == "right" else "L"
 
@@ -61,6 +62,7 @@ class PhotoService:
 
         # Create filename: patient_id_sequence_eye_device.ext
         return f"{patient_id}_{seq_num}_{eye_code}_{device_code}{ext}"
+
 
     def save_file_for_user(self, user_id, file_storage, is_processed=False):
         """
@@ -77,9 +79,11 @@ class PhotoService:
         # Ensure the user directory exists with the new structure
         user_dir = self._create_user_directory(user_id)
 
+
         # Choose the appropriate subfolder
         subfolder = "processed" if is_processed else "original"
         target_dir = os.path.join(user_dir, subfolder)
+
 
         # Generate a unique filename
         original_filename = secure_filename(file_storage.filename)
@@ -127,11 +131,14 @@ class PhotoService:
 
             # Generate filename based on the new naming convention
             filename = self._generate_image_filename(
+
                 patient_id,
                 eye_side,
                 device_type,
                 secure_filename(photo_file.filename)
             )
+
+
 
             abs_file_path = os.path.join(original_dir, filename)
 
@@ -425,8 +432,10 @@ class PhotoService:
             logger.error(f"Error sending image to processing: {str(e)}")
             return False, 500, f"Error sending image to processing: {str(e)}"
 
+
     def process_received_data(self, status, answer, file_id, file_data, file_extension, processed_at=None,
                               created_at=None):
+
         """Process the received data from the processing service."""
         try:
             # Find the processed image by ID
@@ -461,8 +470,10 @@ class PhotoService:
             else:
                 processing_time = datetime.now()
 
+
             timestamp = processing_time.strftime("%Y%m%d_%H%M%S")
             filename = f"{patient_id}_{original_photo_id}_{eye_code}_{method_name}_{timestamp}.{file_extension}"
+
 
             abs_file_path = os.path.join(processed_dir, filename)
 
@@ -483,8 +494,10 @@ class PhotoService:
             if created_at:
                 try:
                     # Only update if the existing created_at is None or very recent
+
                     if not processed_image.created_at or (
                             datetime.now() - processed_image.created_at).total_seconds() < 60:
+
                         processed_image.created_at = datetime.fromisoformat(created_at)
                 except (ValueError, TypeError):
                     # If parsing fails, keep the existing created_at
@@ -513,6 +526,7 @@ class PhotoService:
         # Ensure the user directory exists
         user_dir = self._create_user_directory(user_id)
 
+
         # Choose the appropriate subfolder
         subfolder = "processed" if is_processed else "original"
         target_dir = os.path.join(user_dir, subfolder)
@@ -520,6 +534,7 @@ class PhotoService:
         # Generate a unique filename
         unique_filename = f"{uuid.uuid4().hex}.{extension}"
         file_path = os.path.join(target_dir, unique_filename)
+
 
         # Decode and save the file
         with open(file_path, "wb") as f:

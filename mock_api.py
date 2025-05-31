@@ -97,7 +97,8 @@ def processing_worker():
                 # Add text to the image
                 processed_images[processing_id]["data"] = add_text_to_image(processed_images[processing_id]["data"])
                 processed_images[processing_id]["status"] = "processed"
-                processed_images[processing_id]["processed_at"] = datetime.now().isoformat()
+                processed_timestamp = datetime.now()
+                processed_images[processing_id]["processed_at"] = processed_timestamp.isoformat()
                 processed_images[processing_id]["answer"] = random.choice(
                     ["zdravý", "retinopatia", "glaukóm", "leukokória", "amblyopia", "strabizmus"])
                 rec_endpoint = processed_images[processing_id].get("recieving_endpoint")
@@ -108,6 +109,8 @@ def processing_worker():
                             json={
                                 "status": "processed",
                                 "answer": processed_images[processing_id]["answer"],
+                                "processed_at": processed_timestamp.isoformat(),  # Include timestamp in response
+                                "created_at": processed_images[processing_id]["created_at"],  # Include creation timestamp
                                 "file": {
                                     "id": processed_images[processing_id]["id"],
                                     "data": processed_images[processing_id]["data"],
@@ -200,7 +203,8 @@ async def process_image(
             "answer": None,
             "recieving_endpoint": payload.recieving_endpoint,
             "data": base64.b64encode(image_data).decode('utf-8'),
-            "extension": ext
+            "extension": ext,
+            "created_at": datetime.now().isoformat()
             # ... add other fields if needed ...
         }
         with queue_lock:
