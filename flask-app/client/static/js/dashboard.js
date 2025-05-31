@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuConfig = {
     patient: [
       { icon: "fa fa-home",    label: "Domov",      link: "/dashboard"},
-      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých správ" },
+      { icon: "fa fa-envelope", label: "Správy", link: "/messages", countTemplate: "${data.message_count} Všetkých neprečítaných správ" },
       { icon: "fa fa-cog",     label: "Nastavenie", link: "/settings"},
       { icon: "fa fa-sign-out",label: "Odhlásiť",   link: "/logout", isLogout: true },
     ],
